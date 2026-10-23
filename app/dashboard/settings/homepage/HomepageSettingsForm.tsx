@@ -18,6 +18,11 @@ import {
 import { parsePlatformNewsItems, PLATFORM_NEWS_MAX_ITEMS } from "@/lib/platform-news";
 import { useLocale, useT } from "@/components/LocaleProvider";
 import { fillMessage } from "@/lib/i18n/interpolate";
+import {
+  getHomepageCopyEditorValues,
+  HOMEPAGE_COPY_FIELDS,
+  type HomepageCopyMap,
+} from "@/lib/homepage-copy";
 
 const HERO_BG_PRESET_IDS: HeroBgPreset[] = [
   "navy",
@@ -224,6 +229,9 @@ export function HomepageSettingsForm({
   );
   const [platformNewsItems, setPlatformNewsItems] = useState<PlatformNewsItem[]>(
     parsePlatformNewsItems(initialSettings.platformNewsItems),
+  );
+  const [homepageTextOverrides, setHomepageTextOverrides] = useState<HomepageCopyMap>(
+    getHomepageCopyEditorValues(initialSettings.homepageTextOverrides),
   );
   const [platformNewsUploading, setPlatformNewsUploading] = useState<string | null>(null);
 
@@ -446,6 +454,7 @@ export function HomepageSettingsForm({
           platformNewsItems: platformNewsItems.filter(
             (item) => item.imageUrl.trim() && item.description.trim(),
           ),
+          homepageTextOverrides,
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -462,6 +471,21 @@ export function HomepageSettingsForm({
 
   const canAddPlatformDetailItem = platformDetailsItems.length < 4;
   const canAddPlatformNewsItem = platformNewsItems.length < PLATFORM_NEWS_MAX_ITEMS;
+  const homepageCopyGroups = Array.from(new Set(HOMEPAGE_COPY_FIELDS.map((field) => field.group)));
+  const homepageCopyGroupLabels: Record<string, string> = {
+    Hero: ar ? "الواجهة الرئيسية" : "Hero",
+    Courses: ar ? "الدورات" : "Courses",
+    "Editorial collections": ar ? "مجموعات المحتوى" : "Editorial collections",
+    "Editorial: Podcourses": ar ? "بطاقات البودكورس" : "Podcourses cards",
+    "Editorial: Podcasts": ar ? "بطاقات البودكاست" : "Podcast cards",
+    "Editorial: Learning programs": ar ? "بطاقات البرامج التعليمية" : "Learning program cards",
+    Teachers: ar ? "المعلمون" : "Teachers",
+    Subscriptions: ar ? "الاشتراكات" : "Subscriptions",
+    Store: ar ? "المتجر" : "Store",
+    Reviews: ar ? "التقييمات" : "Reviews",
+    "Call to action": ar ? "الدعوة لاتخاذ إجراء" : "Call to action",
+    News: ar ? "الأخبار" : "News",
+  };
 
   function addPlatformNewsItem() {
     if (!canAddPlatformNewsItem) return;
@@ -2013,6 +2037,77 @@ export function HomepageSettingsForm({
           </div>
         </div>
       </div>
+
+      <details open className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
+        <summary className="cursor-pointer text-lg font-semibold text-[var(--color-foreground)]">
+          {ar ? "نصوص الصفحة الرئيسية والبطاقات التحريرية" : "Homepage text and editorial cards"}
+        </summary>
+        <p className="mb-5 mt-2 text-sm text-[var(--color-muted)]">
+          {ar
+            ? "عدّل النصوص الثابتة الظاهرة في الصفحة الرئيسية باللغتين. عناوين الدورات والتصنيفات والمنتجات والتقييمات تُعدّل من أقسامها الخاصة."
+            : "Edit the static homepage copy in both languages. Course, category, product, and review content is managed in its own dashboard section."}
+        </p>
+        <div className="space-y-4">
+          {homepageCopyGroups.map((group) => (
+            <details key={group} open={!group.startsWith("Editorial:")} className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-4">
+              <summary className="cursor-pointer font-semibold text-[var(--color-foreground)]">
+                {homepageCopyGroupLabels[group] ?? group}
+              </summary>
+              <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                {HOMEPAGE_COPY_FIELDS.filter((field) => field.group === group).map((field) => {
+                  const value = homepageTextOverrides[field.key] ?? { ar: field.ar, en: field.en };
+                  const baseClass = "mt-1 w-full rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm text-[var(--color-foreground)]";
+                  return (
+                    <div key={field.key} className="rounded-md border border-[var(--color-border)]/70 p-3">
+                      <p className="mb-2 text-sm font-medium text-[var(--color-foreground)]">
+                        {ar ? field.labelAr : field.labelEn}
+                      </p>
+                      <label className="block text-xs text-[var(--color-muted)]">العربية</label>
+                      {field.multiline ? (
+                        <textarea
+                          dir="rtl"
+                          rows={3}
+                          maxLength={2000}
+                          value={value.ar}
+                          onChange={(event) => setHomepageTextOverrides((current) => ({ ...current, [field.key]: { ...value, ar: event.target.value } }))}
+                          className={baseClass}
+                        />
+                      ) : (
+                        <input
+                          dir="rtl"
+                          maxLength={2000}
+                          value={value.ar}
+                          onChange={(event) => setHomepageTextOverrides((current) => ({ ...current, [field.key]: { ...value, ar: event.target.value } }))}
+                          className={baseClass}
+                        />
+                      )}
+                      <label className="mt-2 block text-xs text-[var(--color-muted)]">English</label>
+                      {field.multiline ? (
+                        <textarea
+                          dir="ltr"
+                          rows={3}
+                          maxLength={2000}
+                          value={value.en}
+                          onChange={(event) => setHomepageTextOverrides((current) => ({ ...current, [field.key]: { ...value, en: event.target.value } }))}
+                          className={baseClass}
+                        />
+                      ) : (
+                        <input
+                          dir="ltr"
+                          maxLength={2000}
+                          value={value.en}
+                          onChange={(event) => setHomepageTextOverrides((current) => ({ ...current, [field.key]: { ...value, en: event.target.value } }))}
+                          className={baseClass}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </details>
+          ))}
+        </div>
+      </details>
 
       <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
         <h3 className="mb-4 text-lg font-semibold text-[var(--color-foreground)]">{fh("socialBlockTitle")}</h3>

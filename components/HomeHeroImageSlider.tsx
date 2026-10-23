@@ -3,15 +3,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import type { ResolvedHomepageCopy } from "@/lib/homepage-copy";
 
 export type HomeHeroSlide = { src: string; href: string | null };
 
 export function HomeHeroImageSlider({
   slides,
   intervalMs = 5000,
+  copy,
 }: {
   slides: HomeHeroSlide[];
   intervalMs?: number;
+  copy: ResolvedHomepageCopy;
 }) {
   const safeSlides = useMemo(
     () =>
@@ -41,7 +44,7 @@ export function HomeHeroImageSlider({
     return (
       <div className="relative w-full">
         <div className="flex min-h-[calc(100vh-3.5rem)] w-full items-center justify-center border-y border-dashed border-[var(--color-border)] bg-[var(--color-surface)] text-sm text-[var(--color-muted)]">
-          لا توجد صور مضافة للقالب الثاني حتى الآن.
+          {copy.heroSliderEmpty}
         </div>
       </div>
     );
@@ -59,7 +62,7 @@ export function HomeHeroImageSlider({
               <Image
                 key={slide.src + idx}
                 src={slide.src}
-                alt={`صورة الهيرو ${idx + 1}`}
+                alt={copy.heroSliderAlt.replace("{index}", String(idx + 1))}
                 fill
                 sizes="100vw"
                 priority={isLcpCandidate}
@@ -77,7 +80,7 @@ export function HomeHeroImageSlider({
             <Link
               href={activeHref}
               className="absolute inset-0 z-10 cursor-pointer"
-              aria-label="الانتقال إلى صفحة الكورس المرتبطة بهذه الشريحة"
+              aria-label={copy.heroSliderLink}
             />
           ) : null}
         </div>
@@ -86,7 +89,7 @@ export function HomeHeroImageSlider({
           <>
             <button
               type="button"
-              aria-label="الصورة السابقة"
+              aria-label={copy.heroSliderPrevious}
               onClick={() => setActive((prev) => (prev - 1 + safeSlides.length) % safeSlides.length)}
               className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/30 bg-black/35 px-3 py-2 text-white transition hover:bg-black/55"
             >
@@ -94,7 +97,7 @@ export function HomeHeroImageSlider({
             </button>
             <button
               type="button"
-              aria-label="الصورة التالية"
+              aria-label={copy.heroSliderNext}
               onClick={() => setActive((prev) => (prev + 1) % safeSlides.length)}
               className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/30 bg-black/35 px-3 py-2 text-white transition hover:bg-black/55"
             >

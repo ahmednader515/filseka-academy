@@ -6,6 +6,7 @@ import { normalizeHeroHex } from "@/lib/hero-bg";
 import type { PlatformDetailsItem, PlatformDetailsPresetIcon, PlatformNewsItem } from "@/lib/types";
 import { PLATFORM_DETAILS_PRESET_ICON_OPTIONS } from "@/lib/platform-details";
 import { PLATFORM_NEWS_MAX_ITEMS } from "@/lib/platform-news";
+import { HOMEPAGE_COPY_FIELDS } from "@/lib/homepage-copy";
 const PLATFORM_DETAILS_PRESET_ICONS = PLATFORM_DETAILS_PRESET_ICON_OPTIONS.map(
   (option) => option.id,
 ) as PlatformDetailsPresetIcon[];
@@ -119,6 +120,7 @@ export async function PUT(request: NextRequest) {
     platformNewsItems?: unknown;
     platformNewsSectionTitle?: string | null;
     platformNewsSectionTitleEn?: string | null;
+    homepageTextOverrides?: unknown;
   };
   try {
     body = await request.json();
@@ -258,6 +260,24 @@ export async function PUT(request: NextRequest) {
 
   let platform_details_items: string | null | undefined;
   let platform_details_background_color: string | null | undefined;
+  let homepage_text_overrides: string | null | undefined;
+  if (body.homepageTextOverrides !== undefined) {
+    if (!body.homepageTextOverrides || typeof body.homepageTextOverrides !== "object" || Array.isArray(body.homepageTextOverrides)) {
+      return NextResponse.json({ error: "نصوص الصفحة الرئيسية غير صالحة" }, { status: 400 });
+    }
+    const rawCopy = body.homepageTextOverrides as Record<string, unknown>;
+    const safeCopy: Record<string, { ar: string; en: string }> = {};
+    for (const field of HOMEPAGE_COPY_FIELDS) {
+      const raw = rawCopy[field.key];
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) continue;
+      const value = raw as Record<string, unknown>;
+      safeCopy[field.key] = {
+        ar: typeof value.ar === "string" ? value.ar.trim().slice(0, 2000) : field.ar,
+        en: typeof value.en === "string" ? value.en.trim().slice(0, 2000) : field.en,
+      };
+    }
+    homepage_text_overrides = JSON.stringify(safeCopy);
+  }
   if (body.platformDetailsBackgroundColor !== undefined) {
     if (body.platformDetailsBackgroundColor === null) {
       platform_details_background_color = null;
@@ -694,6 +714,7 @@ export async function PUT(request: NextRequest) {
       platform_details_items,
       platform_news_enabled,
       platform_news_items,
+      homepage_text_overrides,
       platform_news_section_title,
       platform_news_section_title_en:
         body.platformNewsSectionTitleEn !== undefined

@@ -42,13 +42,16 @@ import {
 } from "@/lib/homepage-known-defaults";
 import { homepageDefaultForLocale } from "@/lib/homepage-default-for-locale";
 import { pickLocalizedText } from "@/lib/i18n/localized-field";
+import type { ResolvedHomepageCopy } from "@/lib/homepage-copy";
 
 type CourseWithCategory = Awaited<ReturnType<typeof getCoursesPublished>>[number];
 
 export async function HomePageBelowFold({
   homepageSettings,
+  homepageCopy,
 }: {
   homepageSettings: HomepageSetting;
+  homepageCopy: ResolvedHomepageCopy;
 }) {
   const [t, locale, session] = await Promise.all([
     getServerTranslator(),
@@ -327,7 +330,7 @@ export async function HomePageBelowFold({
   return (
     <>
       {homepageSettings.featuredCoursesEnabled !== false && featuredCourse ? (
-        <HomeCourseShowcase course={featuredCourse} locale={locale} />
+        <HomeCourseShowcase course={featuredCourse} locale={locale} copy={homepageCopy} />
       ) : null}
 
       {homepageSettings.featuredCoursesEnabled !== false && courses.length > 0 ? (
@@ -335,14 +338,14 @@ export async function HomePageBelowFold({
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="mb-2 text-[11px] font-bold tracking-[0.2em] text-[var(--color-primary)]">
-                {locale === "ar" ? "اختياراتنا لك" : "CURATED FOR YOU"}
+                {homepageCopy.featuredEyebrow}
               </p>
               <h2 id="filseka-featured-courses-heading" className="text-2xl font-extrabold text-[var(--color-foreground)] sm:text-3xl">
                 {featuredCoursesHeading}
               </h2>
             </div>
             <Link href="/courses" className="hidden shrink-0 text-sm font-semibold text-[var(--color-primary)] transition hover:translate-x-[-2px] sm:inline-flex">
-              {locale === "ar" ? "عرض الكل" : "View all"} <span aria-hidden className="ms-2">←</span>
+              {homepageCopy.featuredViewAll} <span aria-hidden className="ms-2">←</span>
             </Link>
           </div>
           <CourseCarousel locale={locale}>
@@ -365,7 +368,7 @@ export async function HomePageBelowFold({
                   href={section.slug ? `/courses?category=${encodeURIComponent(section.slug)}` : "/courses"}
                   className="text-sm font-medium text-[var(--color-primary)] hover:underline"
                 >
-                  {t("common.courses", "Courses")} ←
+                  {homepageCopy.categoryViewAll} ←
                 </Link>
               </div>
 
@@ -380,7 +383,7 @@ export async function HomePageBelowFold({
                     href={section.slug ? `/courses?category=${encodeURIComponent(section.slug)}` : "/courses"}
                     className="text-sm font-medium text-[var(--color-primary)] hover:underline"
                   >
-                    {t("common.courses", "Courses")} ({section.courses.length})
+                    {homepageCopy.categoryViewAll} ({section.courses.length})
                   </Link>
                 </div>
               )}
@@ -388,10 +391,10 @@ export async function HomePageBelowFold({
           ))
         : null}
 
-      <HomeEditorialCollections locale={locale} />
+      <HomeEditorialCollections locale={locale} copy={homepageCopy} />
 
       {teachersSectionEnabled ? (
-        <HomeTeachersSection enabled initialTeachers={teachersHomePreview} />
+        <HomeTeachersSection enabled initialTeachers={teachersHomePreview} copy={homepageCopy} />
       ) : null}
 
       <section className="reviews-section border-t border-[var(--color-border)] bg-[var(--color-reviews-bg)] px-4 py-16 sm:px-6">
@@ -437,7 +440,7 @@ export async function HomePageBelowFold({
               })}
             </div>
           ) : (
-            <p className="mt-10 text-center text-[var(--color-muted)]">{t("home.noReviewsYet", "No reviews yet.")}</p>
+            <p className="mt-10 text-center text-[var(--color-muted)]">{homepageCopy.reviewsEmpty}</p>
           )}
         </div>
       </section>
@@ -458,6 +461,7 @@ export async function HomePageBelowFold({
           isStudent={session?.user?.role === "STUDENT"}
           isLoggedIn={!!session}
           studentPlatformSubscription={studentPlatformSubscription}
+          copy={homepageCopy}
         />
       ) : null}
 
@@ -467,6 +471,7 @@ export async function HomePageBelowFold({
           sectionTitle={storeSectionTitle}
           sectionDescription={storeSectionDescription}
           products={storeProductsHome}
+          copy={homepageCopy}
         />
       ) : null}
 
@@ -476,7 +481,7 @@ export async function HomePageBelowFold({
             <h2 className="mb-6 text-2xl font-bold text-[var(--color-foreground)]">
               {platformNewsTitle}
             </h2>
-            <HomePlatformNewsSlider items={localizedPlatformNewsSlides} />
+            <HomePlatformNewsSlider items={localizedPlatformNewsSlides} copy={homepageCopy} />
           </div>
         </section>
       ) : null}
@@ -497,13 +502,13 @@ export async function HomePageBelowFold({
 
               <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
                 <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/70 px-3 py-1 text-xs text-[var(--color-muted)]">
-                  {t("home.ctaChip1", "Clear, simple explanations")}
+                  {homepageCopy.ctaChip1}
                 </span>
                 <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/70 px-3 py-1 text-xs text-[var(--color-muted)]">
-                  {t("home.ctaChip2", "Ongoing support")}
+                  {homepageCopy.ctaChip2}
                 </span>
                 <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/70 px-3 py-1 text-xs text-[var(--color-muted)]">
-                  {t("home.ctaChip3", "Tangible results")}
+                  {homepageCopy.ctaChip3}
                 </span>
               </div>
 

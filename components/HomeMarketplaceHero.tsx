@@ -6,19 +6,19 @@ export function HomeMarketplaceHero({
   title,
   subtitle,
   ctaLabel,
+  eyebrow,
   locale,
 }: {
   title: string;
   subtitle: string;
   ctaLabel: string;
+  eyebrow: string;
   locale: "ar" | "en";
 }) {
-  const eyebrow = locale === "ar" ? "تعلم بالطريقة التي تناسبك" : "LEARN YOUR WAY";
-
   return (
     <section className="filseka-hero relative isolate min-h-[500px] overflow-hidden sm:min-h-[560px]" aria-label={title}>
       <video
-        className="filseka-hero-video absolute inset-0 -z-20 h-full w-full object-cover"
+        className="filseka-hero-video absolute inset-0 -z-20 h-full w-full bg-black object-contain"
         autoPlay
         muted
         loop

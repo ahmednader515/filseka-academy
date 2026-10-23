@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { ResolvedHomepageCopy } from "@/lib/homepage-copy";
 
 export type HomeCourseFeature = {
   title: string;
@@ -13,9 +14,11 @@ export type HomeCourseFeature = {
 export function HomeCourseShowcase({
   course,
   locale,
+  copy,
 }: {
   course: HomeCourseFeature;
   locale: "ar" | "en";
+  copy: ResolvedHomepageCopy;
 }) {
   const ar = locale === "ar";
   const courseHref = `/courses/${encodeURIComponent(course.slug)}`;
@@ -33,7 +36,7 @@ export function HomeCourseShowcase({
           <div className="relative flex flex-col justify-center p-6 sm:p-8 lg:p-10" dir={ar ? "rtl" : "ltr"}>
             <span className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-[var(--color-primary)]/40 bg-[var(--color-primary)]/10 px-3 py-1 text-xs font-bold text-red-200">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
-              {ar ? "اختيار هذا الأسبوع" : "THIS WEEK’S PICK"}
+              {copy.courseShowcaseBadge}
             </span>
             <p className="text-xs font-semibold text-white/50">{course.category}</p>
             <h2 className="mt-2 text-2xl font-extrabold leading-tight text-white sm:text-3xl">{course.title}</h2>
@@ -41,10 +44,10 @@ export function HomeCourseShowcase({
             <div className="mt-5 flex flex-wrap items-center gap-3 text-xs text-white/60">
               {course.duration ? <span className="inline-flex items-center gap-2"><span aria-hidden>◷</span>{course.duration}</span> : null}
               <span className="h-1 w-1 rounded-full bg-white/35" aria-hidden />
-              <span>{ar ? "دورة عملية خطوة بخطوة" : "A practical step-by-step course"}</span>
+              <span>{copy.courseShowcaseSteps}</span>
             </div>
             <Link href={courseHref} className="filseka-primary-button mt-6 inline-flex min-h-11 w-fit items-center gap-3 rounded-full px-5 py-2.5 text-sm font-bold text-white transition hover:-translate-y-0.5">
-              {ar ? "ابدأ الآن" : "Start learning"}<span aria-hidden>↗</span>
+              {copy.courseShowcaseCta}<span aria-hidden>↗</span>
             </Link>
           </div>
         </article>

@@ -2,10 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { PlatformNewsItem } from "@/lib/types";
+import type { ResolvedHomepageCopy } from "@/lib/homepage-copy";
 
 const AUTO_MS = 5000;
 
-export function HomePlatformNewsSlider({ items }: { items: PlatformNewsItem[] }) {
+export function HomePlatformNewsSlider({ items, copy }: { items: PlatformNewsItem[]; copy: ResolvedHomepageCopy }) {
   const slides = useMemo(
     () =>
       items
@@ -74,7 +75,7 @@ export function HomePlatformNewsSlider({ items }: { items: PlatformNewsItem[] })
           <>
             <button
               type="button"
-              aria-label="الخبر السابق"
+              aria-label={copy.newsPrevious}
               onClick={goPrev}
               className="absolute left-3 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded border border-white/30 bg-transparent text-2xl font-bold leading-none text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] transition hover:opacity-90"
             >
@@ -84,7 +85,7 @@ export function HomePlatformNewsSlider({ items }: { items: PlatformNewsItem[] })
             </button>
             <button
               type="button"
-              aria-label="الخبر التالي"
+              aria-label={copy.newsNext}
               onClick={goNext}
               className="absolute right-3 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded border border-white/30 bg-transparent text-2xl font-bold leading-none text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] transition hover:opacity-90"
             >
@@ -99,7 +100,7 @@ export function HomePlatformNewsSlider({ items }: { items: PlatformNewsItem[] })
           <div
             className="absolute bottom-3 left-3 z-30 flex items-center gap-1.5"
             role="tablist"
-            aria-label="مؤشرات الأخبار"
+            aria-label={copy.newsDots}
           >
             {slides.map((slide, idx) => (
               <button
@@ -107,7 +108,7 @@ export function HomePlatformNewsSlider({ items }: { items: PlatformNewsItem[] })
                 type="button"
                 role="tab"
                 aria-selected={idx === active}
-                aria-label={`الخبر ${idx + 1}`}
+                aria-label={`${copy.newsNext} ${idx + 1}`}
                 onClick={() => setActive(idx)}
                 className={`rounded-full transition ${
                   idx === active

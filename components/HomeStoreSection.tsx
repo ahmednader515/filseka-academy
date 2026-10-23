@@ -3,17 +3,20 @@
 import Link from "next/link";
 import { useStoreSplash } from "@/components/StoreSplashProvider";
 import type { StoreProductRow } from "@/lib/db";
+import type { ResolvedHomepageCopy } from "@/lib/homepage-copy";
 
 export function HomeStoreSection({
   productsCount,
   sectionTitle,
   sectionDescription,
   products,
+  copy,
 }: {
   productsCount: number;
   sectionTitle: string;
   sectionDescription: string;
   products: StoreProductRow[];
+  copy: ResolvedHomepageCopy;
 }) {
   const { startStoreSplashTransition } = useStoreSplash();
 
@@ -39,9 +42,9 @@ export function HomeStoreSection({
                   onClick={handleStoreClick}
                   className="inline-flex items-center rounded-full bg-[var(--color-primary)] px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:scale-[1.02] hover:bg-[var(--color-primary-hover)]"
                 >
-                  دخول متجر المنصة
+                  {copy.storeButton}
                 </Link>
-                <span className="text-sm text-[var(--color-muted)]">عدد المنتجات المتاحة الآن: {productsCount}</span>
+                <span className="text-sm text-[var(--color-muted)]">{copy.storeProductCount.replace("{count}", String(productsCount))}</span>
               </div>
             </div>
           </div>

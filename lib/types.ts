@@ -103,6 +103,8 @@ export interface PlatformNewsItem {
 }
 
 export interface HomepageSetting {
+  /** Editable bilingual copy for remaining public homepage labels and editorial cards (JSON). */
+  homepageTextOverrides?: string | null;
   /** القالب العام لهيرو الصفحة الرئيسية */
   heroTemplate?: "classic" | "image_slider" | "coming_soon" | string | null;
   teacherImageUrl: string | null;

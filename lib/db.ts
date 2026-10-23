@@ -1167,6 +1167,17 @@ async function ensureHomepageStoreSectionCopyColumns(): Promise<void> {
   });
 }
 
+/** Additional editable bilingual homepage labels and editorial card copy. */
+async function ensureHomepageTextOverridesColumn(): Promise<void> {
+  return ensureOnce("ensureHomepageTextOverridesColumn", async () => {
+    try {
+      await sql`ALTER TABLE "HomepageSetting" ADD COLUMN IF NOT EXISTS homepage_text_overrides TEXT`;
+    } catch {
+      /* DDL غير متاح */
+    }
+  });
+}
+
 /** قسم تفاصيل المنصة (إظهار/إخفاء + عنوان + وصف + بطاقات) */
 async function ensureHomepagePlatformDetailsColumns(): Promise<void> {
   return ensureOnce("ensureHomepagePlatformDetailsColumns", async () => {
@@ -1481,6 +1492,10 @@ async function fetchHomepageSettingsFromDb(): Promise<HomepageSetting> {
         if (s === "classic" || s === "image_slider" || s === "coming_soon") return s;
         return HOMEPAGE_DEFAULTS.heroTemplate ?? "classic";
       })(),
+      homepageTextOverrides:
+        row.homepage_text_overrides != null && String(row.homepage_text_overrides).trim()
+          ? String(row.homepage_text_overrides).slice(0, 50000)
+          : null,
       teacherImageUrl: (c.teacherImageUrl as string) ?? HOMEPAGE_DEFAULTS.teacherImageUrl,
       heroTitle: (c.heroTitle as string) ?? HOMEPAGE_DEFAULTS.heroTitle,
       heroTitleEn:
@@ -2107,6 +2122,7 @@ export async function updateHomepageSettings(data: {
   platform_news_items?: string | null;
   platform_news_section_title?: string | null;
   platform_news_section_title_en?: string | null;
+  homepage_text_overrides?: string | null;
 }): Promise<void> {
   await Promise.all([
     ensureHomepageHeroTemplateColumns(),
@@ -2125,7 +2141,11 @@ export async function updateHomepageSettings(data: {
     ensureHomepageCopyrightOverlayColumns(),
     ensureHomepageStoreEnabledColumn(),
     ensureHomepageStoreSectionCopyColumns(),
+    ensureHomepageTextOverridesColumn(),
   ]);
+  if (data.homepage_text_overrides !== undefined) {
+    await sql`UPDATE "HomepageSetting" SET homepage_text_overrides = ${data.homepage_text_overrides}, updated_at = NOW() WHERE id = 'default'`;
+  }
   if (data.hero_template !== undefined) {
     await sql`UPDATE "HomepageSetting" SET hero_template = ${data.hero_template}, updated_at = NOW() WHERE id = 'default'`;
   }

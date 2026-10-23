@@ -8,6 +8,7 @@ import {
 } from "@/components/HomePageBelowFold";
 import { getLocaleFromCookie, getServerTranslator } from "@/lib/i18n/server";
 import { pickLocalizedText } from "@/lib/i18n/localized-field";
+import { resolveHomepageCopy } from "@/lib/homepage-copy";
 
 /** كاش قصير + إبطال فوري عند حفظ الإعدادات/الكورسات عبر revalidateHomepageCaches */
 export const revalidate = 60;
@@ -24,6 +25,7 @@ export default async function HomePage() {
   const configuredHeroSubtitle = pickLocalizedText(locale, homepageSettings.heroSlogan, homepageSettings.heroSloganEn);
   const heroCtaLabel = pickLocalizedText(locale, homepageSettings.ctaButtonText, homepageSettings.ctaButtonTextEn)
     || (locale === "ar" ? "اكتشف الدورات" : "Explore courses");
+  const homepageCopy = resolveHomepageCopy(homepageSettings.homepageTextOverrides, locale);
   const defaultHeroTitle = locale === "ar" ? "ابدأ رحلتك التعليمية مع فِلسِكة" : "Your next learning journey starts here";
   const defaultHeroSubtitle = locale === "ar"
     ? "دورات عملية وخبراء يساعدونك على بناء مهاراتك وتحقيق أهدافك."
@@ -52,12 +54,15 @@ export default async function HomePage() {
           badge1Link={homepageSettings.hero3StoreBadge1Link?.trim() || null}
           badge2ImageUrl={homepageSettings.hero3StoreBadge2ImageUrl?.trim() || null}
           badge2Link={homepageSettings.hero3StoreBadge2Link?.trim() || null}
+          badge1Fallback={homepageCopy.hero3Badge1}
+          badge2Fallback={homepageCopy.hero3Badge2}
         />
       ) : (
         <HomeMarketplaceHero
           title={heroTitle}
           subtitle={heroSubtitle}
           ctaLabel={heroCtaLabel}
+          eyebrow={homepageCopy.heroEyebrow}
           locale={locale}
         />
       )}
@@ -65,7 +70,7 @@ export default async function HomePage() {
       <div id="home-next-section" className="scroll-mt-20" />
 
       <Suspense fallback={<HomePageBelowFoldFallback />}>
-        <HomePageBelowFold homepageSettings={homepageSettings} />
+        <HomePageBelowFold homepageSettings={homepageSettings} homepageCopy={homepageCopy} />
       </Suspense>
     </div>
   );

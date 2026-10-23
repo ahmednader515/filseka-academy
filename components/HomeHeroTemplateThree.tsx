@@ -9,6 +9,8 @@ export function HomeHeroTemplateThree({
   badge1Link,
   badge2ImageUrl,
   badge2Link,
+  badge1Fallback,
+  badge2Fallback,
 }: {
   title: string;
   subtitle: string;
@@ -18,6 +20,8 @@ export function HomeHeroTemplateThree({
   badge1Link: string | null;
   badge2ImageUrl: string | null;
   badge2Link: string | null;
+  badge1Fallback: string;
+  badge2Fallback: string;
 }) {
   const renderBadge = (imageUrl: string | null, href: string | null, fallbackLabel: string) => {
     const content = imageUrl ? (
@@ -48,7 +52,7 @@ export function HomeHeroTemplateThree({
   return (
     <section className="filseka-hero relative isolate min-h-screen overflow-hidden border-b border-white/10 bg-black px-4 pt-14 text-white sm:px-6">
       <video
-        className="absolute inset-0 -z-20 h-full w-full object-cover"
+        className="absolute inset-0 -z-20 h-full w-full bg-black object-contain"
         autoPlay
         muted
         loop
@@ -65,8 +69,8 @@ export function HomeHeroTemplateThree({
           <h1 className="text-4xl font-extrabold text-white sm:text-6xl">{title}</h1>
           <p className="mt-3 text-lg font-semibold text-red-200 sm:text-2xl">{subtitle}</p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-            {renderBadge(badge1ImageUrl, badge1Link, "Google Play")}
-            {renderBadge(badge2ImageUrl, badge2Link, "App Store")}
+            {renderBadge(badge1ImageUrl, badge1Link, badge1Fallback)}
+            {renderBadge(badge2ImageUrl, badge2Link, badge2Fallback)}
           </div>
         </div>
 

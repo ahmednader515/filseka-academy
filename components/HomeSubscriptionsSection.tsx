@@ -1,6 +1,7 @@
 "use client";
 
 import { SubscriptionPlanCard, type SubscriptionPlanCardData } from "@/components/SubscriptionPlanCard";
+import type { ResolvedHomepageCopy } from "@/lib/homepage-copy";
 
 /** قسم الصفحة الرئيسية «الاشتراكات المتاحة» — نفس سلم العناوين مثل «اختر المعلمين» */
 export function HomeSubscriptionsSection({
@@ -9,6 +10,7 @@ export function HomeSubscriptionsSection({
   isStudent,
   isLoggedIn,
   studentPlatformSubscription,
+  copy,
 }: {
   enabled: boolean;
   plans: SubscriptionPlanCardData[];
@@ -16,6 +18,7 @@ export function HomeSubscriptionsSection({
   isLoggedIn: boolean;
   /** اشتراك منصة نشط للطالب الحالي (إن وُجد) */
   studentPlatformSubscription?: { active: boolean; expiresAtIso: string | null } | null;
+  copy: ResolvedHomepageCopy;
 }) {
   if (!enabled) return null;
 
@@ -31,7 +34,7 @@ export function HomeSubscriptionsSection({
             id="home-subscriptions-heading"
             className="text-4xl font-bold leading-tight text-[var(--color-primary)] sm:text-5xl"
           >
-            الاشتراكات المتاحة
+            {copy.subscriptionsTitle}
           </h2>
           <svg
             className="mt-3 h-8 w-[17.5rem] text-[var(--color-primary)] sm:h-9 sm:w-[21rem] md:w-[26rem]"
@@ -48,13 +51,13 @@ export function HomeSubscriptionsSection({
             />
           </svg>
           <p className="mt-3 max-w-xl text-sm text-[var(--color-muted)]">
-            اشترك لفترة محددة واستمتع بكل الكورسات المدفوعة المنشورة دون شراء كل كورس على حدة
+            {copy.subscriptionsSubtitle}
           </p>
         </div>
 
         {plans.length === 0 ? (
           <p className="mt-14 text-center text-[var(--color-muted)]">
-            لا توجد باقات حالياً. أضف باقات من لوحة التحكم ← إنشاء اشتراكات المنصة.
+            {copy.subscriptionsEmpty}
           </p>
         ) : (
           <div className="mt-14 flex flex-wrap justify-center gap-8">

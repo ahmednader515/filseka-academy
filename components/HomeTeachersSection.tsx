@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { TeacherPublicCard, type TeacherCardCourse } from "@/components/TeacherPublicCard";
+import type { ResolvedHomepageCopy } from "@/lib/homepage-copy";
 
 export type HomeTeacher = {
   id: string;
@@ -16,9 +17,11 @@ export type HomeTeacher = {
 export function HomeTeachersSection({
   enabled,
   initialTeachers,
+  copy,
 }: {
   enabled: boolean;
   initialTeachers: HomeTeacher[];
+  copy: ResolvedHomepageCopy;
 }) {
   /** الترتيب يُحدَّد من السيرفر (محددون من لوحة التحكم ثم أبجدي حتى 4). */
   const visible = initialTeachers;
@@ -37,7 +40,7 @@ export function HomeTeachersSection({
             id="home-teachers-heading"
             className="text-4xl font-bold leading-tight text-[var(--color-primary)] sm:text-5xl"
           >
-            اختر المعلمين
+            {copy.teachersTitle}
           </h2>
           <svg
             className="mt-3 h-8 w-[17.5rem] text-[var(--color-primary)] sm:h-9 sm:w-[21rem] md:w-[26rem]"
@@ -54,13 +57,13 @@ export function HomeTeachersSection({
             />
           </svg>
           <p className="mt-3 max-w-xl text-sm text-[var(--color-muted)]">
-            تصفح مدرسي المنصة وانتقل إلى دورات كل مدرس
+            {copy.teachersSubtitle}
           </p>
         </div>
 
         {visible.length === 0 ? (
           <p className="mt-14 text-center text-[var(--color-muted)]">
-            لا يوجد مدرسون حتى الآن. أنشئ حسابات من لوحة التحكم ← تعدد المعلمين.
+            {copy.teachersEmpty}
           </p>
         ) : (
           <>
@@ -82,7 +85,7 @@ export function HomeTeachersSection({
                 href="/teachers"
                 className="text-sm font-semibold text-[var(--color-primary)] underline-offset-4 hover:underline"
               >
-                صفحة المعلمين الكاملة ←
+                {copy.teachersAllLink} ←
               </Link>
             </div>
           </>
