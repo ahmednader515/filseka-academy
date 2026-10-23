@@ -20,8 +20,8 @@ export const HOMEPAGE_DEFAULT_FOOTER_COPYRIGHT_AR = "Filseka Academy. جميع �
 /** Hero + platform copy defaults */
 export const HOMEPAGE_DEFAULT_PLATFORM_NAME_AR = "Filseka Academy";
 export const HOMEPAGE_DEFAULT_HERO_TITLE_AR = "ابدأ رحلتك التعليمية مع فِلسِكة";
-export const HOMEPAGE_DEFAULT_HERO_SLOGAN_AR = "دورات عملية وخبراء يساعدونك على بناء مهاراتك وتحقيق أهدافك.";
-export const HOMEPAGE_DEFAULT_PAGE_TITLE_AR = "Filseka Academy | دورات وتعلم أونلاين";
+export const HOMEPAGE_DEFAULT_HERO_SLOGAN_AR = "كورسات عملية وخبراء يساعدونك على بناء مهاراتك وتحقيق أهدافك.";
+export const HOMEPAGE_DEFAULT_PAGE_TITLE_AR = "Filseka Academy | كورسات وتعلم أونلاين";
 export const HOMEPAGE_DEFAULT_HERO3_TITLE_AR = "المنصة الشاملة رقم 1";
 export const HOMEPAGE_DEFAULT_HERO3_SUBTITLE_AR = "انضم لأكثر من مليون طالب مع الخطة";
 

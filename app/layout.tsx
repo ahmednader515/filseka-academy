@@ -49,12 +49,12 @@ export async function generateMetadata(): Promise<Metadata> {
   ]);
   const defaultTitle =
     locale === "ar"
-      ? "Filseka Academy | دورات وتعلم أونلاين"
+      ? "Filseka Academy | كورسات وتعلم أونلاين"
       : "Filseka Academy | Online Courses and Learning";
   const defaultDescription =
     locale === "ar"
-      ? "اكتشف دورات تعليمية عملية في Filseka Academy وابدأ رحلتك في اكتساب مهارات جديدة."
-      : "Explore practical courses at Filseka Academy and start building new skills.";
+      ? "تعلّم صناعة البودكاست والإنتاج الإعلامي عبر دورات عملية في إعداد المحتوى والتسجيل والمونتاج والسرد القصصي."
+      : "Learn podcast creation and media production through practical courses in content planning, recording, editing, and storytelling.";
   const rawTitle = settings
     ? pickLocalizedText(locale, settings.pageTitle, settings.pageTitleEn) || defaultTitle
     : defaultTitle;

@@ -135,13 +135,27 @@ body {
 
 .filseka-hero {
   background:
-    radial-gradient(ellipse at 78% 26%, color-mix(in srgb, var(--color-primary) 24%, transparent), transparent 35%),
-    linear-gradient(120deg, #080808 8%, #17090b 68%, #090909 100%);
+    radial-gradient(ellipse at 34% 48%, rgb(31 35 36 / 0.56), transparent 48%),
+    radial-gradient(ellipse at 76% 34%, color-mix(in srgb, var(--color-primary) 12%, transparent), transparent 42%),
+    linear-gradient(110deg, #080a0b 0%, #090a0b 55%, #080809 100%);
 }
 
 .filseka-hero-video {
-  object-position: left center;
+  object-position: center center;
   animation: filseka-hero-reveal 900ms ease both;
+}
+
+@media (min-width: 640px) {
+  .filseka-hero-video {
+    -webkit-mask-image:
+      linear-gradient(90deg, transparent 0%, #000 24%, #000 68%, transparent 100%),
+      linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(90deg, transparent 0%, #000 24%, #000 68%, transparent 100%),
+      linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+    mask-composite: intersect;
+  }
 }
 
 .filseka-hero-shade {
@@ -227,7 +241,7 @@ body {
 .filseka-carousel-arrow-next { right: -1.35rem; }
 
 .filseka-course-card {
-  flex: 0 0 min(82vw, 320px);
+  flex: 0 0 var(--filseka-carousel-card-basis, 100%);
   border-radius: 12px !important;
   background: #111 !important;
   border-color: #292929 !important;
@@ -278,14 +292,6 @@ body {
 @keyframes filseka-hero-reveal {
   from { opacity: 0.55; transform: scale(1.025); }
   to { opacity: 1; transform: scale(1); }
-}
-
-@media (min-width: 640px) {
-  .filseka-course-card { flex-basis: 46vw; }
-}
-
-@media (min-width: 1024px) {
-  .filseka-course-card { flex-basis: calc((min(100vw, 1440px) - 5.5rem) / 3); }
 }
 
 @media (max-width: 639px) {
@@ -471,7 +477,7 @@ html.dark .hero-wave-fill {
   animation: loading-dot 1.4s ease-in-out infinite both;
 }
 
-/* حركة طفو خفيفة لأيقونات المدرس */
+/* حركة طفو خفيفة لأيقونات الخبير */
 @keyframes float-gentle {
   0%, 100% {
     transform: translateY(0);

@@ -21,7 +21,7 @@ import { pickLocalizedText } from "@/lib/i18n/localized-field";
 
 type Props = { params: Promise<{ slug: string }> };
 
-/** عدم التخزين المؤقت — دائماً التحقق من وجود الدورة (تجنب 404 للدورات المحذوفة) */
+/** عدم التخزين المؤقت — دائماً التحقق من وجود الدورة (تجنب 404 للكورسات المحذوفة) */
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -196,7 +196,7 @@ export default async function CoursePage({ params }: Props) {
           <p className="mt-3 text-sm text-white/65">{locale === "ar" ? "بواسطة " : "By "}<span className="font-semibold text-sky-300">{instructorName}</span></p>
           {categoryName ? (
             <div className="mt-1 text-sm">
-              {categorySlug ? <Link href={`/courses?category=${encodeURIComponent(categorySlug)}`} className="text-red-300 underline decoration-red-300/70 underline-offset-4">{locale === "ar" ? "الدورات التدريبية" : "Courses"}</Link> : <span className="text-red-300 underline underline-offset-4">{categoryName}</span>}
+              {categorySlug ? <Link href={`/courses?category=${encodeURIComponent(categorySlug)}`} className="text-red-300 underline decoration-red-300/70 underline-offset-4">{locale === "ar" ? "الكورسات التدريبية" : "Courses"}</Link> : <span className="text-red-300 underline underline-offset-4">{categoryName}</span>}
             </div>
           ) : null}
 

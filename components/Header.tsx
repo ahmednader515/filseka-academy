@@ -104,9 +104,9 @@ export function Header({
 
   return (
     <header className="filseka-header sticky top-0 z-50 border-b border-white/10 bg-[#080808]/95 text-white backdrop-blur-xl">
-      <div className="mx-auto flex h-[68px] max-w-[1500px] items-center justify-between gap-3 px-4 sm:px-8 lg:px-12">
-        <Link href="/" className="flex min-w-0 shrink-0 items-center gap-3" title={linkTitle}>
-          <span className="filseka-brand-mark relative grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-white p-0.5 sm:h-11 sm:w-11">
+      <div className="mx-auto flex h-[68px] max-w-[1500px] items-center justify-between gap-2 px-3 sm:gap-3 sm:px-8 lg:px-12">
+        <Link href="/" className="flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-3" title={linkTitle}>
+          <span className="filseka-brand-mark relative grid h-9 w-9 shrink-0 place-items-center overflow-hidden sm:h-11 sm:w-11">
             {headerLogoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={headerLogoUrl} alt="" className="h-full w-full rounded-[10px] object-contain" />
@@ -116,7 +116,7 @@ export function Header({
               </video>
             )}
           </span>
-          <span className="max-w-[190px] truncate text-base font-extrabold tracking-tight sm:max-w-none sm:text-lg">{displayName}</span>
+          <span className="max-w-[105px] truncate text-[13px] font-extrabold tracking-tight sm:max-w-none sm:text-lg">{displayName}</span>
         </Link>
 
         <nav className="hidden flex-1 items-center justify-center gap-5 lg:flex xl:gap-8" aria-label={homepageCopy.headerNavAria}>
@@ -126,7 +126,7 @@ export function Header({
           <Link href="/#home-next-section" className="text-sm font-medium text-white/75 transition hover:text-white">{homepageCopy.headerAbout}</Link>
         </nav>
 
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-3">
           <span className="hidden sm:inline-flex"><LanguageToggle /></span>
           {status === "loading" ? (
             <span className="text-sm text-white/60">...</span>
@@ -134,8 +134,8 @@ export function Header({
             <UserMenu />
           ) : (
             <>
-              <Link href="/login" className="hidden whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold text-white/80 transition hover:text-white sm:inline-flex">{homepageCopy.headerLogin}</Link>
-              <Link href="/register" className="filseka-primary-button whitespace-nowrap rounded-full px-4 py-2.5 text-xs font-bold text-white transition hover:-translate-y-0.5 sm:px-5 sm:text-sm">{homepageCopy.headerRegister}</Link>
+              <Link href="/login" className="inline-flex whitespace-nowrap rounded-full px-1.5 py-2 text-[11px] font-semibold text-white/80 transition hover:text-white sm:px-3 sm:text-sm">{homepageCopy.headerLogin}</Link>
+              <Link href="/register" className="filseka-primary-button whitespace-nowrap rounded-full px-2.5 py-2 text-[11px] font-bold text-white transition hover:-translate-y-0.5 sm:px-5 sm:py-2.5 sm:text-sm">{homepageCopy.headerRegister}</Link>
             </>
           )}
           <span className="sm:hidden"><LanguageToggle /></span>

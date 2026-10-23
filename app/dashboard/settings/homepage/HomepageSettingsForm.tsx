@@ -132,7 +132,7 @@ export function HomepageSettingsForm({
     teacherImageUrl: initialSettings.teacherImageUrl ?? "",
     heroTitle: initialSettings.heroTitle === "أستاذ / عصام محي" || initialSettings.heroTitle?.toLowerCase() === "filseka academy" ? "ابدأ رحلتك التعليمية مع فِلسِكة" : initialSettings.heroTitle ?? "",
     heroTitleEn: initialSettings.heroTitleEn ?? "",
-    heroSlogan: initialSettings.heroSlogan === "ادرسها... يمكن تفهم المعلومة صح!" ? "دورات عملية وخبراء يساعدونك على بناء مهاراتك وتحقيق أهدافك." : initialSettings.heroSlogan ?? "",
+    heroSlogan: initialSettings.heroSlogan === "ادرسها... يمكن تفهم المعلومة صح!" ? "كورسات عملية وخبراء يساعدونك على بناء مهاراتك وتحقيق أهدافك." : initialSettings.heroSlogan ?? "",
     heroSloganEn: initialSettings.heroSloganEn ?? "",
     platformName: initialSettings.platformName === "منصة أستاذ عصام محي" || initialSettings.platformName?.toLowerCase() === "filseka academy" ? "Filseka Academy" : initialSettings.platformName ?? "",
     platformNameEn: initialSettings.platformNameEn ?? "",
@@ -475,7 +475,7 @@ export function HomepageSettingsForm({
   const homepageCopyGroupLabels: Record<string, string> = {
     Navigation: ar ? "روابط شريط التنقل" : "Navigation links",
     Hero: ar ? "الواجهة الرئيسية" : "Hero",
-    Courses: ar ? "الدورات" : "Courses",
+    Courses: ar ? "الكورسات" : "Courses",
     "Editorial collections": ar ? "مجموعات المحتوى" : "Editorial collections",
     "Editorial: Podcourses": ar ? "بطاقات البودكورس" : "Podcourses cards",
     "Editorial: Podcasts": ar ? "بطاقات البودكاست" : "Podcast cards",
@@ -1414,8 +1414,8 @@ export function HomepageSettingsForm({
       </div>
 
       <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
-        <h3 className="text-lg font-semibold text-[var(--color-foreground)]">{ar ? "كتالوج الدورات المميزة" : "Featured course catalog"}</h3>
-        <p className="mb-4 mt-1 text-sm text-[var(--color-muted)]">{ar ? "تحكم في ظهور قسم الدورات المميزة والعنوان الذي يظهر أعلى بطاقات الدورات." : "Control the featured course area and its heading on the homepage."}</p>
+        <h3 className="text-lg font-semibold text-[var(--color-foreground)]">{ar ? "كتالوج الكورسات المميزة" : "Featured course catalog"}</h3>
+        <p className="mb-4 mt-1 text-sm text-[var(--color-muted)]">{ar ? "تحكم في ظهور قسم الكورسات المميزة والعنوان الذي يظهر أعلى بطاقات الكورسات." : "Control the featured course area and its heading on the homepage."}</p>
         <label className="mb-4 flex items-center gap-2 text-sm font-medium text-[var(--color-foreground)]">
           <input
             type="checkbox"
@@ -1423,7 +1423,7 @@ export function HomepageSettingsForm({
             checked={form.featuredCoursesEnabled}
             onChange={(e) => setForm((f) => ({ ...f, featuredCoursesEnabled: e.target.checked }))}
           />
-          {ar ? "إظهار قسم الدورات المميزة" : "Show featured course section"}
+          {ar ? "إظهار قسم الكورسات المميزة" : "Show featured course section"}
         </label>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block text-sm font-medium text-[var(--color-foreground)]">
@@ -1434,7 +1434,7 @@ export function HomepageSettingsForm({
               onChange={(e) => setForm((f) => ({ ...f, featuredCoursesTitle: e.target.value }))}
               maxLength={240}
               className="mt-1 w-full rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2"
-              placeholder="الدورات المميزة هذا الأسبوع"
+              placeholder="الكورسات المميزة هذا الأسبوع"
             />
           </label>
           <label className="block text-sm font-medium text-[var(--color-foreground)]">
@@ -2045,7 +2045,7 @@ export function HomepageSettingsForm({
         </summary>
         <p className="mb-5 mt-2 text-sm text-[var(--color-muted)]">
           {ar
-            ? "عدّل النصوص الثابتة الظاهرة في الصفحة الرئيسية باللغتين. عناوين الدورات والتصنيفات والمنتجات والتقييمات تُعدّل من أقسامها الخاصة."
+            ? "عدّل النصوص الثابتة الظاهرة في الصفحة الرئيسية باللغتين. عناوين الكورسات والتصنيفات والمنتجات والتقييمات تُعدّل من أقسامها الخاصة."
             : "Edit the static homepage copy in both languages. Course, category, product, and review content is managed in its own dashboard section."}
         </p>
         <div className="space-y-4">

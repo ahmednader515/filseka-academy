@@ -21,7 +21,7 @@ export async function GET() {
   } catch (error) {
     console.error("API courses:", error);
     return NextResponse.json(
-      { error: "فشل جلب الدورات" },
+      { error: "فشل جلب الكورسات" },
       { status: 500 }
     );
   }

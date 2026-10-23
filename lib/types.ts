@@ -54,7 +54,7 @@ export interface Review {
 }
 
 /**
- * مفتاح تدرج خلفية الهيرو الجاهز (وراء صورة المدرس).
+ * مفتاح تدرج خلفية الهيرو الجاهز (وراء صورة الخبير).
  * عند تعبئة heroBgCustomFrom و heroBgCustomTo بصيغة hex صالحة يُستخدم التدرج المخصّص بدلاً من المفتاح.
  */
 export type HeroBgPreset =
@@ -148,7 +148,7 @@ export interface HomepageSetting {
   heroBgCustomFrom?: string | null;
   /** لون أسفل التدرج المخصّص (#RRGGBB) */
   heroBgCustomTo?: string | null;
-  /** روابط الصور الصغيرة العائمة حول صورة المدرس (1: يسار أعلى، 2: يمين أسفل، 3: أسفل يسار) */
+  /** روابط الصور الصغيرة العائمة حول صورة الخبير (1: يسار أعلى، 2: يمين أسفل، 3: أسفل يسار) */
   heroFloatImage1: string | null;
   heroFloatImage2: string | null;
   heroFloatImage3: string | null;
@@ -213,7 +213,7 @@ export interface HomepageSetting {
   ctaButtonTextEn?: string | null;
   /** عند true تظهر صفحة «اختر المعلمين» ويُسمح بحسابات TEACHER */
   teachersEnabled?: boolean;
-  /** عند true يظهر قسم «الاشتراكات المتاحة» ويُفعّل شراء باقات الوصول لكل الدورات المدفوعة */
+  /** عند true يظهر قسم «الاشتراكات المتاحة» ويُفعّل شراء باقات الوصول لكل الكورسات المدفوعة */
   subscriptionsEnabled?: boolean;
   /** عند true يظهر قسم متجر المنصة في الصفحة الرئيسية */
   storeEnabled?: boolean;

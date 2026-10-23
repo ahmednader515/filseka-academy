@@ -48,7 +48,7 @@ async function main() {
       name: "Programming",
       name_ar: "البرمجة",
       slug: "programming",
-      description: "دورات البرمجة وتطوير البرمجيات",
+      description: "كورسات البرمجة وتطوير البرمجيات",
       order: 1,
     });
     console.log("Created category programming");

@@ -8,7 +8,7 @@ EXCEPTION
   WHEN duplicate_object THEN NULL;
 END $$;
 
--- 2) حقول المدرس في جدول المستخدمين
+-- 2) حقول الخبير في جدول المستخدمين
 ALTER TABLE "User" ADD COLUMN IF NOT EXISTS teacher_subject TEXT;
 ALTER TABLE "User" ADD COLUMN IF NOT EXISTS teacher_avatar_url TEXT;
 

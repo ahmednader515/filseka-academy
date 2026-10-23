@@ -1,4 +1,4 @@
--- جدول أكواد التفعيل المجانية للدورات
+-- جدول أكواد التفعيل المجانية للكورسات
 -- تشغيله مرة واحدة من لوحة Neon: SQL Editor
 
 CREATE TABLE IF NOT EXISTS "ActivationCode" (

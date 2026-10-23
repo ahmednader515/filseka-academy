@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getStudentsEnrolledInTeacherCourses, getUsersByRole } from "@/lib/db";
 
-/** قائمة الطلبة (للأدمن/مساعد لاختيار طالب للتواصل) — للمدرس: طلاب اشتركوا في كورساته */
+/** قائمة الطلبة (للأدمن/مساعد لاختيار طالب للتواصل) — للخبير: طلاب اشتركوا في كورساته */
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {

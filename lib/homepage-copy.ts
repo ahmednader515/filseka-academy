@@ -20,7 +20,7 @@ export type HomepageCopyField = {
 };
 
 const baseFields: HomepageCopyField[] = [
-  { key: "headerCourses", group: "Navigation", labelAr: "رابط الدورات", labelEn: "Courses link", ar: "الدورات", en: "Courses" },
+  { key: "headerCourses", group: "Navigation", labelAr: "رابط الكورسات", labelEn: "Courses link", ar: "الكورسات", en: "Courses" },
   { key: "headerTeachers", group: "Navigation", labelAr: "رابط المعلمين", labelEn: "Teachers link", ar: "المعلمون", en: "Teachers" },
   { key: "headerStore", group: "Navigation", labelAr: "رابط المتجر", labelEn: "Store link", ar: "المتجر", en: "Store" },
   { key: "headerAbout", group: "Navigation", labelAr: "رابط عن فِلسِكة", labelEn: "About link", ar: "عن فِلسِكة", en: "About" },
@@ -28,17 +28,17 @@ const baseFields: HomepageCopyField[] = [
   { key: "headerRegister", group: "Navigation", labelAr: "زر إنشاء الحساب", labelEn: "Create account button", ar: "إنشاء حساب", en: "Create account" },
   { key: "headerNavAria", group: "Navigation", labelAr: "وصف شريط التنقل لقارئات الشاشة", labelEn: "Navigation label for screen readers", ar: "التنقل الرئيسي", en: "Main navigation" },
   { key: "heroEyebrow", group: "Hero", labelAr: "العبارة الصغيرة في الهيرو", labelEn: "Hero eyebrow", ar: "تعلم بالطريقة التي تناسبك", en: "LEARN YOUR WAY" },
-  { key: "featuredEyebrow", group: "Courses", labelAr: "عبارة قسم الدورات المميزة", labelEn: "Featured courses eyebrow", ar: "اختياراتنا لك", en: "CURATED FOR YOU" },
-  { key: "featuredViewAll", group: "Courses", labelAr: "زر عرض كل الدورات", labelEn: "View all courses label", ar: "عرض الكل", en: "View all" },
-  { key: "categoryViewAll", group: "Courses", labelAr: "رابط قسم التصنيف", labelEn: "Category courses link", ar: "الدورات", en: "Courses" },
+  { key: "featuredEyebrow", group: "Courses", labelAr: "عبارة قسم الكورسات المميزة", labelEn: "Featured courses eyebrow", ar: "اختياراتنا لك", en: "CURATED FOR YOU" },
+  { key: "featuredViewAll", group: "Courses", labelAr: "زر عرض كل الكورسات", labelEn: "View all courses label", ar: "عرض الكل", en: "View all" },
+  { key: "categoryViewAll", group: "Courses", labelAr: "رابط قسم التصنيف", labelEn: "Category courses link", ar: "الكورسات", en: "Courses" },
   { key: "courseShowcaseBadge", group: "Courses", labelAr: "شارة الدورة المميزة", labelEn: "Featured course badge", ar: "اختيار هذا الأسبوع", en: "THIS WEEK’S PICK" },
   { key: "courseShowcaseSteps", group: "Courses", labelAr: "وصف الدورة المميزة", labelEn: "Featured course descriptor", ar: "دورة عملية خطوة بخطوة", en: "A practical step-by-step course" },
   { key: "courseShowcaseCta", group: "Courses", labelAr: "زر الدورة المميزة", labelEn: "Featured course button", ar: "ابدأ الآن", en: "Start learning" },
   { key: "editorialExploreMore", group: "Editorial collections", labelAr: "رابط استكشف المزيد", labelEn: "Explore more link", ar: "اكتشف المزيد", en: "Explore more" },
-  { key: "editorialExploreCourses", group: "Editorial collections", labelAr: "زر بطاقة المحتوى", labelEn: "Editorial card button", ar: "استكشف الدورات", en: "Explore courses" },
+  { key: "editorialExploreCourses", group: "Editorial collections", labelAr: "زر بطاقة المحتوى", labelEn: "Editorial card button", ar: "استكشف الكورسات", en: "Explore courses" },
   { key: "teachersTitle", group: "Teachers", labelAr: "عنوان قسم المعلمين", labelEn: "Teachers section title", ar: "اختر المعلمين", en: "Meet our teachers" },
-  { key: "teachersSubtitle", group: "Teachers", labelAr: "وصف قسم المعلمين", labelEn: "Teachers section description", ar: "تصفح مدرسي المنصة وانتقل إلى دورات كل مدرس", en: "Explore our instructors and browse their courses" },
-  { key: "teachersEmpty", group: "Teachers", labelAr: "رسالة عدم وجود معلمين", labelEn: "No teachers message", ar: "لا يوجد مدرسون حتى الآن. أنشئ حسابات من لوحة التحكم ← تعدد المعلمين.", en: "No teachers yet. Add teacher accounts from the dashboard." },
+  { key: "teachersSubtitle", group: "Teachers", labelAr: "وصف قسم المعلمين", labelEn: "Teachers section description", ar: "تصفح خبيري المنصة وانتقل إلى كورسات كل خبير", en: "Explore our instructors and browse their courses" },
+  { key: "teachersEmpty", group: "Teachers", labelAr: "رسالة عدم وجود معلمين", labelEn: "No teachers message", ar: "لا يوجد خبيرون حتى الآن. أنشئ حسابات من لوحة التحكم ← تعدد المعلمين.", en: "No teachers yet. Add teacher accounts from the dashboard." },
   { key: "teachersAllLink", group: "Teachers", labelAr: "رابط كل المعلمين", labelEn: "All teachers link", ar: "صفحة المعلمين الكاملة", en: "View all teachers" },
   { key: "subscriptionsTitle", group: "Subscriptions", labelAr: "عنوان قسم الاشتراكات", labelEn: "Subscriptions section title", ar: "الاشتراكات المتاحة", en: "Available subscriptions" },
   { key: "subscriptionsSubtitle", group: "Subscriptions", labelAr: "وصف قسم الاشتراكات", labelEn: "Subscriptions section description", ar: "اشترك لفترة محددة واستمتع بكل الكورسات المدفوعة المنشورة دون شراء كل كورس على حدة", en: "Subscribe for a set period and access all published paid courses without buying them individually.", multiline: true },
@@ -64,7 +64,7 @@ const baseFields: HomepageCopyField[] = [
 const editorialGroups = [
   { key: "podcourses", label: "Podcourses", title: "بودكورس", subtitle: "تعلم من حوارات وخبرات عملية مختارة.", cards: HOMEPAGE_PODCOURSES },
   { key: "podcasts", label: "Podcasts", title: "بودكاست", subtitle: "أفكار ملهمة للنمو في الحياة والعمل.", cards: HOMEPAGE_PODCASTS },
-  { key: "learningPrograms", label: "Learning programs", title: "برامج التعلم", subtitle: "مسارات تعليمية تجمع الدورات في رحلة واحدة واضحة.", cards: HOMEPAGE_LEARNING_PROGRAMS },
+  { key: "learningPrograms", label: "Learning programs", title: "برامج التعلم", subtitle: "مسارات تعليمية تجمع الكورسات في رحلة واحدة واضحة.", cards: HOMEPAGE_LEARNING_PROGRAMS },
 ];
 
 for (const group of editorialGroups) {

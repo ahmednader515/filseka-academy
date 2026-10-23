@@ -8,7 +8,7 @@ export const revalidate = 0;
 
 export const metadata = {
   title: "اختر المعلمين | منصتي التعليمية",
-  description: "تصفح مدرسي المنصة والدورات المتاحة لكل مدرس",
+  description: "تصفح خبيري المنصة والكورسات المتاحة لكل خبير",
 };
 
 export default async function TeachersPage() {

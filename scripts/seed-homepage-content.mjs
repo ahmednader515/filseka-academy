@@ -53,7 +53,7 @@ const details = [
 
 const news = [
   { id: "filseka-news-digital-skills", imageUrl: "/course-cover-digital.svg", description: "مسارات جديدة في المهارات الرقمية لمساعدتك على تحويل المعرفة إلى تطبيق عملي.", descriptionEn: "Explore digital skills paths designed to turn knowledge into practical action." },
-  { id: "filseka-news-professional-growth", imageUrl: "/course-cover-business.svg", description: "اكتشف دورات عملية تساعدك على تطوير مشروعك ومهاراتك المهنية.", descriptionEn: "Discover practical courses to grow your project and professional skills." },
+  { id: "filseka-news-professional-growth", imageUrl: "/course-cover-business.svg", description: "اكتشف كورسات عملية تساعدك على تطوير مشروعك ومهاراتك المهنية.", descriptionEn: "Discover practical courses to grow your project and professional skills." },
 ];
 
 await sql`ALTER TABLE "User" ADD COLUMN IF NOT EXISTS teacher_subject TEXT`;
@@ -135,8 +135,8 @@ for (let index = 0; index < reviews.length; index++) {
 }
 
 const plans = [
-  { id: "filseka-plan-monthly", name: "اشتراك شهر واحد", description: "وصول كامل إلى مكتبة الدورات طوال الشهر.", image: "/course-cover-digital.svg", duration: "month", price: 399 },
-  { id: "filseka-plan-yearly", name: "اشتراك سنوي", description: "تعلّم على مدار العام مع وصول غير محدود إلى جميع الدورات.", image: "/course-cover-business.svg", duration: "year", price: 2999 },
+  { id: "filseka-plan-monthly", name: "اشتراك شهر واحد", description: "وصول كامل إلى مكتبة الكورسات طوال الشهر.", image: "/course-cover-digital.svg", duration: "month", price: 399 },
+  { id: "filseka-plan-yearly", name: "اشتراك سنوي", description: "تعلّم على مدار العام مع وصول غير محدود إلى جميع الكورسات.", image: "/course-cover-business.svg", duration: "year", price: 2999 },
 ];
 for (let index = 0; index < plans.length; index++) {
   const plan = plans[index];

@@ -12,6 +12,6 @@ UPDATE "HomepageSetting"
 SET
   whatsapp_url = COALESCE(whatsapp_url, 'https://wa.me/966553612356'),
   facebook_url = COALESCE(facebook_url, 'https://www.facebook.com/profile.php?id=61562686209159'),
-  page_title = COALESCE(page_title, 'منصتي التعليمية | دورات وتعلم أونلاين'),
+  page_title = COALESCE(page_title, 'منصتي التعليمية | كورسات وتعلم أونلاين'),
   updated_at = NOW()
 WHERE id = 'default';

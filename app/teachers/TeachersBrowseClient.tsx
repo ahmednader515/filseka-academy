@@ -59,20 +59,20 @@ export function TeachersBrowseClient({ initialTeachers }: { initialTeachers: Tea
             />
           </svg>
           <p className="mx-auto mt-3 max-w-xl text-sm text-[var(--color-muted)]">
-            تصفح مدرسي المنصة وابحث بالاسم أو التخصص، ثم انتقل إلى دورات كل مدرس من صفحة الدورات.
+            تصفح خبيري المنصة وابحث بالاسم أو التخصص، ثم انتقل إلى كورسات كل خبير من صفحة الكورسات.
           </p>
         </div>
 
         <div className="mx-auto mt-8 max-w-xl">
           <label htmlFor="teachers-search" className="sr-only">
-            بحث عن مدرس
+            بحث عن خبير
           </label>
           <input
             id="teachers-search"
             type="search"
             dir="rtl"
             autoComplete="off"
-            placeholder="ابحث باسم المدرس أو المادة…"
+            placeholder="ابحث باسم الخبير أو المادة…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-[var(--color-foreground)] shadow-[var(--shadow-card)] placeholder:text-[var(--color-muted)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/25"
@@ -81,7 +81,7 @@ export function TeachersBrowseClient({ initialTeachers }: { initialTeachers: Tea
 
         {initialTeachers.length === 0 ? (
           <p className="mt-16 text-center text-[var(--color-muted)]">
-            لا يوجد مدرسون على المنصة حتى الآن. يمكن للمسؤول إضافة حسابات معلمين من لوحة التحكم.
+            لا يوجد خبيرون على المنصة حتى الآن. يمكن للمسؤول إضافة حسابات معلمين من لوحة التحكم.
           </p>
         ) : filtered.length === 0 ? (
           <p className="mt-16 text-center text-[var(--color-muted)]">

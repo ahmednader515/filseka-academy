@@ -24,11 +24,11 @@ export default async function HomePage() {
   const configuredHeroTitle = pickLocalizedText(locale, homepageSettings.heroTitle, homepageSettings.heroTitleEn);
   const configuredHeroSubtitle = pickLocalizedText(locale, homepageSettings.heroSlogan, homepageSettings.heroSloganEn);
   const heroCtaLabel = pickLocalizedText(locale, homepageSettings.ctaButtonText, homepageSettings.ctaButtonTextEn)
-    || (locale === "ar" ? "اكتشف الدورات" : "Explore courses");
+    || (locale === "ar" ? "اكتشف الكورسات" : "Explore courses");
   const homepageCopy = resolveHomepageCopy(homepageSettings.homepageTextOverrides, locale);
   const defaultHeroTitle = locale === "ar" ? "ابدأ رحلتك التعليمية مع فِلسِكة" : "Your next learning journey starts here";
   const defaultHeroSubtitle = locale === "ar"
-    ? "دورات عملية وخبراء يساعدونك على بناء مهاراتك وتحقيق أهدافك."
+    ? "كورسات عملية وخبراء يساعدونك على بناء مهاراتك وتحقيق أهدافك."
     : "Practical courses and expert guidance to help you build skills and reach your goals.";
   const heroTitle =
     configuredHeroTitle === "أستاذ / عصام محي" ||
@@ -38,7 +38,7 @@ export default async function HomePage() {
       : configuredHeroTitle || defaultHeroTitle;
   const heroSubtitle =
     configuredHeroSubtitle === "ادرسها... يمكن تفهم المعلومة صح!" ||
-    (locale === "en" && configuredHeroSubtitle === "دورات عملية وخبراء يساعدونك على بناء مهاراتك وتحقيق أهدافك.")
+    (locale === "en" && configuredHeroSubtitle === "كورسات عملية وخبراء يساعدونك على بناء مهاراتك وتحقيق أهدافك.")
       ? defaultHeroSubtitle
       : configuredHeroSubtitle || defaultHeroSubtitle;
 

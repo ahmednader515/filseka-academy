@@ -1,4 +1,4 @@
--- الصور الصغيرة العائمة حول صورة المدرس في الصفحة الرئيسية
+-- الصور الصغيرة العائمة حول صورة الخبير في الصفحة الرئيسية
 -- شغّله من لوحة Neon → SQL Editor (بعد وجود جدول HomepageSetting)
 
 ALTER TABLE "HomepageSetting" ADD COLUMN IF NOT EXISTS hero_float_image_1 TEXT;

@@ -1,4 +1,4 @@
--- اشتراكات المنصة الشاملة (كل الدورات المدفوعة) — نفّذه في Neon إن لزم
+-- اشتراكات المنصة الشاملة (كل الكورسات المدفوعة) — نفّذه في Neon إن لزم
 ALTER TABLE "HomepageSetting" ADD COLUMN IF NOT EXISTS subscriptions_enabled BOOLEAN NOT NULL DEFAULT false;
 
 CREATE TABLE IF NOT EXISTS "SubscriptionPlan" (

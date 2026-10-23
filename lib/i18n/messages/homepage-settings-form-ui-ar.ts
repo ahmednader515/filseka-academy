@@ -9,7 +9,7 @@ export const homepageSettingsFormUiAr = {
   layoutTitle: "تغيير التصميم العام",
   layoutIntro: "اختر قالب عرض مقدمة الصفحة الرئيسية (الجزء الكبير في أول الصفحة).",
   templateClassicTitle: "القالب الأول (الحالي)",
-  templateClassicDesc: "النجوم + صورة المدرس + النصوص الحالية",
+  templateClassicDesc: "النجوم + صورة الخبير + النصوص الحالية",
   templateSliderTitle: "القالب الثاني (صورة كبيرة/سلايدر)",
   templateSliderDesc: "صورة كبيرة في البداية مع تبديل تلقائي + تنقّل يدوي",
   templateAppTitle: "القالب الثالث (واجهة التطبيق)",
@@ -47,15 +47,15 @@ export const homepageSettingsFormUiAr = {
   linkPublishedCourse: "ربط بالضغط على الصورة (كورس منشور)",
   noCourseLink: "— بدون ربط —",
 
-  teacherImageTitle: "صورة المدرس",
+  teacherImageTitle: "صورة الخبير",
   teacherImageIntro: "تظهر في الصفحة الرئيسية بجانب العنوان. يمكنك رفع صورة أو إدخال رابط صورة.",
   previewAlt: "معاينة",
   chooseImageToUpload: "اختر صورة للرفع",
   teacherImageUrlPh: "/instructor.png أو رابط صورة",
 
-  heroBgCardTitle: "لون خلفية الهيرو (وراء صورة المدرس)",
+  heroBgCardTitle: "لون خلفية الهيرو (وراء صورة الخبير)",
   heroBgCardIntro:
-    "اختر تدرجاً جاهزاً، أو لونين مخصّصين (منتقي الألوان + كود hex) ليظهرا في الصفحة الرئيسية خلف صورة المدرس والعنوان.",
+    "اختر تدرجاً جاهزاً، أو لونين مخصّصين (منتقي الألوان + كود hex) ليظهرا في الصفحة الرئيسية خلف صورة الخبير والعنوان.",
   presetGradients: "تدرجات جاهزة",
   customGradient: "تدرج مخصّص (منتقي ألوان)",
   customGradientIntro:
@@ -78,9 +78,9 @@ export const homepageSettingsFormUiAr = {
   uploadLogo: "رفع لوجو",
   logoUrlPh: "رابط لوجو أو ارفعه من الزر",
 
-  floatImagesTitle: "الصور الصغيرة العائمة حول صورة المدرس",
+  floatImagesTitle: "الصور الصغيرة العائمة حول صورة الخبير",
   floatImagesIntro:
-    "تظهر هذه الصور بجانب صورة المدرس في الصفحة الرئيسية. يمكنك إدخال رابط لكل صورة أو ترك الحقل فارغاً لاستخدام الافتراضي.",
+    "تظهر هذه الصور بجانب صورة الخبير في الصفحة الرئيسية. يمكنك إدخال رابط لكل صورة أو ترك الحقل فارغاً لاستخدام الافتراضي.",
   float1: "صورة عائمة ١ (يسار أعلى)",
   float2: "صورة عائمة ٢ (يمين أسفل)",
   float3: "صورة عائمة ٣ (أسفل يسار)",
@@ -102,7 +102,7 @@ export const homepageSettingsFormUiAr = {
   labelHeroSloganEn: "Hero slogan (English)",
   phHeroSloganEn: "Study it... and finally understand it right!",
   browserTabTitleLabel: "عنوان التبويب (المظهر في تاب المتصفح)",
-  phPageTitleAr: "منصتي التعليمية | دورات وتعلم أونلاين",
+  phPageTitleAr: "منصتي التعليمية | كورسات وتعلم أونلاين",
   labelPageTitleEn: "Browser tab title (English)",
   phPageTitleEn: "My Learning Platform | Online Courses",
   footerTitleLabel: "عنوان الفوتر (أسفل الموقع)",

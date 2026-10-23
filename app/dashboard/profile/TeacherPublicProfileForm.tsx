@@ -39,7 +39,7 @@ export function TeacherPublicProfileForm({ defaultSubject, defaultAvatarUrl }: P
       setError(data.error ?? "فشل التحديث");
       return;
     }
-    setSuccess("تم حفظ الملف العام للمدرس");
+    setSuccess("تم حفظ الملف العام للخبير");
     router.refresh();
   }
 

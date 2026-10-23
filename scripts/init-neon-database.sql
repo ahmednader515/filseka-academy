@@ -266,7 +266,7 @@ ALTER TABLE "Review" ADD COLUMN IF NOT EXISTS image_url TEXT;
 ALTER TABLE "Review" ADD COLUMN IF NOT EXISTS text_en TEXT;
 ALTER TABLE "Review" ADD COLUMN IF NOT EXISTS author_title_en TEXT;
 
--- 13) إعدادات الصفحة الرئيسية (صورة المدرس، النصوص، روابط واتساب/فيسبوك، عنوان التبويب، لون الهيرو، نصوص الفوتر)
+-- 13) إعدادات الصفحة الرئيسية (صورة الخبير، النصوص، روابط واتساب/فيسبوك، عنوان التبويب، لون الهيرو، نصوص الفوتر)
 CREATE TABLE IF NOT EXISTS "HomepageSetting" (
   id                  TEXT PRIMARY KEY DEFAULT 'default',
   teacher_image_url   TEXT,
@@ -358,7 +358,7 @@ VALUES (
   'https://www.facebook.com/profile.php?id=61562686209159',
   NULL,
   NULL,
-  'منصتي التعليمية | دورات وتعلم أونلاين',
+  'منصتي التعليمية | كورسات وتعلم أونلاين',
   'navy',
   'منصتي التعليمية',
   'تعلم بأسلوب حديث ومنهجية واضحة',
@@ -383,7 +383,7 @@ SET
   social_right_label = COALESCE(NULLIF(TRIM(social_right_label), ''), 'الدعم'),
   social_left_label = COALESCE(NULLIF(TRIM(social_left_label), ''), 'دعم الفريق'),
   social_left_enabled = COALESCE(social_left_enabled, true),
-  page_title       = COALESCE(page_title, 'منصتي التعليمية | دورات وتعلم أونلاين'),
+  page_title       = COALESCE(page_title, 'منصتي التعليمية | كورسات وتعلم أونلاين'),
   hero_bg_preset   = COALESCE(hero_bg_preset, 'navy'),
   copyright_overlay_style = COALESCE(copyright_overlay_style, 'floating'),
   footer_title     = COALESCE(footer_title, 'منصتي التعليمية'),

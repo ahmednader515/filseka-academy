@@ -23,7 +23,7 @@ export const HOMEPAGE_PODCASTS: EditorialCard[] = [
 ];
 
 export const HOMEPAGE_LEARNING_PROGRAMS: EditorialCard[] = [
-  { title: "الانطلاق في العمل الحر", titleEn: "Start Freelancing", description: "تعلم بناء ملف أعمالك، تسعير خدماتك، والتواصل مع العملاء.", descriptionEn: "Build a portfolio, price your work, and communicate with clients.", imageUrl: "/course-cover-business.svg", meta: "4 دورات · 8 ساعات", metaEn: "4 courses · 8h" },
-  { title: "مهارات الذكاء الاصطناعي", titleEn: "Essential AI Skills", description: "أساسيات الذكاء الاصطناعي وتطبيقاته في العمل والدراسة.", descriptionEn: "AI foundations and practical uses at work and in study.", imageUrl: "/course-cover-digital.svg", meta: "5 دورات · 8 ساعات", metaEn: "5 courses · 8h" },
-  { title: "الإنجليزية لسوق العمل", titleEn: "English for Work", description: "طور المحادثة والكتابة والعرض باللغة الإنجليزية.", descriptionEn: "Improve your English speaking, writing, and presentation skills.", imageUrl: "/course-cover-language.svg", meta: "5 دورات · 15 ساعة", metaEn: "5 courses · 15h" },
+  { title: "الانطلاق في العمل الحر", titleEn: "Start Freelancing", description: "تعلم بناء ملف أعمالك، تسعير خدماتك، والتواصل مع العملاء.", descriptionEn: "Build a portfolio, price your work, and communicate with clients.", imageUrl: "/course-cover-business.svg", meta: "4 كورسات · 8 ساعات", metaEn: "4 courses · 8h" },
+  { title: "مهارات الذكاء الاصطناعي", titleEn: "Essential AI Skills", description: "أساسيات الذكاء الاصطناعي وتطبيقاته في العمل والدراسة.", descriptionEn: "AI foundations and practical uses at work and in study.", imageUrl: "/course-cover-digital.svg", meta: "5 كورسات · 8 ساعات", metaEn: "5 courses · 8h" },
+  { title: "الإنجليزية لسوق العمل", titleEn: "English for Work", description: "طور المحادثة والكتابة والعرض باللغة الإنجليزية.", descriptionEn: "Improve your English speaking, writing, and presentation skills.", imageUrl: "/course-cover-language.svg", meta: "5 كورسات · 15 ساعة", metaEn: "5 courses · 15h" },
 ];

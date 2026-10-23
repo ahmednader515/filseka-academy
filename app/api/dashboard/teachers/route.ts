@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error:
-            "قاعدة البيانات لا تقبل رتبة «مدرس» بعد. حدّث قاعدة البيانات (قيمة TEACHER في نوع UserRole أو قيد role) ثم أعد المحاولة. يمكن تشغيل scripts/add-teachers-multi.sql كاملاً على Neon.",
+            "قاعدة البيانات لا تقبل رتبة «خبير» بعد. حدّث قاعدة البيانات (قيمة TEACHER في نوع UserRole أو قيد role) ثم أعد المحاولة. يمكن تشغيل scripts/add-teachers-multi.sql كاملاً على Neon.",
         },
         { status: 500 },
       );

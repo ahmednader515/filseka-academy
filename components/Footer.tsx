@@ -25,7 +25,7 @@ export async function Footer({
     {
       title: ar ? "اكتشف المزيد" : "Discover",
       links: [
-        ["/courses", t("common.courses", ar ? "الدورات" : "Courses")],
+        ["/courses", t("common.courses", ar ? "الكورسات" : "Courses")],
         ["/teachers", ar ? "الخبراء والمعلمون" : "Experts"],
         ["/store", ar ? "المتجر التعليمي" : "Learning store"],
       ],
@@ -72,10 +72,10 @@ export async function Footer({
           <div>
             <p className="text-sm font-bold text-white">{ar ? "ابدأ رحلتك التعليمية" : "Start learning today"}</p>
             <p className="mt-3 text-sm leading-6 text-white/55">
-              {ar ? "اكتشف دورات عملية وابنِ المهارات التي تحتاجها لخطوتك القادمة." : "Explore practical courses and build skills for your next step."}
+              {ar ? "اكتشف كورسات عملية وابنِ المهارات التي تحتاجها لخطوتك القادمة." : "Explore practical courses and build skills for your next step."}
             </p>
             <Link href="/courses" className="filseka-primary-button mt-5 inline-flex min-h-11 items-center rounded-full px-5 text-sm font-bold text-white transition hover:-translate-y-0.5">
-              {ar ? "تصفح الدورات" : "Browse courses"} <span className="ms-2" aria-hidden>↗</span>
+              {ar ? "تصفح الكورسات" : "Browse courses"} <span className="ms-2" aria-hidden>↗</span>
             </Link>
           </div>
         </div>

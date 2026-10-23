@@ -11,7 +11,7 @@ type Props = {
   titleTag?: "h2" | "h3";
 };
 
-/** بطاقة مدرس — التخصص وقائمة دوراته المنشورة داخل البطاقة فقط */
+/** بطاقة خبير — التخصص وقائمة كورساته المنشورة داخل البطاقة فقط */
 export function TeacherPublicCard({
   teacherId,
   name,
@@ -20,7 +20,7 @@ export function TeacherPublicCard({
   courses,
   titleTag: TitleTag = "h3",
 }: Props) {
-  const subject = teacherSubject?.trim() || "مدرس على المنصة";
+  const subject = teacherSubject?.trim() || "خبير على المنصة";
   const profileHref = `/courses?teacher=${encodeURIComponent(teacherId)}`;
   const previewCourses = courses.slice(0, 2);
   const moreCount = courses.length > 2 ? courses.length - 2 : 0;
@@ -64,7 +64,7 @@ export function TeacherPublicCard({
         {courses.length > 0 ? (
           <>
             <p className="mb-2 text-center text-[0.7rem] font-semibold uppercase tracking-wide text-[var(--color-muted)]/80">
-              الدورات
+              الكورسات
             </p>
             <ul className="space-y-2 px-1 text-right">
               {previewCourses.map((c) => (
@@ -80,19 +80,19 @@ export function TeacherPublicCard({
               <p className="mt-2 text-center text-[0.7rem] text-[var(--color-muted)]">
                 {moreCount === 1
                   ? "ودورة إضافية…"
-                  : `و${moreCount} دورات إضافية…`}
+                  : `و${moreCount} كورسات إضافية…`}
               </p>
             ) : null}
             <Link
               href={profileHref}
               className="mt-3 block text-center text-xs font-medium text-[var(--color-primary)] underline-offset-2 hover:underline"
             >
-              صفحة جميع دورات المدرس ←
+              صفحة جميع كورسات الخبير ←
             </Link>
           </>
         ) : (
           <p className="px-1 text-center text-xs leading-relaxed text-[var(--color-muted)]">
-            لا توجد دورات منشورة ضمن بطاقة هذا المدرس حتى الآن.
+            لا توجد كورسات منشورة ضمن بطاقة هذا الخبير حتى الآن.
           </p>
         )}
       </div>

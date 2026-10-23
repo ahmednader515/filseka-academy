@@ -126,7 +126,7 @@ function toCourseCardProps(c: TeacherCourseListItem) {
 
 export function TeacherCoursesSearch({
   courses,
-  /** عند false: شبكة واحدة (مثل «جميع الدورات») مع نفس شريط البحث */
+  /** عند false: شبكة واحدة (مثل «جميع الكورسات») مع نفس شريط البحث */
   groupByCategory = true,
 }: {
   courses: TeacherCourseListItem[];
@@ -174,7 +174,7 @@ export function TeacherCoursesSearch({
           <p className="text-[var(--color-muted)]">
             {normalizeSearch(query)
               ? "لا توجد نتائج تطابق بحثك. جرّب اسم دورة أو قسم آخر."
-              : "لا توجد دورات لعرضها."}
+              : "لا توجد كورسات لعرضها."}
           </p>
         </div>
       ) : groupByCategory ? (

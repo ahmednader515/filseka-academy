@@ -144,7 +144,7 @@ export async function HomePageBelowFold({
                 text(category.nameAr, category.name_ar),
                 text(category.name),
               )
-            : (locale === "ar" ? "الدورات التدريبية" : "Courses"),
+            : (locale === "ar" ? "الكورسات التدريبية" : "Courses"),
           duration: text(row.duration) ?? null,
           imageUrl: text(row.imageUrl, row.image_url) ?? null,
           slug: text(row.slug, row.id) ?? "",
@@ -325,7 +325,7 @@ export async function HomePageBelowFold({
       locale,
       homepageSettings.featuredCoursesTitle,
       homepageSettings.featuredCoursesTitleEn,
-    ) || (locale === "ar" ? "الدورات المميزة هذا الأسبوع" : "Featured courses this week");
+    ) || (locale === "ar" ? "الكورسات المميزة هذا الأسبوع" : "Featured courses this week");
 
   return (
     <>
