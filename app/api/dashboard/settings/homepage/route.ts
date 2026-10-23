@@ -42,6 +42,9 @@ export async function PUT(request: NextRequest) {
     platformNameEn?: string | null;
     headerLogoUrl?: string | null;
     primaryColor?: string | null;
+    featuredCoursesEnabled?: boolean;
+    featuredCoursesTitle?: string | null;
+    featuredCoursesTitleEn?: string | null;
     youtubeUrl?: string | null;
     linkedinUrl?: string | null;
     whatsappUrl?: string | null;

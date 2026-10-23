@@ -159,7 +159,7 @@ export default async function CoursePage({ params }: Props) {
   const categorySlug = String((course.category as Record<string, unknown> | null)?.slug ?? "").trim();
 
   const liveStreams = canAccessContent ? await getLiveStreamsByCourseId(course.id) : [];
-  const instructor = course.createdById ? await getUserById(course.createdById).catch(() => null) : null;
+  const instructor = course.created_by_id ? await getUserById(course.created_by_id).catch(() => null) : null;
   const instructorName = instructor?.role === "TEACHER" ? instructor.name : "Filseka Academy";
   const formatStreamDate = (d: Date | string) => {
     const date = typeof d === "string" ? new Date(d) : d;
