@@ -2,20 +2,17 @@
 
 import Link from "next/link";
 import { useStoreSplash } from "@/components/StoreSplashProvider";
-import type { StoreProductRow } from "@/lib/db";
 import type { ResolvedHomepageCopy } from "@/lib/homepage-copy";
 
 export function HomeStoreSection({
   productsCount,
   sectionTitle,
   sectionDescription,
-  products,
   copy,
 }: {
   productsCount: number;
   sectionTitle: string;
   sectionDescription: string;
-  products: StoreProductRow[];
   copy: ResolvedHomepageCopy;
 }) {
   const { startStoreSplashTransition } = useStoreSplash();
@@ -48,29 +45,6 @@ export function HomeStoreSection({
               </div>
             </div>
           </div>
-          {products.length ? (
-            <div className="filseka-course-track flex snap-x gap-4 overflow-x-auto p-5 sm:p-7">
-              {products.slice(0, 4).map((product) => (
-                <Link
-                  key={product.id}
-                  href="/store"
-                  onClick={handleStoreClick}
-                  className="group w-[min(74vw,250px)] shrink-0 snap-start overflow-hidden rounded-xl border border-white/10 bg-black/35 transition hover:-translate-y-1 hover:border-[var(--color-primary)]/55 sm:w-[250px]"
-                >
-                  <div className="relative aspect-[16/10] overflow-hidden bg-white/5">
-                    {product.imageUrl ? (
-                      <img src={product.imageUrl} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />
-                    ) : null}
-                  </div>
-                  <div className="p-4 text-white">
-                    <h3 className="line-clamp-1 font-semibold">{product.title}</h3>
-                    <p className="mt-1 line-clamp-2 min-h-10 text-xs leading-5 text-white/50">{product.description}</p>
-                    <p className="mt-3 text-sm font-bold text-red-200">{product.price.toLocaleString("en-US")} EGP</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : null}
         </div>
       </section>
     </>

@@ -21,6 +21,7 @@ import { getLocaleFromCookie } from "@/lib/i18n/server";
 import { LocaleProvider } from "@/components/LocaleProvider";
 import { homepageDefaultForLocale } from "@/lib/homepage-default-for-locale";
 import { pickLocalizedText } from "@/lib/i18n/localized-field";
+import { resolveHomepageCopy } from "@/lib/homepage-copy";
 import {
   HOMEPAGE_DEFAULT_FOOTER_COPYRIGHT_AR,
   HOMEPAGE_DEFAULT_FOOTER_TAGLINE_AR,
@@ -73,6 +74,7 @@ export default async function RootLayout({
   ]);
   const dir = getDir(locale);
   const t = makeTranslator(locale);
+  const homepageCopy = resolveHomepageCopy(settingsResult?.homepageTextOverrides, locale);
   let platformName: string | null = null;
   let headerLogoUrl: string | null = null;
   let platformPrimaryColor: string | null = null;
@@ -176,6 +178,7 @@ export default async function RootLayout({
               platformName={platformName}
               headerLogoUrl={headerLogoUrl}
               platformSubscriptionExpiryLabel={platformSubscriptionExpiryLabel}
+              homepageCopy={homepageCopy}
             />
             <main className="flex-1">{children}</main>
             <Footer footerTitle={footerTitle} footerTagline={footerTagline} footerCopyright={footerCopyright} logoUrl={headerLogoUrl} />

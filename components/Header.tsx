@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import type { UserRole } from "@/lib/types";
+import type { ResolvedHomepageCopy } from "@/lib/homepage-copy";
 import { LanguageToggle } from "@/components/LanguageToggle";
-import { useT, useLocalizedEnumValue, useLocale } from "@/components/LocaleProvider";
+import { useT, useLocalizedEnumValue } from "@/components/LocaleProvider";
 
 function UserMenu() {
   const { data: session, status } = useSession();
@@ -84,15 +85,16 @@ export function Header({
   platformName,
   headerLogoUrl,
   platformSubscriptionExpiryLabel,
+  homepageCopy,
 }: {
   platformName?: string | null;
   headerLogoUrl?: string | null;
+  homepageCopy: ResolvedHomepageCopy;
   /** للطالب ذي اشتراك منصة نشط: نص تاريخ انتهاء الاشتراك (مُنسَّق من السيرفر) */
   platformSubscriptionExpiryLabel?: string | null;
 }) {
   const { data: session, status } = useSession();
   const t = useT();
-  const locale = useLocale();
   const configuredName = platformName?.trim() ?? "";
   const trimmedName = configuredName === "منصة أستاذ عصام محي" || configuredName.toLowerCase() === "filseka academy"
     ? "Filseka Academy"
@@ -117,11 +119,11 @@ export function Header({
           <span className="max-w-[190px] truncate text-base font-extrabold tracking-tight sm:max-w-none sm:text-lg">{displayName}</span>
         </Link>
 
-        <nav className="hidden flex-1 items-center justify-center gap-5 lg:flex xl:gap-8" aria-label={t("common.navigation", "Main navigation")}>
-          <Link href="/courses" className="text-sm font-medium text-white/75 transition hover:text-white">{t("common.courses", "Courses")}</Link>
-          <Link href="/teachers" className="text-sm font-medium text-white/75 transition hover:text-white">{locale === "ar" ? "المعلمون" : "Teachers"}</Link>
-          <Link href="/store" className="text-sm font-medium text-white/75 transition hover:text-white">{locale === "ar" ? "المتجر" : "Store"}</Link>
-          <Link href="/#home-next-section" className="text-sm font-medium text-white/75 transition hover:text-white">{locale === "ar" ? "عن فِلسِكة" : "About"}</Link>
+        <nav className="hidden flex-1 items-center justify-center gap-5 lg:flex xl:gap-8" aria-label={homepageCopy.headerNavAria}>
+          <Link href="/courses" className="text-sm font-medium text-white/75 transition hover:text-white">{homepageCopy.headerCourses}</Link>
+          <Link href="/teachers" className="text-sm font-medium text-white/75 transition hover:text-white">{homepageCopy.headerTeachers}</Link>
+          <Link href="/store" className="text-sm font-medium text-white/75 transition hover:text-white">{homepageCopy.headerStore}</Link>
+          <Link href="/#home-next-section" className="text-sm font-medium text-white/75 transition hover:text-white">{homepageCopy.headerAbout}</Link>
         </nav>
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
@@ -132,8 +134,8 @@ export function Header({
             <UserMenu />
           ) : (
             <>
-              <Link href="/login" className="hidden whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold text-white/80 transition hover:text-white sm:inline-flex">{t("header.login", "Log in")}</Link>
-              <Link href="/register" className="filseka-primary-button whitespace-nowrap rounded-full px-4 py-2.5 text-xs font-bold text-white transition hover:-translate-y-0.5 sm:px-5 sm:text-sm">{t("header.register", "Create account")}</Link>
+              <Link href="/login" className="hidden whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold text-white/80 transition hover:text-white sm:inline-flex">{homepageCopy.headerLogin}</Link>
+              <Link href="/register" className="filseka-primary-button whitespace-nowrap rounded-full px-4 py-2.5 text-xs font-bold text-white transition hover:-translate-y-0.5 sm:px-5 sm:text-sm">{homepageCopy.headerRegister}</Link>
             </>
           )}
           <span className="sm:hidden"><LanguageToggle /></span>

@@ -20,6 +20,13 @@ export type HomepageCopyField = {
 };
 
 const baseFields: HomepageCopyField[] = [
+  { key: "headerCourses", group: "Navigation", labelAr: "رابط الدورات", labelEn: "Courses link", ar: "الدورات", en: "Courses" },
+  { key: "headerTeachers", group: "Navigation", labelAr: "رابط المعلمين", labelEn: "Teachers link", ar: "المعلمون", en: "Teachers" },
+  { key: "headerStore", group: "Navigation", labelAr: "رابط المتجر", labelEn: "Store link", ar: "المتجر", en: "Store" },
+  { key: "headerAbout", group: "Navigation", labelAr: "رابط عن فِلسِكة", labelEn: "About link", ar: "عن فِلسِكة", en: "About" },
+  { key: "headerLogin", group: "Navigation", labelAr: "رابط تسجيل الدخول", labelEn: "Log in link", ar: "تسجيل الدخول", en: "Log in" },
+  { key: "headerRegister", group: "Navigation", labelAr: "زر إنشاء الحساب", labelEn: "Create account button", ar: "إنشاء حساب", en: "Create account" },
+  { key: "headerNavAria", group: "Navigation", labelAr: "وصف شريط التنقل لقارئات الشاشة", labelEn: "Navigation label for screen readers", ar: "التنقل الرئيسي", en: "Main navigation" },
   { key: "heroEyebrow", group: "Hero", labelAr: "العبارة الصغيرة في الهيرو", labelEn: "Hero eyebrow", ar: "تعلم بالطريقة التي تناسبك", en: "LEARN YOUR WAY" },
   { key: "featuredEyebrow", group: "Courses", labelAr: "عبارة قسم الدورات المميزة", labelEn: "Featured courses eyebrow", ar: "اختياراتنا لك", en: "CURATED FOR YOU" },
   { key: "featuredViewAll", group: "Courses", labelAr: "زر عرض كل الدورات", labelEn: "View all courses label", ar: "عرض الكل", en: "View all" },

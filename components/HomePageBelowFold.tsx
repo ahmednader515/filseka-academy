@@ -470,7 +470,6 @@ export async function HomePageBelowFold({
           productsCount={storeProductsHome.length}
           sectionTitle={storeSectionTitle}
           sectionDescription={storeSectionDescription}
-          products={storeProductsHome}
           copy={homepageCopy}
         />
       ) : null}

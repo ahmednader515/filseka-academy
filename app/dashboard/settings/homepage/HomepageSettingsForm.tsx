@@ -473,6 +473,7 @@ export function HomepageSettingsForm({
   const canAddPlatformNewsItem = platformNewsItems.length < PLATFORM_NEWS_MAX_ITEMS;
   const homepageCopyGroups = Array.from(new Set(HOMEPAGE_COPY_FIELDS.map((field) => field.group)));
   const homepageCopyGroupLabels: Record<string, string> = {
+    Navigation: ar ? "روابط شريط التنقل" : "Navigation links",
     Hero: ar ? "الواجهة الرئيسية" : "Hero",
     Courses: ar ? "الدورات" : "Courses",
     "Editorial collections": ar ? "مجموعات المحتوى" : "Editorial collections",

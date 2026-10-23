@@ -18,7 +18,7 @@ export function HomeMarketplaceHero({
   return (
     <section className="filseka-hero relative isolate min-h-[500px] overflow-hidden sm:min-h-[560px]" aria-label={title}>
       <video
-        className="filseka-hero-video absolute inset-0 -z-20 h-full w-full bg-black object-contain"
+        className="filseka-hero-video absolute left-0 top-0 -z-20 h-[52%] w-full bg-black object-contain sm:h-full sm:w-1/2"
         autoPlay
         muted
         loop
@@ -36,8 +36,8 @@ export function HomeMarketplaceHero({
         <div className="filseka-hero-glow" />
       </div>
 
-      <div className="mx-auto flex min-h-[500px] max-w-[1440px] items-end px-5 pb-20 pt-28 sm:min-h-[560px] sm:px-10 sm:pb-24 lg:px-16">
-        <div className="max-w-3xl" dir={locale === "ar" ? "rtl" : "ltr"}>
+      <div dir="ltr" className="mx-auto flex min-h-[620px] max-w-[1440px] items-end justify-end px-5 pb-16 pt-[300px] sm:min-h-[560px] sm:px-10 sm:pb-24 sm:pt-28 lg:px-16">
+        <div className="w-full max-w-3xl sm:w-[47%]" dir={locale === "ar" ? "rtl" : "ltr"}>
           <p className="mb-5 inline-flex items-center gap-2 text-xs font-bold tracking-[0.22em] text-white/75 sm:text-sm">
             <span className="h-2 w-2 rounded-full bg-[var(--color-primary)] shadow-[0_0_16px_var(--color-primary)]" />
             {eyebrow}

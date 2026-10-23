@@ -140,7 +140,7 @@ body {
 }
 
 .filseka-hero-video {
-  object-position: center;
+  object-position: left center;
   animation: filseka-hero-reveal 900ms ease both;
 }
 
