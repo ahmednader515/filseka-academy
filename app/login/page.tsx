@@ -3,7 +3,7 @@
 import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { CONCURRENT_SESSION_ERROR } from "@/lib/auth-constants";
 import LoginBackground from "./LoginBackground";
 import { useT } from "@/components/LocaleProvider";
@@ -16,10 +16,22 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [concurrentSession, setConcurrentSession] = useState(false);
   const [forceLogoutLoading, setForceLogoutLoading] = useState(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
   const reasonElsewhere = searchParams.get("reason") === "session_ended_elsewhere";
+
+  function navigateToCallback() {
+    try {
+      const destination = new URL(callbackUrl, window.location.origin);
+      const safeDestination =
+        destination.origin === window.location.origin
+          ? `${destination.pathname}${destination.search}${destination.hash}`
+          : "/dashboard";
+      window.location.assign(safeDestination);
+    } catch {
+      window.location.assign("/dashboard");
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -42,8 +54,7 @@ function LoginForm() {
         setLoading(false);
         return;
       }
-      router.push(callbackUrl);
-      router.refresh();
+      navigateToCallback();
     } finally {
       setLoading(false);
     }
@@ -69,8 +80,7 @@ function LoginForm() {
         setError(t("auth.login.loginAfterForceLogoutFailed", "Failed to log in after logging out the other device"));
         return;
       }
-      router.push(callbackUrl);
-      router.refresh();
+      navigateToCallback();
     } finally {
       setForceLogoutLoading(false);
     }
