@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" fill="none">
+  <defs>
+    <linearGradient id="base" x1="115" y1="57" x2="1040" y2="727" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#31080D"/>
+      <stop offset=".52" stop-color="#151012"/>
+      <stop offset="1" stop-color="#070707"/>
+    </linearGradient>
+    <linearGradient id="red" x1="457" y1="177" x2="936" y2="608" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF4656"/>
+      <stop offset="1" stop-color="#A10E1B"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="matrix(336 196 -194 333 877 331)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F02B3D" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#F02B3D" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M42 0H0V42" stroke="#fff" stroke-opacity=".05"/>
+    </pattern>
+  </defs>
+  <path fill="url(#base)" d="M0 0h1200v750H0z"/>
+  <path fill="url(#grid)" d="M0 0h1200v750H0z"/>
+  <path fill="url(#glow)" d="M0 0h1200v750H0z"/>
+  <circle cx="832" cy="376" r="232" stroke="#fff" stroke-opacity=".08" stroke-width="2"/>
+  <circle cx="832" cy="376" r="174" stroke="#fff" stroke-opacity=".1" stroke-width="2"/>
+  <circle cx="832" cy="376" r="117" stroke="#FF4656" stroke-opacity=".38" stroke-width="2"/>
+  <path d="M746 499 856 226l61 65 77-37-89 274-77-76-82 47Z" fill="url(#red)"/>
+  <path d="m827 457 44-130 40 35 42-21-45 124-42-44-39 36Z" fill="#fff" fill-opacity=".84"/>
+  <path d="M95 575h478" stroke="#fff" stroke-opacity=".15" stroke-width="2"/>
+  <path d="M95 607h318" stroke="#fff" stroke-opacity=".09" stroke-width="2"/>
+  <text x="95" y="170" fill="#FF5362" font-family="Arial,sans-serif" font-size="21" font-weight="700" letter-spacing="6">FILSEKA ACADEMY</text>
+  <text x="95" y="300" fill="#fff" font-family="Arial,sans-serif" font-size="80" font-weight="800" letter-spacing="-4">BUILD YOUR</text>
+  <text x="95" y="395" fill="#fff" font-family="Arial,sans-serif" font-size="80" font-weight="800" letter-spacing="-4">NEXT CHAPTER</text>
+  <rect x="95" y="450" width="105" height="7" rx="3.5" fill="#E11D2E"/>
+  <text x="95" y="536" fill="#BEB8B8" font-family="Arial,sans-serif" font-size="27" letter-spacing="2">IDEAS INTO ACTION</text>
+</svg>
