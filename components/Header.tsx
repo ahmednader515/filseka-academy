@@ -141,6 +141,14 @@ export function Header({
           <span className="sm:hidden"><LanguageToggle /></span>
         </div>
       </div>
+      <div className="border-t border-white/5 lg:hidden">
+        <nav className="mx-auto flex h-10 max-w-[1500px] items-center justify-around gap-3 overflow-x-auto px-3 sm:px-8" aria-label={homepageCopy.headerNavAria}>
+          <Link href="/courses" className="shrink-0 whitespace-nowrap py-2 text-xs font-medium text-white/75 transition hover:text-white">{homepageCopy.headerCourses}</Link>
+          <Link href="/teachers" className="shrink-0 whitespace-nowrap py-2 text-xs font-medium text-white/75 transition hover:text-white">{homepageCopy.headerTeachers}</Link>
+          <Link href="/store" className="shrink-0 whitespace-nowrap py-2 text-xs font-medium text-white/75 transition hover:text-white">{homepageCopy.headerStore}</Link>
+          <Link href="/#home-next-section" className="shrink-0 whitespace-nowrap py-2 text-xs font-medium text-white/75 transition hover:text-white">{homepageCopy.headerAbout}</Link>
+        </nav>
+      </div>
       {platformSubscriptionExpiryLabel ? (
         <div className="border-t border-red-500/35 bg-gradient-to-l from-red-950/80 to-slate-900/90 py-2.5 text-center text-xs leading-relaxed text-red-50 sm:text-sm">
           <span className="font-semibold text-red-200">{t("header.platformSubscriptionActive", "You are subscribed to the platform subscription")}</span>
