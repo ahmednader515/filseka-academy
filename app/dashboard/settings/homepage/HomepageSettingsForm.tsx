@@ -476,6 +476,7 @@ export function HomepageSettingsForm({
     Navigation: ar ? "روابط شريط التنقل" : "Navigation links",
     Hero: ar ? "الواجهة الرئيسية" : "Hero",
     Courses: ar ? "الكورسات" : "Courses",
+    "Mobile app": ar ? "تطبيق الهاتف" : "Mobile app",
     "Editorial collections": ar ? "مجموعات المحتوى" : "Editorial collections",
     "Editorial: Podcourses": ar ? "بطاقات البودكورس" : "Podcourses cards",
     "Editorial: Podcasts": ar ? "بطاقات البودكاست" : "Podcast cards",

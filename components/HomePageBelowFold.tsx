@@ -21,6 +21,7 @@ import { HomeTeachersSection } from "@/components/HomeTeachersSection";
 import { HomeSubscriptionsSection } from "@/components/HomeSubscriptionsSection";
 import { HomeStoreSection } from "@/components/HomeStoreSection";
 import { HomePlatformDetailsSection } from "@/components/HomePlatformDetailsSection";
+import { HomeMobileAppSection } from "@/components/HomeMobileAppSection";
 import { parsePlatformDetailsItems } from "@/lib/platform-details";
 import { parsePlatformNewsItems } from "@/lib/platform-news";
 import { HomePlatformNewsSlider } from "@/components/HomePlatformNewsSlider";
@@ -392,6 +393,8 @@ export async function HomePageBelowFold({
         : null}
 
       <HomeEditorialCollections locale={locale} copy={homepageCopy} />
+
+      <HomeMobileAppSection locale={locale} copy={homepageCopy} />
 
       {teachersSectionEnabled ? (
         <HomeTeachersSection enabled initialTeachers={teachersHomePreview} copy={homepageCopy} />
