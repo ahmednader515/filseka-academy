@@ -3,10 +3,12 @@ import localFont from "next/font/local";
 import NextTopLoader from "nextjs-toploader";
 import { getServerSession } from "next-auth";
 import "./globals.css";
+import { HomeSidebar } from "@/components/HomeSidebar";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SessionProvider } from "@/components/SessionProvider";
 import { StoreSplashProvider } from "@/components/StoreSplashProvider";
+import { NavigationScrollReset } from "@/components/NavigationScrollReset";
 import { DeferredInspectGuard } from "@/components/DeferredInspectGuard";
 import { ForceLogoutGuard } from "@/components/ForceLogoutGuard";
 import { authOptions } from "@/lib/auth";
@@ -40,6 +42,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  colorScheme: "dark",
+  themeColor: "#000000",
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -53,7 +57,7 @@ export async function generateMetadata(): Promise<Metadata> {
       : "Filseka Academy | Online Courses and Learning";
   const defaultDescription =
     locale === "ar"
-      ? "تعلّم صناعة البودكاست والإنتاج الإعلامي عبر دورات عملية في إعداد المحتوى والتسجيل والمونتاج والسرد القصصي."
+      ? "تعلّم صناعة البودكاست والإنتاج الإعلامي عبر كورسات عملية في إعداد المحتوى والتسجيل والمونتاج والسرد القصصي."
       : "Learn podcast creation and media production through practical courses in content planning, recording, editing, and storytelling.";
   const rawTitle = settings
     ? pickLocalizedText(locale, settings.pageTitle, settings.pageTitleEn) || defaultTitle
@@ -75,20 +79,12 @@ export default async function RootLayout({
   const dir = getDir(locale);
   const t = makeTranslator(locale);
   const homepageCopy = resolveHomepageCopy(settingsResult?.homepageTextOverrides, locale);
-  let platformName: string | null = null;
-  let headerLogoUrl: string | null = null;
   let platformPrimaryColor: string | null = null;
   let footerTitle = t("footer.defaultTitle", "منصتي التعليمية");
   let footerTagline = t("footer.defaultTagline", "تعلم بأسلوب حديث ومنهجية واضحة");
   let footerCopyright = t("footer.defaultCopyright", "منصتي التعليمية. جميع الحقوق محفوظة.");
   const settings = settingsResult;
   if (settings) {
-    const configuredName = pickLocalizedText(locale, settings.platformName, settings.platformNameEn).trim();
-    platformName =
-      configuredName === "منصة أستاذ عصام محي" || configuredName.toLowerCase() === "filseka academy"
-        ? "Filseka Academy"
-        : configuredName || null;
-    headerLogoUrl = settings.headerLogoUrl ?? null;
     platformPrimaryColor = normalizeHeroHex(String(settings.primaryColor ?? "")) ?? null;
     const rawFooterTitle = pickLocalizedText(locale, settings.footerTitle, settings.footerTitleEn);
     const rawFooterTagline = pickLocalizedText(locale, settings.footerTagline, settings.footerTaglineEn);
@@ -145,13 +141,8 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang={locale} dir={dir} suppressHydrationWarning>
+    <html lang={locale} dir={dir} className="dark" data-scroll-behavior="smooth">
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){var t=localStorage.getItem("theme");document.documentElement.classList.add(t==="light"?"light":"dark");})();`,
-          }}
-        />
         {platformPrimaryColor ? (
           <style
             dangerouslySetInnerHTML={{
@@ -170,18 +161,20 @@ export default async function RootLayout({
           shadow="0 0 10px rgba(225,29,46,0.4)"
         />
         <LocaleProvider locale={locale}>
-          <SessionProvider>
+          <SessionProvider session={session}>
             <StoreSplashProvider>
+            <NavigationScrollReset />
             <DeferredInspectGuard />
             <ForceLogoutGuard />
+            <HomeSidebar />
+            <div className="platform-shell">
             <Header
-              platformName={platformName}
-              headerLogoUrl={headerLogoUrl}
               platformSubscriptionExpiryLabel={platformSubscriptionExpiryLabel}
               homepageCopy={homepageCopy}
             />
             <main className="flex-1">{children}</main>
-            <Footer footerTitle={footerTitle} footerTagline={footerTagline} footerCopyright={footerCopyright} logoUrl={headerLogoUrl} />
+            <Footer copy={homepageCopy} footerTitle={footerTitle} footerTagline={footerTagline} footerCopyright={footerCopyright} />
+            </div>
             </StoreSplashProvider>
           </SessionProvider>
         </LocaleProvider>

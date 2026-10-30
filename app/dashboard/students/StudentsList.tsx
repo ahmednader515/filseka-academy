@@ -167,7 +167,7 @@ export function StudentsList({
     const data = await res.json().catch(() => ({}));
     setLoading(false);
     if (!res.ok) {
-      setEnrollError(data.error ?? t("dashboard.studentsPage.errorAddCourseFailed", "فشل إضافة الدورة"));
+      setEnrollError(data.error ?? t("dashboard.studentsPage.errorAddCourseFailed", "فشل إضافة الكورس"));
       return;
     }
     setAddCourseId("");
@@ -195,7 +195,7 @@ export function StudentsList({
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
       setEnrollError(
-        data.error ?? t("dashboard.studentsPage.errorRemoveCourseFailed", "فشل إزالة الدورة"),
+        data.error ?? t("dashboard.studentsPage.errorRemoveCourseFailed", "فشل إزالة الكورس"),
       );
       return;
     }

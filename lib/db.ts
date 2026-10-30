@@ -543,7 +543,7 @@ export async function getCategories(): Promise<Category[]> {
   return getCategoriesCached();
 }
 
-/** أقسام تظهر في لوحة إنشاء/تعديل الدورة: الخبير يرى أقسامه فقط؛ الأدمن يرى أقسام المنصة وأقسام أي أدمن/مساعد */
+/** أقسام تظهر في لوحة إنشاء/تعديل الكورس: الخبير يرى أقسامه فقط؛ الأدمن يرى أقسام المنصة وأقسام أي أدمن/مساعد */
 export async function getCategoriesForDashboard(userId: string, role: UserRole): Promise<Category[]> {
   await ensureCategoryCreatedByColumn();
   if (role === "TEACHER") {
@@ -1290,7 +1290,7 @@ export async function listTeachersPublic(categoryId?: string | null): Promise<
   }));
 }
 
-/** دورة منشورة تظهر ضمن بطاقة الخبير العامة */
+/** كورس منشور تظهر ضمن بطاقة الخبير العامة */
 export type TeacherHomepageCourse = { id: string; slug: string; title: string };
 
 export type TeacherHomepageRow = {
@@ -1395,7 +1395,7 @@ async function fetchTeachersForHomepage(): Promise<TeacherHomepageRow[]> {
       const tid = String(r.created_by_id ?? "");
       if (!tid) continue;
       const titleAr = (r.title_ar as string | null)?.trim();
-      const title = (r.title as string | null)?.trim() || "دورة";
+      const title = (r.title as string | null)?.trim() || "كورس";
       const display = titleAr || title;
       const list = byTeacher.get(tid);
       const item: TeacherHomepageCourse = {
@@ -3200,7 +3200,7 @@ export async function userHasActivePlatformSubscription(userId: string): Promise
   }
 }
 
-/** اشتراك نشط + دورة منشورة + سعرها > 0 ⇒ وصول كامل كمسجّل */
+/** اشتراك نشط + كورس منشور + سعرها > 0 ⇒ وصول كامل كمسجّل */
 export async function userHasActivePlatformSubscriptionForPaidCourse(userId: string, courseId: string): Promise<boolean> {
   const active = await userHasActivePlatformSubscription(userId);
   if (!active) return false;
@@ -3212,7 +3212,7 @@ export async function userHasActivePlatformSubscriptionForPaidCourse(userId: str
   return price > 0;
 }
 
-/** تسجيل في الدورة أو اشتراك منصة نشط على دورة مدفوعة منشورة */
+/** تسجيل في الكورس أو اشتراك منصة نشط على كورس مدفوع منشورة */
 export async function hasFullCourseAccessAsStudent(userId: string, courseId: string): Promise<boolean> {
   const en = await getEnrollment(userId, courseId);
   if (en) return true;
@@ -3673,7 +3673,7 @@ export async function createCourse(data: {
   }
   const row = rows?.[0] as Record<string, unknown> | undefined;
   const c = row ? rowToCamel(row) as Course : null;
-  if (!c) throw new Error("فشل إنشاء الدورة");
+  if (!c) throw new Error("فشل إنشاء الكورس");
   revalidateHomepageCaches();
   return c;
 }
@@ -3784,6 +3784,28 @@ export async function deleteLessonsByCourseId(courseId: string): Promise<void> {
   await sql`DELETE FROM "Lesson" WHERE course_id = ${courseId}`;
 }
 
+/** Preserve lesson IDs (and student progress) when course content is edited. */
+export async function saveCourseLessons(courseId: string, lessons: (Parameters<typeof createLesson>[0] & { id?: string })[]) {
+  const existing = await sql`SELECT id, slug FROM "Lesson" WHERE course_id = ${courseId}`;
+  const ids = lessons.flatMap((lesson) => lesson.id ? [lesson.id] : []);
+  if (new Set(ids).size !== ids.length || ids.some((id) => !existing.some((row) => row.id === id))) throw new Error("INVALID_LESSON_IDS");
+  await ensureOnce("lesson-content-save-columns", async () => {
+    await sql`ALTER TABLE "Lesson" ADD COLUMN IF NOT EXISTS accepts_homework BOOLEAN NOT NULL DEFAULT false`;
+    await sql`ALTER TABLE "Lesson" ADD COLUMN IF NOT EXISTS homework_image_url TEXT`;
+  });
+  const rows = lessons.map((lesson) => ({ ...lesson, id: lesson.id || generateId() }));
+  await sql.transaction([
+    ...rows.map((lesson) => {
+      const slug = existing.find((row) => row.id === lesson.id)?.slug || `${lesson.slug}-${lesson.id.slice(-8)}`;
+      return sql`INSERT INTO "Lesson" (id, course_id, title, title_ar, slug, content, video_url, pdf_url, "order", accepts_homework, homework_image_url)
+        VALUES (${lesson.id}, ${courseId}, ${lesson.title}, ${lesson.title_ar ?? null}, ${slug}, ${lesson.content ?? null}, ${lesson.video_url ?? null}, ${lesson.pdf_url ?? null}, ${lesson.order}, ${lesson.accepts_homework ?? false}, ${lesson.homework_image_url ?? null})
+        ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, title_ar = EXCLUDED.title_ar, content = EXCLUDED.content, video_url = EXCLUDED.video_url, pdf_url = EXCLUDED.pdf_url, "order" = EXCLUDED."order", accepts_homework = EXCLUDED.accepts_homework, homework_image_url = EXCLUDED.homework_image_url
+        WHERE "Lesson".course_id = ${courseId}`;
+    }),
+    sql`DELETE FROM "Lesson" WHERE course_id = ${courseId} AND id NOT IN (SELECT jsonb_array_elements_text(${JSON.stringify(rows.map((row) => row.id))}::jsonb))`,
+  ]);
+}
+
 /** جلب كورس مع الحصص والاختبارات (عدد أسئلة كل اختبار) — للصفحة التفصيلية */
 export async function getCourseWithContent(segment: string): Promise<{
   course: (Course & { category?: Record<string, unknown> }) | null;
@@ -3827,7 +3849,7 @@ export async function getCourseWithContent(segment: string): Promise<{
   };
 }
 
-/** جلب دورة كاملة مع حصص واختبارات (أسئلة + خيارات) — لصفحة التعديل */
+/** جلب كورس كامل مع حصص واختبارات (أسئلة + خيارات) — لصفحة التعديل */
 export async function getCourseForEdit(courseId: string): Promise<{
   course: Record<string, unknown> | null;
   lessons: Record<string, unknown>[];
@@ -4158,7 +4180,7 @@ export async function useActivationCode(codeId: string, userId: string): Promise
     quizIds = [];
   }
 
-  // إذا لم يتم تحديد حصص ولا اختبارات => تسجيل كامل في الدورة (السلوك القديم)
+  // إذا لم يتم تحديد حصص ولا اختبارات => تسجيل كامل في الكورس (السلوك القديم)
   if (lessonIds.length === 0 && quizIds.length === 0) {
     await createEnrollment(userId, row.course_id);
   }
@@ -5043,6 +5065,28 @@ export async function getUserByEmailExcludingId(email: string, excludeUserId: st
 }
 
 // ----- Counts -----
+export async function getAcademyPublicStats(): Promise<{
+  publishedCourses: number;
+  instructors: number;
+  learners: number;
+  categories: number;
+}> {
+  const rows = await sql`
+    SELECT
+      (SELECT COUNT(*)::int FROM "Course" WHERE is_published = true) AS published_courses,
+      (SELECT COUNT(*)::int FROM "User" WHERE role = 'TEACHER') AS instructors,
+      (SELECT COUNT(*)::int FROM "User" WHERE role = 'STUDENT') AS learners,
+      (SELECT COUNT(*)::int FROM "Category") AS categories
+  `;
+  const row = rows[0] as { published_courses: number; instructors: number; learners: number; categories: number };
+  return {
+    publishedCourses: Number(row.published_courses),
+    instructors: Number(row.instructors),
+    learners: Number(row.learners),
+    categories: Number(row.categories),
+  };
+}
+
 export async function countUsersByRole(role: UserRole): Promise<number> {
   const rows = await sql`SELECT COUNT(*)::int as c FROM "User" WHERE role = ${role}`;
   return Number((rows[0] as { c: number }).c ?? 0);

@@ -1,0 +1,33 @@
+.card { width: 100%; max-width: none; margin: 0; border: 1px solid #733047; border-radius: 22px; background: linear-gradient(145deg, #21111d, #110b12 65%); box-shadow: 0 16px 36px #0004, inset 0 1px 0 #ffffff08; transition: border-color .2s, box-shadow .2s; }
+.card:hover { border-color: #c44464; box-shadow: 0 16px 40px #0005, 0 0 25px #ff003315; }
+.card .media { aspect-ratio: 16 / 8; background: radial-gradient(ellipse at center, #421728, #130c15); }
+.card .media::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top, #1a0e19, transparent 65%), linear-gradient(90deg, #20061333, transparent); }
+.card .media img { opacity: .9; }
+.card .ribbon { top: 16px; right: 16px; transform: none; transform-origin: center; padding: 5px 13px; border: 1px solid #ff597a88; border-radius: 8px; background: #300d1ee6; color: #ffb3c4; font-size: 11px; }
+.card .body { display: flex; flex-direction: column; flex: 1; margin-top: 0; padding: 22px 24px 24px; border: 0; border-radius: 0; background: transparent; }
+.card .duration { left: auto; right: 24px; top: -35px; transform: none; padding: 5px 14px; border: 1px solid #a03f58; border-radius: 8px; color: #ffe2ea; background: #270e1f; font-size: 12px; line-height: 1.5; box-shadow: 0 4px 16px #0003; }
+.card .header { display: contents; }
+.card .header h3 { font-size: 24px; line-height: 1.5; font-weight: 800; }
+.card .divider { margin: 16px 0; }
+.card .divider > :first-child { background: linear-gradient(to left, #a52a4b, #a52a4b00); }
+.card .divider > :last-child { display: none; }
+.card .body > p { color: #baa9b5; font-size: 13px; line-height: 1.9; }
+.card .pricing { align-items: center; margin-top: auto; padding-top: 22px; padding-bottom: 20px; border-top: 0; }
+.card .pricing > :first-child { color: #bda5b3; font-size: 11px; line-height: 1.8; }
+.card .pricing > :first-child p { justify-content: flex-start; }
+.card .pricing > :last-child { align-items: baseline; gap: 5px; border-radius: 0; box-shadow: none; background: transparent !important; ring: none; --tw-ring-shadow: 0 0 #0000; }
+.card .pricing > :last-child > :first-child { padding: 0; font-size: 13px; color: #d3a1b2; }
+.card .pricing > :last-child > :last-child { padding: 0; color: #fff; background: transparent; font-size: 34px; line-height: 1.4; letter-spacing: -.03em; }
+.card .actions { order: 4; display: flex; flex-direction: row; gap: 10px; width: 100%; padding-top: 18px; border-top: 1px solid #63304666; }
+.card .actions > :first-child { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 14px; border-width: 1px; border-color: #8a3c54 !important; border-radius: 11px; font-size: 12px; color: #ecd4df; }
+.card .actions > :last-child { display: flex; align-items: center; justify-content: center; order: -1; flex: 1; min-width: 0; min-height: 44px; padding: 10px 16px; border-radius: 11px; font-size: 13px; }
+.card .actions > :last-child:is(a, button:not([class*="emerald"])) { background-image: linear-gradient(180deg, #f20b35, #b00025); border: 1px solid #ff5276; box-shadow: inset 0 1px 0 #ffb6c633, 0 5px 18px #ec00331a; color: #fff; }
+.card .actions > :is(a, button):focus-visible { outline: 2px solid #ff9ab0; outline-offset: 4px; }
+.card .body > div:has([role="status"]), .card .body > div[role="status"], .card .feedback { order: 5; }
+@media (max-width: 700px) {
+  .card .body { padding: 20px; }
+  .card .header h3 { font-size: 22px; }
+  .card .duration { right: 20px; }
+  .card .pricing > :last-child > :last-child { font-size: 30px; }
+}
+@media (prefers-reduced-motion: reduce) { .card { transition: none; } }

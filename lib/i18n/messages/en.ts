@@ -239,7 +239,7 @@ export const enMessages: Messages = {
     introBack: "back",
     introAgain: "again",
     homepageSettingsDescription:
-      "Update homepage visuals and text in both Arabic and English.",
+      "Manage homepage text in Arabic and English.",
     addBalanceSettingsTitle: "Add balance page settings",
     addBalanceSettingsDescription:
       "Edit wallet numbers and all student-facing text for the add-balance page in both Arabic and English.",

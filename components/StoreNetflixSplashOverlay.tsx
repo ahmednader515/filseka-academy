@@ -4,20 +4,20 @@ import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import "./store-netflix-splash.css";
 
-/** تدرجات تركواز / سماوي / فيروزي — قريبة من لون الثيم */
+/** Light beams and strips share the platform's primary theme color. */
 const BEAM_COLORS = [
-  "#2dd4bf",
-  "#5eead4",
-  "#14b8a6",
-  "#0d9488",
-  "#22d3ee",
-  "#06b6d4",
-  "#67e8f9",
-  "#2dd4bf",
-  "#99f6e4",
-  "#0ea5e9",
-  "#38bdf8",
-  "#5eead4",
+  "var(--nfs-primary)",
+  "color-mix(in srgb, var(--nfs-primary) 85%, white)",
+  "color-mix(in srgb, var(--nfs-primary) 90%, black)",
+  "color-mix(in srgb, var(--nfs-primary) 70%, black)",
+  "color-mix(in srgb, var(--nfs-primary) 95%, white)",
+  "color-mix(in srgb, var(--nfs-primary) 80%, black)",
+  "color-mix(in srgb, var(--nfs-primary) 75%, white)",
+  "var(--nfs-primary)",
+  "color-mix(in srgb, var(--nfs-primary) 65%, white)",
+  "color-mix(in srgb, var(--nfs-primary) 85%, black)",
+  "color-mix(in srgb, var(--nfs-primary) 90%, white)",
+  "color-mix(in srgb, var(--nfs-primary) 85%, white)",
 ];
 
 /** أقل شرائح = أقل عمل رسم أثناء الحركة */

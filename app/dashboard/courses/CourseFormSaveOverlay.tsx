@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 type Props = { open: boolean; title: string; subtitle?: string };
 
-/** طبقة تحميل فوق الصفحة أثناء حفظ/إنشاء الدورة (قد يطول الطلب) */
+/** طبقة تحميل فوق الصفحة أثناء حفظ/إنشاء الكورس (قد يطول الطلب) */
 export function CourseFormSaveOverlay({ open, title, subtitle }: Props) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);

@@ -32,7 +32,7 @@ export async function GET(
 
     const isPublished = result.course.isPublished ?? result.course.is_published;
     if (!isPublished) {
-      return NextResponse.json({ error: "الدورة غير منشورة" }, { status: 404 });
+      return NextResponse.json({ error: "الكورس غير منشور" }, { status: 404 });
     }
 
     const courseId = (result.quiz.courseId ?? result.quiz.course_id) as string;
@@ -48,7 +48,7 @@ export async function GET(
       if (!enrolled && !fullCourse) {
         const allowedQuizIds = await getAllowedQuizIdsForUserCourse(session.user.id, courseId);
         if (!allowedQuizIds.includes(quizId)) {
-          return NextResponse.json({ error: "غير مسجّل في هذه الدورة أو لا تملك صلاحية لهذا الاختبار" }, { status: 403 });
+          return NextResponse.json({ error: "غير مسجّل في هذا الكورس أو لا تملك صلاحية لهذا الاختبار" }, { status: 403 });
         }
       }
     }
@@ -160,7 +160,7 @@ export async function POST(
     const enrolled = await getEnrollment(session.user.id, courseId);
     const fullCourse = await hasFullCourseAccessAsStudent(session.user.id, courseId);
     if (!enrolled && !fullCourse) {
-      return NextResponse.json({ error: "غير مسجّل في هذه الدورة" }, { status: 403 });
+      return NextResponse.json({ error: "غير مسجّل في هذا الكورس" }, { status: 403 });
     }
 
     const maxAttempts = result.course.max_quiz_attempts ?? result.course.maxQuizAttempts;

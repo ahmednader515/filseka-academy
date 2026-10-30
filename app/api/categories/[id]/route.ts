@@ -1,7 +1,28 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { categoryIsManageableOnDashboard, deleteCategory } from "@/lib/db";
+import { categoryIsManageableOnDashboard, deleteCategory, sql } from "@/lib/db";
+import { categoryInput } from "@/lib/category-validation";
+import { revalidateHomepageCaches } from "@/lib/revalidate-homepage";
+
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session || !["ADMIN", "ASSISTANT_ADMIN"].includes(session.user.role)) return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+  const { id } = await params;
+  if (!await categoryIsManageableOnDashboard(id, session.user.id, session.user.role)) return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+  const parsed = categoryInput.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "تحقق من الأسماء والترتيب." }, { status: 400 });
+  try {
+    const d = parsed.data;
+    const rows = await sql`UPDATE "Category" SET name = ${d.name}, name_ar = ${d.nameAr}, description = ${d.description}, image_url = ${d.imageUrl || null}, "order" = ${d.order}, updated_at = NOW() WHERE id = ${id} RETURNING id`;
+    if (!rows.length) return NextResponse.json({ error: "القسم غير موجود" }, { status: 404 });
+    revalidateHomepageCaches();
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    const duplicate = (error as { code?: string }).code === "23505";
+    return NextResponse.json({ error: duplicate ? "رابط القسم مستخدم بالفعل." : "تعذر حفظ القسم." }, { status: duplicate ? 409 : 500 });
+  }
+}
 
 /** حذف قسم — الأدمن/المساعد: أقسام المنصة وأقسام الأدمن فقط؛ الخبير: أقسامه فقط. الكورسات المرتبطة تصبح بدون قسم */
 export async function DELETE(
@@ -29,6 +50,7 @@ export async function DELETE(
 
   try {
     await deleteCategory(id);
+    revalidateHomepageCaches();
     return NextResponse.json({ success: true });
   } catch (e) {
     console.error("API categories [id] DELETE:", e);

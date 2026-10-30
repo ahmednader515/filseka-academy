@@ -135,7 +135,7 @@ export function HomeworkSubmitSection({ courseId }: { courseId: string }) {
         تسليم الواجب
       </h2>
       <p className="mt-1 text-sm text-[var(--color-muted)]">
-        يمكنك إرسال رابط أو ملف PDF أو صورة كواجب لهذه الدورة.
+        يمكنك إرسال رابط أو ملف PDF أو صورة كواجب لهذا الكورس.
       </p>
       {error && (
         <div className="mt-3 rounded-[var(--radius-btn)] bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400">

@@ -1,15 +1,18 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { LoginIcon, LoginScene } from "@/components/AuthScene";
 import { CONCURRENT_SESSION_ERROR } from "@/lib/auth-constants";
-import LoginBackground from "./LoginBackground";
-import { useT } from "@/components/LocaleProvider";
+import { useLocale, useT } from "@/components/LocaleProvider";
 
 function LoginForm() {
   const t = useT();
+  const ar = useLocale() === "ar";
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberEmail, setRememberEmail] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,7 +23,28 @@ function LoginForm() {
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
   const reasonElsewhere = searchParams.get("reason") === "session_ended_elsewhere";
 
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      try {
+        setEmail(localStorage.getItem("filseka-login-email") ?? "");
+      } catch {
+        // Login remains available when browser storage is disabled.
+      }
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  function rememberIdentifier() {
+    try {
+      if (rememberEmail) localStorage.setItem("filseka-login-email", email);
+      else localStorage.removeItem("filseka-login-email");
+    } catch {
+      // Remembering the identifier is optional; never store the password.
+    }
+  }
+
   function navigateToCallback() {
+    rememberIdentifier();
     try {
       const destination = new URL(callbackUrl, window.location.origin);
       const safeDestination =
@@ -86,152 +110,69 @@ function LoginForm() {
     }
   }
 
-  if (concurrentSession) {
-    return (
-      <div className="relative mx-auto flex min-h-[calc(100vh-8rem)] w-full max-w-none flex-col overflow-hidden bg-black">
-        <LoginBackground />
-        <div className="pointer-events-none absolute inset-0 z-[1] bg-black/55" />
-        <div className="relative z-10 flex flex-1 items-center justify-center px-4 py-12">
-          <div className="w-full max-w-md rounded-[var(--radius-card)] border border-amber-200 bg-amber-50/50 p-6 dark:border-amber-800 dark:bg-amber-900/20 sm:p-8">
-          <h1 className="text-xl font-bold text-amber-800 dark:text-amber-200">
-            {t("auth.login.concurrentTitle", "This account is active on another device")}
-          </h1>
-          <p className="mt-2 text-sm text-amber-700 dark:text-amber-300">
-            {t("auth.login.concurrentDescription", "This account is currently logged in from another device or browser. To continue here, log out the other device first.")}
-          </p>
-          <p className="mt-3 text-sm text-amber-700 dark:text-amber-300">
-            {t("auth.login.concurrentSecurityHint", "If you suspect your account was compromised, update your password and account details from \"Edit account\" after logging in.")}
-          </p>
-          {error && (
-            <div className="mt-4 rounded-[var(--radius-btn)] bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400">
-              {error}
-            </div>
-          )}
-          <form onSubmit={handleForceLogoutOther} className="mt-6">
-            <button
-              type="submit"
-              disabled={forceLogoutLoading}
-              className="w-full rounded-[var(--radius-btn)] bg-[var(--color-primary)] py-2.5 font-medium text-white hover:bg-[var(--color-primary-hover)] disabled:opacity-50"
-            >
-              {forceLogoutLoading
-                ? t("auth.login.concurrentActionLoading", "Processing...")
-                : t("auth.login.concurrentAction", "Log out the other device and continue here")}
-            </button>
-          </form>
-          <button
-            type="button"
-            onClick={() => setConcurrentSession(false)}
-            className="mt-4 w-full text-sm text-[var(--color-muted)] hover:underline"
-          >
-            {t("auth.login.concurrentCancel", "Cancel and go back to login")}
-          </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="relative mx-auto flex min-h-[calc(100vh-8rem)] w-full max-w-none flex-col overflow-hidden bg-black">
-      <LoginBackground />
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-black/55" />
-      <div className="relative z-10 flex flex-1 items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)] sm:p-8">
-        <h1 className="text-2xl font-bold text-[var(--color-foreground)]">
-          {t("auth.login.title", "Log in")}
-        </h1>
-        <p className="mt-1 text-sm text-[var(--color-muted)]">
-          {t("auth.login.subtitle", "Enter your details to access your account")}
-        </p>
-        {reasonElsewhere && (
-          <div className="mt-4 rounded-[var(--radius-btn)] border border-amber-200 bg-amber-50/50 px-3 py-2 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-200">
-            {t("auth.login.sessionEndedElsewhere", "You were logged out because this account was opened on another device. Log in again here if you want.")}
+    <LoginScene>
+      <section className="login-card" aria-labelledby="login-title" dir={ar ? "rtl" : "ltr"}>
+        <div className="login-user-badge"><LoginIcon name="user" /></div>
+        <h1 id="login-title">{t("auth.login.title", "Log in")}</h1>
+        <span className="login-brush" aria-hidden="true" />
+        <p className="login-welcome">{ar ? "مرحبًا بعودتك إلى في السكة أكاديمي" : "Welcome back to Filsaka Academy"}</p>
+        {concurrentSession ? (
+          <div className="login-session-notice" role="alert">
+            <h2>{t("auth.login.concurrentTitle")}</h2>
+            <p>{t("auth.login.concurrentDescription")}</p>
+            <p>{t("auth.login.concurrentSecurityHint")}</p>
+            {error && <p className="login-error">{error}</p>}
+            <form onSubmit={handleForceLogoutOther}>
+              <button className="login-submit" disabled={forceLogoutLoading}>
+                {forceLogoutLoading ? t("auth.login.concurrentActionLoading") : t("auth.login.concurrentAction")}
+              </button>
+            </form>
+            <button type="button" className="login-cancel" onClick={() => setConcurrentSession(false)}>{t("auth.login.concurrentCancel")}</button>
           </div>
-        )}
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          {error && (
-            <div className="rounded-[var(--radius-btn)] bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400">
-              {error}
+        ) : (
+          <form onSubmit={handleSubmit} className="login-form">
+            {reasonElsewhere && <p className="login-notice" role="status">{t("auth.login.sessionEndedElsewhere")}</p>}
+            {error && <p className="login-error" role="alert">{error}</p>}
+            <div className="login-field">
+              <label htmlFor="email" className="sr-only">{t("auth.login.emailOrPhoneLabel")}</label>
+              <LoginIcon name="mail" />
+              <input id="email" type="text" autoComplete="username" autoCapitalize="none" spellCheck={false} value={email} onChange={(e) => setEmail(e.target.value)} required placeholder={ar ? "البريد الإلكتروني أو رقم الهاتف" : "Email or phone number"} />
             </div>
-          )}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-[var(--color-foreground)]"
-            >
-              {t("auth.login.emailOrPhoneLabel", "Email or phone number")}
-            </label>
-            <input
-              id="email"
-              type="text"
-              autoComplete="username"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="mt-1 w-full rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-[var(--color-foreground)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
-              placeholder={t("auth.login.emailOrPhonePlaceholder", "example@email.com or 01xxxxxxxxx")}
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-[var(--color-foreground)]"
-            >
-              {t("auth.login.passwordLabel", "Password")}
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="mt-1 w-full rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-[var(--color-foreground)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
-            />
-            <p className="mt-1.5 text-xs text-[var(--color-muted)]">
-              <Link href="/login/forgot-password" className="text-[var(--color-primary)] hover:underline">
-                {t("auth.login.forgotPassword", "Forgot password?")}
-              </Link>
-            </p>
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-[var(--radius-btn)] bg-[var(--color-primary)] py-2.5 font-medium text-white transition hover:bg-[var(--color-primary-hover)] disabled:opacity-50"
-          >
-            {loading ? t("auth.login.submitting", "Logging in...") : t("auth.login.submit", "Log in")}
-          </button>
-        </form>
-        <p className="mt-6 text-center text-sm text-[var(--color-muted)]">
-          {t("auth.login.noAccount", "Don't have an account?")}{" "}
-          <Link
-            href="/register"
-            className="font-medium text-[var(--color-primary)] hover:underline"
-          >
-            {t("auth.login.createAccount", "Create account")}
-          </Link>
-        </p>
+            <div className="login-field">
+              <label htmlFor="password" className="sr-only">{t("auth.login.passwordLabel")}</label>
+              <LoginIcon name="lock" />
+              <input id="password" type={showPassword ? "text" : "password"} autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder={t("auth.login.passwordLabel")} />
+              <button type="button" className="login-password-toggle" aria-label={showPassword ? (ar ? "إخفاء كلمة المرور" : "Hide password") : (ar ? "إظهار كلمة المرور" : "Show password")} aria-pressed={showPassword} onClick={() => setShowPassword(!showPassword)}><LoginIcon name={showPassword ? "eye-off" : "eye"} /></button>
+            </div>
+            <div className="login-options">
+              <label className="login-remember" title={ar ? "حفظ البريد الإلكتروني أو رقم الهاتف على هذا الجهاز" : "Remember your email or phone on this device"}>
+                <input type="checkbox" checked={rememberEmail} onChange={(e) => {
+                  setRememberEmail(e.target.checked);
+                  if (!e.target.checked) {
+                    try { localStorage.removeItem("filseka-login-email"); } catch { /* Storage is optional. */ }
+                  }
+                }} />
+                {ar ? "تذكرني" : "Remember me"}
+              </label>
+              <Link href="/login/forgot-password">{ar ? "نسيت كلمة المرور؟" : "Forgot password?"}</Link>
+            </div>
+            <button type="submit" disabled={loading} className="login-submit">
+              <LoginIcon name="enter" />
+              {loading ? t("auth.login.submitting") : t("auth.login.submit")}
+            </button>
+          </form>
+        )}
+        <div className="login-register">
+          <span>{t("auth.login.noAccount")}</span>
+          <Link href="/register"><LoginIcon name="user-plus" />{ar ? "إنشاء حساب جديد" : "Create an account"}</Link>
         </div>
-      </div>
-    </div>
+      </section>
+    </LoginScene>
   );
 }
 
 export default function LoginPage() {
-  return (
-    <Suspense fallback={
-      <div className="relative mx-auto flex min-h-[calc(100vh-8rem)] w-full max-w-none flex-col overflow-hidden bg-black">
-        <LoginBackground />
-        <div className="pointer-events-none absolute inset-0 z-[1] bg-black/55" />
-        <div className="relative z-10 flex flex-1 items-center justify-center px-4 py-12">
-          <div className="w-full max-w-md rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-8">
-            <div className="h-8 w-48 animate-pulse rounded bg-[var(--color-border)]" />
-            <div className="mt-4 h-4 w-full animate-pulse rounded bg-[var(--color-border)]" />
-            <div className="mt-4 h-4 w-full animate-pulse rounded bg-[var(--color-border)]" />
-          </div>
-        </div>
-      </div>
-    }>
-      <LoginForm />
-    </Suspense>
-  );
+  return <Suspense fallback={<LoginScene><div className="login-card login-skeleton" aria-busy="true"><div /><div /><div /></div></LoginScene>}><LoginForm /></Suspense>;
 }

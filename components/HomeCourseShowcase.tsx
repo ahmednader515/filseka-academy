@@ -24,7 +24,7 @@ export function HomeCourseShowcase({
   const courseHref = `/courses/${encodeURIComponent(course.slug)}`;
 
   return (
-    <section className="filseka-showcase mx-auto max-w-[1440px] px-5 py-8 sm:px-10 sm:py-12 lg:px-16" aria-label={ar ? "دورة مميزة" : "Featured course"}>
+    <section className="filseka-showcase mx-auto max-w-[1440px] px-5 py-8 sm:px-10 sm:py-12 lg:px-16" aria-label={ar ? "كورس مميز" : "Featured course"}>
       <div>
         <article className="filseka-showcase-feature group relative grid min-h-[300px] overflow-hidden rounded-2xl border border-white/10 bg-[#101010] sm:min-h-[350px] sm:grid-cols-2">
           <div className="filseka-showcase-art relative min-h-[190px] overflow-hidden sm:min-h-full">

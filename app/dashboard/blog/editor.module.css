@@ -1,0 +1,53 @@
+.editorLayout { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr); align-items: start; gap: 24px; }
+.editorPanel, .postsPanel { min-width: 0; padding: 22px; border: 1px solid #a3396255; border-radius: 20px; background: #ffffff06; }
+.editorLayout :is(input, textarea, select, button, a):focus-visible { outline: 2px solid #ff90b0; outline-offset: 3px; }
+.editorHeading, .listHeading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; }
+.editorHeading h3, .listHeading h3 { font-size: 22px; font-weight: 850; }
+.editorHeading > button, .listHeading > a { padding: 8px 12px; border: 1px solid #c4587d66; border-radius: 11px; color: #ffaccb; font-size: 12px; cursor: pointer; }
+.editorTabs { display: flex; gap: 8px; margin-bottom: 22px; }
+.editorTabs button { flex: 1; min-height: 42px; padding: 8px 15px; border: 1px solid #ffffff25; border-radius: 12px; background: #ffffff04; font-size: 13px; font-weight: 750; cursor: pointer; }
+.editorTabs button[aria-pressed="true"] { border-color: #ef467b; background: #9b003e55; color: #ffccdf; }
+.form, .fields { display: grid; min-width: 0; gap: 19px; }
+.fields { margin: 0; padding: 0; border: 0; }
+.fields:disabled { opacity: .65; }
+.editorLayout label { display: grid; gap: 8px; min-width: 0; color: #e7c9d9; font-size: 13px; line-height: 1.8; }
+.editorLayout :is(input:not([type="checkbox"]), textarea, select) { width: 100%; min-width: 0; padding: 12px; border: 1px solid #ffffff2b; border-radius: 12px; background: #100a0f; color: #fff1f7; font: inherit; font-size: 13px; }
+.editorLayout textarea { resize: vertical; line-height: 2; }
+.editorLayout option { background: #21131c; }
+.editorLayout label > small { color: #b594a7; font-size: 10px; overflow-wrap: anywhere; }
+.bodyInput { min-height: 340px; }
+.editorLayout .check { display: flex; align-items: center; gap: 11px; }
+.check input { width: 19px; height: 19px; accent-color: #f12b6b; flex-shrink: 0; }
+.hint { color: #b79aa9; font-size: 11px; line-height: 1.9; }
+.upload { padding: 14px; border: 1px dashed #8b4160; border-radius: 12px; background: #4c0b271a; }
+.editorLayout .upload input { border: 0; background: transparent; padding: 4px 0; font-size: 11px; }
+.translation { min-width: 0; border: 1px solid #ffffff1f; border-radius: 12px; padding: 13px; }
+.translation summary { color: #dcaac2; font-size: 13px; cursor: pointer; }
+.translation label { margin-top: 15px; }
+.save { min-height: 47px; padding: 10px 20px; border: 1px solid #ff5484; border-radius: 12px; background: linear-gradient(#d40047, #89002d); color: white; font-size: 15px; font-weight: 800; cursor: pointer; }
+.save:hover:not(:disabled) { background: #ed1b5d; }
+.editorLayout button:disabled { cursor: default; opacity: .5; }
+.error, .success { border: 1px solid; border-radius: 12px; padding: 13px; font-size: 12px; line-height: 1.9; }
+.error { color: #ffd2df; background: #560d29; border-color: #b54169; }
+.success { color: #c6ffe9; background: #12372b; border-color: #478d76; }
+.postsPanel > label { margin-bottom: 12px; }
+.postList { display: grid; gap: 14px; margin-top: 20px; }
+.postList article { display: flex; align-items: flex-start; gap: 13px; padding: 14px; border: 1px solid #ffffff25; border-radius: 16px; background: #ffffff04; }
+.postList article.selectedPost { border-color: #ec5b8b; background: #71032b25; }
+.postList article > img { width: 75px; height: 65px; object-fit: cover; flex-shrink: 0; border-radius: 10px; }
+.postList article > div { flex: 1; min-width: 0; }
+.postList h4 { font-size: 14px; font-weight: 800; line-height: 1.8; overflow-wrap: anywhere; }
+.postList p { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 7px; font-size: 10px; color: #e9acc8; }
+.postList small { display: block; margin-top: 7px; font-size: 10px; color: #b190a2; }
+.published, .draft { display: inline-block; padding: 2px 7px; border: 1px solid #439a7666; border-radius: 99px; color: #a8f2d1; background: #12442b55; }
+.draft { border-color: #ab835466; color: #eccc9b; background: #59402255; }
+.postActions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.postActions > :is(button, a) { min-height: 35px; padding: 5px 11px; border: 1px solid #c54e7d55; border-radius: 9px; color: #ffb8d3; font-size: 11px; cursor: pointer; }
+.empty { padding: 25px 15px; border: 1px dashed #82415e; border-radius: 14px; color: #b99aaa; text-align: center; font-size: 13px; line-height: 1.9; }
+.preview h2 { font-size: 27px; font-weight: 850; line-height: 1.7; margin-block: 18px 12px; }
+.preview > .check { margin-bottom: 15px; }
+.preview > div > p { color: #d5b7c7; font-size: 15px; line-height: 2; }
+.coverPreview { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 14px; }
+.preview > .hint { margin-top: 22px; }
+@media (max-width: 1000px) { .editorLayout { grid-template-columns: minmax(0, 1fr); } .postsPanel { grid-row: 1; } .postList { max-height: 420px; overflow-y: auto; padding: 3px; } }
+@media (max-width: 600px) { .editorPanel, .postsPanel { padding: 17px 14px; } .postList article { padding: 12px; gap: 10px; } .postList article > img { width: 62px; height: 58px; } .postList h4 { font-size: 13px; } .editorHeading h3, .listHeading h3 { font-size: 20px; } }

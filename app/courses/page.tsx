@@ -1,6 +1,8 @@
 import { unstable_noStore } from "next/cache";
-import { getCoursesPublished, getTeacherIdsExcludedFromPublicCourseLists, getUserById } from "@/lib/db";
-import { redirect } from "next/navigation";
+import { getCategories, getCoursesPublished, getTeacherIdsExcludedFromPublicCourseLists, getUserById } from "@/lib/db";
+import { notFound, redirect } from "next/navigation";
+import Link from "next/link";
+import { AcademyIcon } from "@/components/AcademyIcon";
 import { TeacherCoursesSearch, type TeacherCourseListItem } from "./TeacherCoursesSearch";
 import { getLocaleFromCookie, getServerTranslator } from "@/lib/i18n/server";
 import { pickLocalizedText } from "@/lib/i18n/localized-field";
@@ -17,12 +19,12 @@ export async function generateMetadata() {
   };
 }
 
-type Props = { searchParams: Promise<{ category?: string; teacher?: string }> };
+type Props = { searchParams: Promise<{ category?: string; teacher?: string; q?: string }> };
 
 export default async function CoursesPage({ searchParams }: Props) {
   unstable_noStore();
   const [t, locale] = await Promise.all([getServerTranslator(), getLocaleFromCookie()]);
-  const { category: categorySlug, teacher: teacherId } = await searchParams;
+  const { category: categorySlug, teacher: teacherId, q } = await searchParams;
   let courses: Awaited<ReturnType<typeof getCoursesPublished>> = [];
   try {
     courses = await getCoursesPublished(true);
@@ -31,6 +33,12 @@ export default async function CoursesPage({ searchParams }: Props) {
   }
 
   const hideTeacherCreators = await getTeacherIdsExcludedFromPublicCourseLists();
+  const categories = await getCategories().catch(() => []);
+  const selectedCategory = categories.find((category) => category.slug === categorySlug?.trim());
+  if (categorySlug?.trim() && !selectedCategory) notFound();
+  const ar = locale === "ar";
+  const localizedCategoryName = (category: typeof categories[number]) => pickLocalizedText(locale,
+    (category as typeof category & { nameAr?: string | null }).nameAr ?? category.name_ar, category.name);
 
   let teacherName: string | null = null;
   const tid = teacherId?.trim();
@@ -62,18 +70,14 @@ export default async function CoursesPage({ searchParams }: Props) {
   }
 
   const categoryName =
-    categorySlug && filtered.length > 0
-      ? pickLocalizedText(
-          locale,
-          (filtered[0] as { category?: { nameAr?: string | null; name?: string | null } }).category?.nameAr ?? null,
-          (filtered[0] as { category?: { name?: string | null } }).category?.name ?? null,
-        )
+    selectedCategory
+      ? localizedCategoryName(selectedCategory)
       : null;
 
   const pageTitle = teacherName
     ? `${t("courses.teacherCoursesPrefix", "Courses by")} ${teacherName}`
     : categoryName
-      ? `${t("courses.categoryCoursesPrefix", "Category courses:")} ${categoryName}`
+      ? categoryName
       : t("courses.allCoursesTitle", "All courses");
 
   const pageSubtitle = teacherName
@@ -83,14 +87,27 @@ export default async function CoursesPage({ searchParams }: Props) {
       : t("courses.allCoursesSubtitle", "Choose the right course and start learning step by step");
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold text-[var(--color-foreground)]">{pageTitle}</h1>
-        <p className="mt-2 text-[var(--color-muted)]">{pageSubtitle}</p>
-      </div>
+    <div className="academy-course-catalog" dir={ar ? "rtl" : "ltr"}>
+      <nav className="academy-catalog-breadcrumb" aria-label={ar ? "مسار التنقل" : "Breadcrumb"}>
+        <Link href="/">{ar ? "الرئيسية" : "Home"}</Link><span aria-hidden="true">/</span>
+        {categoryName ? <><Link href="/courses">{ar ? "الكورسات" : "Courses"}</Link><span aria-hidden="true">/</span><span aria-current="page">{categoryName}</span></> : <span aria-current="page">{pageTitle}</span>}
+      </nav>
+      <header className="academy-catalog-hero">
+        <div className="academy-catalog-icon"><AcademyIcon name="book" /></div>
+        <div><span className="academy-catalog-eyebrow">{ar ? "تعلّم. أبدع. اصنع تأثيرك." : "Learn. Create. Make an impact."}</span>
+          <h1>{pageTitle}</h1><p>{pageSubtitle}</p>
+        </div>
+        <span className="academy-catalog-count"><strong>{filtered.length}</strong>{ar ? "كورس تدريبي" : "courses"}</span>
+      </header>
+      <nav className="academy-catalog-filters" aria-label={ar ? "أقسام الكورسات" : "Course categories"}>
+        <Link href={tid ? `/courses?teacher=${encodeURIComponent(tid)}` : "/courses"} aria-current={!selectedCategory ? "page" : undefined}>{ar ? "جميع الكورسات" : "All courses"}</Link>
+        {categories.map((category) => <Link key={category.id} href={`/courses?category=${encodeURIComponent(category.slug)}${tid ? `&teacher=${encodeURIComponent(tid)}` : ""}`} aria-current={selectedCategory?.id === category.id ? "page" : undefined}>{localizedCategoryName(category)}</Link>)}
+      </nav>
 
       {filtered.length > 0 ? (
         <TeacherCoursesSearch
+          key={JSON.stringify([categorySlug, teacherId, q])}
+          initialQuery={q?.trim() ?? ""}
           courses={filtered as TeacherCourseListItem[]}
           groupByCategory={!!tid}
         />

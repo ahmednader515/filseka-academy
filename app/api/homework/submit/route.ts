@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       (await getEnrollment(session.user.id, finalCourseId)) ||
       (await hasFullCourseAccessAsStudent(session.user.id, finalCourseId));
     if (!canSubmit) {
-      return NextResponse.json({ error: "يجب التسجيل في الدورة أولاً" }, { status: 403 });
+      return NextResponse.json({ error: "يجب التسجيل في الكورس أولاً" }, { status: 403 });
     }
     if (type === "link") {
       const linkUrl = body.linkUrl?.trim();
@@ -68,17 +68,17 @@ export async function POST(request: NextRequest) {
   }
 
   if (!courseId) {
-    return NextResponse.json({ error: "معرف الحصة أو الدورة مطلوب" }, { status: 400 });
+    return NextResponse.json({ error: "معرف الحصة أو الكورس مطلوب" }, { status: 400 });
   }
   const course = await getCourseById(courseId);
   if (!course || !(course as { accepts_homework?: boolean }).accepts_homework) {
-    return NextResponse.json({ error: "الدورة غير موجودة أو لا تقبل تسليم واجبات" }, { status: 404 });
+    return NextResponse.json({ error: "الكورس غير موجود أو لا تقبل تسليم واجبات" }, { status: 404 });
   }
   const canSubmitCourse =
     (await getEnrollment(session.user.id, courseId)) ||
     (await hasFullCourseAccessAsStudent(session.user.id, courseId));
   if (!canSubmitCourse) {
-    return NextResponse.json({ error: "يجب التسجيل في الدورة أولاً" }, { status: 403 });
+    return NextResponse.json({ error: "يجب التسجيل في الكورس أولاً" }, { status: 403 });
   }
   if (type === "link") {
     const linkUrl = body.linkUrl?.trim();

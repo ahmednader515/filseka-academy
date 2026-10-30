@@ -16,6 +16,7 @@ import { getYouTubeVideoId } from "@/lib/youtube";
 import { CourseOutlineSidebar } from "@/components/CourseOutlineSidebar";
 import { LessonHomeworkSection } from "./LessonHomeworkSection";
 import { LessonRatingSection } from "./LessonRatingSection";
+import { CourseCompletion } from "@/components/CourseCompletion";
 import { getLocaleFromCookie, getServerTranslator } from "@/lib/i18n/server";
 import { pickLocalizedText } from "@/lib/i18n/localized-field";
 
@@ -158,6 +159,7 @@ export default async function LessonPage({ params }: Props) {
         {/* محتوى الحصة — دائماً العمود العريض */}
         <article className="min-w-0 lg:col-start-1 lg:row-start-1">
           <h1 className="text-2xl font-bold text-[var(--color-foreground)]">{lessonTitle}</h1>
+          {isStudent && <CourseCompletion courseId={course.id} lessonId={String(lessonObj.id)} />}
 
           {youtubeVideoId ? (
             <LessonWatchShell

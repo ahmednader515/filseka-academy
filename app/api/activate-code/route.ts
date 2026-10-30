@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getActivationCodeByCode, useActivationCode, getEnrollment } from "@/lib/db";
 
-/** تفعيل كود مجاني لدورة — للطالب فقط */
+/** تفعيل كود مجاني لكورس — للطالب فقط */
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "STUDENT") {
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 
   const alreadyEnrolled = await getEnrollment(session.user.id, courseId);
   if (alreadyEnrolled) {
-    return NextResponse.json({ error: "أنت مسجّل أصلاً في هذه الدورة" }, { status: 400 });
+    return NextResponse.json({ error: "أنت مسجّل أصلاً في هذا الكورس" }, { status: 400 });
   }
 
   const result = await useActivationCode(row.id, session.user.id);
@@ -41,8 +41,8 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     success: true,
     message: isPartial
-      ? "تم تفعيل الكود وإتاحة حصص محددة داخل الدورة بنجاح"
-      : "تم تفعيل الكود والتسجيل في الدورة بنجاح",
+      ? "تم تفعيل الكود وإتاحة حصص محددة داخل الكورس بنجاح"
+      : "تم تفعيل الكود والتسجيل في الكورس بنجاح",
     courseId: result.courseId,
     scope: isPartial ? "partial" : "full",
   });

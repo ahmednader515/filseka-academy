@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRef, useState } from "react";
+import { useLocale } from "./LocaleProvider";
+import { AcademyIcon } from "./AcademyIcon";
 import { TeacherPublicCard, type TeacherCardCourse } from "@/components/TeacherPublicCard";
 import type { ResolvedHomepageCopy } from "@/lib/homepage-copy";
 
@@ -11,6 +14,10 @@ export type HomeTeacher = {
   teacherAvatarUrl: string | null;
   createdAt: string;
   courses: TeacherCardCourse[];
+  nameEn?: string;
+  teacherSubjectEn?: string;
+  isDemo?: boolean;
+  demoAvatarPosition?: string;
 };
 
 /** قسم الصفحة الرئيسية «اختر المعلمين» — يظهر فقط عند تفعيل الميزة من السيرفر */
@@ -18,15 +25,65 @@ export function HomeTeachersSection({
   enabled,
   initialTeachers,
   copy,
+  variant = "default",
 }: {
   enabled: boolean;
   initialTeachers: HomeTeacher[];
   copy: ResolvedHomepageCopy;
+  variant?: "default" | "spotlight";
 }) {
-  /** الترتيب يُحدَّد من السيرفر (محددون من لوحة التحكم ثم أبجدي حتى 4). */
-  const visible = initialTeachers;
+  const [startIndex, setStartIndex] = useState(0);
+  const visible = variant === "spotlight"
+    ? [...initialTeachers.slice(startIndex), ...initialTeachers.slice(0, startIndex)]
+    : initialTeachers;
+  const ar = useLocale() === "ar";
+  const track = useRef<HTMLDivElement>(null);
+
+  function move(direction: 1 | -1) {
+    const element = track.current;
+    if (!element || initialTeachers.length < 2) return;
+    const maximum = element.scrollWidth - element.clientWidth;
+    if (maximum <= 2) {
+      // Cycle the actual profiles when the viewport can show all of them.
+      setStartIndex((current) => (current + direction + initialTeachers.length) % initialTeachers.length);
+      return;
+    }
+    const position = Math.abs(element.scrollLeft);
+    const sign = ar ? -1 : 1;
+    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth";
+    if (direction === 1 && position >= maximum - 2) element.scrollTo({ left: 0, behavior });
+    else if (direction === -1 && position <= 2) element.scrollTo({ left: maximum * sign, behavior });
+    else {
+      const cardWidth = element.firstElementChild?.getBoundingClientRect().width ?? 220;
+      element.scrollBy({ left: sign * direction * (cardWidth + 12), behavior });
+    }
+  }
 
   if (!enabled) return null;
+
+  if (variant === "spotlight") {
+    return <section className="academy-trainers academy-neon-section" dir={ar ? "rtl" : "ltr"} aria-labelledby="academy-trainers-title" aria-roledescription="carousel">
+      <div className="academy-section-intro">
+        <h2 id="academy-trainers-title"><AcademyIcon name="graduate" />{copy.trainersHeading}</h2>
+        <span className="academy-heading-stroke" aria-hidden="true" />
+        <p>{copy.trainersDescription}</p>
+        <Link href="/teachers" className="academy-neon-button">{copy.trainersButton}<span aria-hidden="true">‹</span></Link>
+      </div>
+      <div className="academy-trainer-carousel">
+        <button type="button" disabled={visible.length < 2} className="academy-carousel-arrow" aria-label={copy.trainersPrevious} onClick={() => move(-1)}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={ar ? "m9 5 7 7-7 7" : "m15 5-7 7 7 7"} /></svg></button>
+        <div ref={track} className="academy-trainer-track" tabIndex={0} aria-label={copy.trainersTrack} onKeyDown={(event) => {
+          if (event.target !== event.currentTarget) return;
+          if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+            event.preventDefault();
+            move((event.key === "ArrowRight") === ar ? -1 : 1);
+          }
+        }}>
+          {visible.length ? visible.map((teacher) => <TeacherPublicCard key={teacher.id} teacherId={teacher.id} name={!ar && teacher.nameEn ? teacher.nameEn : teacher.name} teacherSubject={!ar && teacher.teacherSubjectEn ? teacher.teacherSubjectEn : teacher.teacherSubject} teacherAvatarUrl={teacher.teacherAvatarUrl} courses={teacher.courses} titleTag="h3" variant="spotlight" isDemo={teacher.isDemo} demoAvatarPosition={teacher.demoAvatarPosition} demoLabel={copy.trainersDemo} />) : <p className="academy-empty-trainers">{copy.teachersEmpty}</p>}
+        </div>
+        <button type="button" disabled={visible.length < 2} className="academy-carousel-arrow" aria-label={copy.trainersNext} onClick={() => move(1)}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={ar ? "m15 5-7 7 7 7" : "m9 5 7 7-7 7"} /></svg></button>
+      </div>
+    </section>;
+  }
 
   return (
     <section

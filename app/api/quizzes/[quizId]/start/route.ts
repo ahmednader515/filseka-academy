@@ -34,7 +34,7 @@ export async function POST(
     const enrolled = await getEnrollment(session.user.id, courseId);
     const fullCourse = await hasFullCourseAccessAsStudent(session.user.id, courseId);
     if (!enrolled && !fullCourse) {
-      return NextResponse.json({ error: "غير مسجّل في هذه الدورة" }, { status: 403 });
+      return NextResponse.json({ error: "غير مسجّل في هذا الكورس" }, { status: 403 });
     }
 
     const maxAttempts = result.course.max_quiz_attempts ?? result.course.maxQuizAttempts;

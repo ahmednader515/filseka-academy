@@ -7,7 +7,7 @@ import { CourseFormSaveOverlay } from "../../CourseFormSaveOverlay";
 import { ImageAttachField } from "@/components/ImageAttachField";
 
 type CategoryOption = { id: string; name: string; nameAr?: string | null };
-type LessonRow = { title: string; videoUrl: string; content: string; pdfUrl: string; acceptsHomework: boolean; homeworkImageUrl: string };
+type LessonRow = { id?: string; title: string; videoUrl: string; content: string; pdfUrl: string; acceptsHomework: boolean; homeworkImageUrl: string };
 type QuestionOptionRow = { text: string; isCorrect: boolean };
 type QuestionRow = { type: "MULTIPLE_CHOICE" | "TRUE_FALSE"; questionText: string; questionImageUrl: string; options: QuestionOptionRow[] };
 type QuizRow = { title: string; timeLimitMinutes: string; questions: QuestionRow[] };
@@ -323,6 +323,7 @@ export function EditCourseForm({ courseId, initialData }: { courseId: string; in
         ? { categoryNameAr: form.categoryNameAr.trim(), categoryNameEn: form.categoryNameEn.trim() }
         : form.categoryId ? { categoryId: form.categoryId } : { categoryId: null }),
       lessons: validLessons.map((l) => ({
+        ...(l.id ? { id: l.id } : {}),
         title: l.title.trim(),
         videoUrl: l.videoUrl.trim() || undefined,
         content: l.content.trim() || undefined,

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed:homepage": "node scripts/seed-homepage-content.mjs"
+    "seed:homepage": "node scripts/seed-homepage-content.mjs",
+    "seed:demo-academy": "node scripts/seed-demo-academy.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.990.0",

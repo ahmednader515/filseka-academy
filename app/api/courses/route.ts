@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
 
   const exists = await courseExistsBySlug(slug.trim());
   if (exists) {
-    return NextResponse.json({ error: "رابط الدورة مستخدم مسبقاً" }, { status: 400 });
+    return NextResponse.json({ error: "رابط الكورس مستخدم مسبقاً" }, { status: 400 });
   }
 
   let categoryId: string | null = null;
@@ -131,14 +131,14 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("createCourse error:", err);
-    if (msg.includes("foreign key") || msg.includes("فشل إنشاء الدورة")) {
+    if (msg.includes("foreign key") || msg.includes("فشل إنشاء الكورس")) {
       return NextResponse.json(
-        { error: "فشل إنشاء الدورة. جرّب تسجيل الخروج ثم الدخول مرة أخرى (حسابك قد لا يكون في قاعدة البيانات الحالية)." },
+        { error: "فشل إنشاء الكورس. جرّب تسجيل الخروج ثم الدخول مرة أخرى (حسابك قد لا يكون في قاعدة البيانات الحالية)." },
         { status: 500 }
       );
     }
     return NextResponse.json(
-      { error: msg || "فشل إنشاء الدورة" },
+      { error: msg || "فشل إنشاء الكورس" },
       { status: 500 }
     );
   }

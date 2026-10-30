@@ -250,7 +250,7 @@ export function MessagesView({
     : null;
 
   return (
-    <div className="grid gap-4 md:grid-cols-[280px_1fr]">
+    <div className="student-messages grid gap-4 md:grid-cols-[280px_1fr]">
       <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
         {isStaff ? (
           <>
@@ -264,7 +264,7 @@ export function MessagesView({
             />
             <ul className="max-h-[420px] space-y-1 overflow-y-auto">
               {filteredStudents.map((s) => (
-                <li key={s.id}>
+                <li key={s.id} className="border-b border-[var(--color-border)] pb-1 last:border-b-0 last:pb-0">
                   <button
                     type="button"
                     onClick={() => openChatWithStudent(s.id)}
@@ -290,7 +290,7 @@ export function MessagesView({
                   const conv = conversations.find((c) => c.staffUserId === s.id);
                   const label = roleLabel(s.role);
                   return (
-                    <li key={s.id}>
+                    <li key={s.id} className="border-b border-[var(--color-border)] pb-1 last:border-b-0 last:pb-0">
                       <button
                         type="button"
                         onClick={() => (conv ? selectConversation(conv.id) : openChatWithStaff(s.id))}

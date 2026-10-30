@@ -3,16 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import LoginBackground from "@/app/login/LoginBackground";
-import { useT } from "@/components/LocaleProvider";
+import { LoginIcon, LoginScene } from "@/components/AuthScene";
+import { useLocale, useT } from "@/components/LocaleProvider";
 
 export default function RegisterPage() {
   const t = useT();
+  const ar = useLocale() === "ar";
+  const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [studentNumber, setStudentNumber] = useState("");
-  const [guardianNumber, setGuardianNumber] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -34,7 +35,6 @@ export default function RegisterPage() {
         password,
         name,
         student_number: studentNumber.trim() || undefined,
-        guardian_number: guardianNumber.trim() || undefined,
       }),
     });
     const data = await res.json().catch(() => ({}));
@@ -48,128 +48,42 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="relative mx-auto flex min-h-[calc(100vh-8rem)] w-full max-w-none items-center justify-center overflow-hidden bg-black px-4 py-12">
-      <LoginBackground />
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-black/55" />
-      <div className="relative z-10 w-full max-w-md rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)] sm:p-8">
-        <h1 className="text-2xl font-bold text-[var(--color-foreground)]">
-          {t("auth.register.title", "Create account")}
-        </h1>
-        <p className="mt-1 text-sm text-[var(--color-muted)]">
-          {t("auth.register.subtitle", "Register as a student to access courses and learn")}
-        </p>
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          {error && (
-            <div className="rounded-[var(--radius-btn)] bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400">
-              {error}
-            </div>
-          )}
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-[var(--color-foreground)]"
-            >
-              {t("auth.register.nameLabel", "Name")}
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              minLength={2}
-              className="mt-1 w-full rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-[var(--color-foreground)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
-              placeholder={t("auth.register.namePlaceholder", "Ahmed Mohamed")}
-            />
+    <LoginScene>
+      <section className="login-card register-card" dir={ar ? "rtl" : "ltr"} aria-labelledby="register-title">
+        <div className="login-user-badge"><LoginIcon name="user-plus" /></div>
+        <h1 id="register-title">{t("auth.register.title", "Create account")}</h1>
+        <span className="login-brush" aria-hidden="true" />
+        <p className="login-welcome">{t("auth.register.subtitle")}</p>
+        <form onSubmit={handleSubmit} className="login-form register-form">
+          {error && <p className="login-error" role="alert">{error}</p>}
+          <div className="login-field">
+            <label htmlFor="name" className="sr-only">{t("auth.register.nameLabel")}</label>
+            <LoginIcon name="user" />
+            <input id="name" type="text" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} required minLength={2} placeholder={t("auth.register.nameLabel")} />
           </div>
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-[var(--color-foreground)]"
-            >
-              {t("auth.register.emailLabel", "Email")}
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="mt-1 w-full rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-[var(--color-foreground)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
-              placeholder="example@email.com"
-            />
+          <div className="login-field">
+            <label htmlFor="email" className="sr-only">{t("auth.register.emailLabel")}</label>
+            <LoginIcon name="mail" />
+            <input id="email" type="email" autoComplete="email" autoCapitalize="none" spellCheck={false} value={email} onChange={(e) => setEmail(e.target.value)} required placeholder={t("auth.register.emailLabel")} />
           </div>
-          <div>
-            <label
-              htmlFor="student_number"
-              className="block text-sm font-medium text-[var(--color-foreground)]"
-            >
-              {t("auth.register.phoneLabel", "Phone number")}
-            </label>
-            <input
-              id="student_number"
-              type="tel"
-              inputMode="numeric"
-              value={studentNumber}
-              onChange={(e) => setStudentNumber(e.target.value)}
-              required
-              className="mt-1 w-full rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-right text-[var(--color-foreground)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
-              placeholder="01234567890"
-            />
-            <p className="mt-1 text-right text-xs text-[var(--color-muted)]">01234567890</p>
+          <div className="login-field">
+            <label htmlFor="student_number" className="sr-only">{t("auth.register.phoneLabel")}</label>
+            <LoginIcon name="phone" />
+            <input id="student_number" type="tel" inputMode="numeric" autoComplete="tel" value={studentNumber} onChange={(e) => setStudentNumber(e.target.value)} required placeholder={t("auth.register.phoneLabel")} title={t("auth.register.phoneMustBe11")} />
           </div>
-          <div>
-            <label
-              htmlFor="guardian_number"
-              className="block text-sm font-medium text-[var(--color-foreground)]"
-            >
-              {t("auth.register.parentPhoneLabel", "Guardian phone number")}
-            </label>
-            <input
-              id="guardian_number"
-              type="text"
-              value={guardianNumber}
-              onChange={(e) => setGuardianNumber(e.target.value)}
-              className="mt-1 w-full rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-[var(--color-foreground)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
-              placeholder={t("auth.register.parentPhonePlaceholder", "Guardian phone number")}
-            />
+          <div className="login-field">
+            <label htmlFor="password" className="sr-only">{t("auth.register.passwordLabel")}</label>
+            <LoginIcon name="lock" />
+            <input id="password" type={showPassword ? "text" : "password"} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} placeholder={t("auth.register.passwordPlaceholder")} />
+            <button type="button" className="login-password-toggle" aria-label={showPassword ? (ar ? "إخفاء كلمة المرور" : "Hide password") : (ar ? "إظهار كلمة المرور" : "Show password")} aria-pressed={showPassword} onClick={() => setShowPassword(!showPassword)}><LoginIcon name={showPassword ? "eye-off" : "eye"} /></button>
           </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-[var(--color-foreground)]"
-            >
-              {t("auth.register.passwordLabel", "Password")}
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="mt-1 w-full rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-[var(--color-foreground)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
-              placeholder={t("auth.register.passwordPlaceholder", "At least 6 characters")}
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-[var(--radius-btn)] bg-[var(--color-primary)] py-2.5 font-medium text-white transition hover:bg-[var(--color-primary-hover)] disabled:opacity-50"
-          >
-            {loading ? t("auth.register.submitting", "Creating account...") : t("auth.register.submit", "Create account")}
-          </button>
+          <button type="submit" disabled={loading} className="login-submit"><LoginIcon name="user-plus" />{loading ? t("auth.register.submitting") : t("auth.register.submit")}</button>
         </form>
-        <p className="mt-6 text-center text-sm text-[var(--color-muted)]">
-          {t("auth.register.hasAccount", "Already have an account?")}{" "}
-          <Link
-            href="/login"
-            className="font-medium text-[var(--color-primary)] hover:underline"
-          >
-            {t("auth.register.login", "Log in")}
-          </Link>
-        </p>
-      </div>
-    </div>
+        <div className="login-register">
+          <span>{t("auth.register.hasAccount")}</span>
+          <Link href="/login"><LoginIcon name="enter" />{t("auth.register.login")}</Link>
+        </div>
+      </section>
+    </LoginScene>
   );
 }

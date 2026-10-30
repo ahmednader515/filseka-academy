@@ -1,19 +1,20 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getLocaleFromCookie, getServerTranslator } from "@/lib/i18n/server";
+import type { ResolvedHomepageCopy } from "@/lib/homepage-copy";
 
 export async function Footer({
   footerTitle,
   footerTagline,
   footerCopyright,
-  logoUrl,
+  copy,
 }: {
+  copy: ResolvedHomepageCopy;
   footerTitle?: string;
   footerTagline?: string;
   footerCopyright?: string;
-  logoUrl?: string | null;
 }) {
   const [t, locale] = await Promise.all([getServerTranslator(), getLocaleFromCookie()]);
-  const ar = locale === "ar";
   const defaultTitle = t("footer.defaultTitle", "Filseka Academy");
   const defaultTagline = t("footer.defaultTagline", "تعلم بأسلوب حديث ومنهجية واضحة");
   const defaultCopyright = t("footer.defaultCopyright", "Filseka Academy. جميع الحقوق محفوظة.");
@@ -23,19 +24,19 @@ export async function Footer({
 
   const groups = [
     {
-      title: ar ? "اكتشف المزيد" : "Discover",
+      title: copy.footerDiscover,
       links: [
-        ["/courses", t("common.courses", ar ? "الكورسات" : "Courses")],
-        ["/teachers", ar ? "الخبراء والمعلمون" : "Experts"],
-        ["/store", ar ? "المتجر التعليمي" : "Learning store"],
+        ["/courses", copy.footerCourses],
+        ["/teachers", copy.footerTeachers],
+        ["/store", copy.footerStore],
       ],
     },
     {
-      title: ar ? "حسابك" : "Your account",
+      title: copy.footerAccount,
       links: [
-        ["/login", t("header.login", ar ? "تسجيل الدخول" : "Log in")],
-        ["/register", t("header.register", ar ? "إنشاء حساب" : "Create an account")],
-        ["/dashboard", ar ? "تعلمي" : "My learning"],
+        ["/login", copy.footerLogin],
+        ["/register", copy.footerRegister],
+        ["/dashboard", copy.footerDashboard],
       ],
     },
   ];
@@ -46,8 +47,7 @@ export async function Footer({
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.25fr] lg:gap-16">
           <div className="max-w-sm">
             <Link href="/" className="inline-flex items-center gap-3" aria-label={brand}>
-              <img src={logoUrl?.trim() || "/logo.png"} alt="" className="h-12 w-12 rounded-xl object-contain" />
-              <span className="text-lg font-bold tracking-tight">{brand}</span>
+              <Image src="/logo-1.png" alt={brand} width={220} height={110} sizes="220px" className="h-auto w-[220px] max-w-full object-contain" />
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-7 text-white/55">
               {footerTagline?.trim() || defaultTagline}
@@ -70,19 +70,19 @@ export async function Footer({
           ))}
 
           <div>
-            <p className="text-sm font-bold text-white">{ar ? "ابدأ رحلتك التعليمية" : "Start learning today"}</p>
+            <p className="text-sm font-bold text-white">{copy.footerCalloutTitle}</p>
             <p className="mt-3 text-sm leading-6 text-white/55">
-              {ar ? "اكتشف كورسات عملية وابنِ المهارات التي تحتاجها لخطوتك القادمة." : "Explore practical courses and build skills for your next step."}
+              {copy.footerCalloutDescription}
             </p>
             <Link href="/courses" className="filseka-primary-button mt-5 inline-flex min-h-11 items-center rounded-full px-5 text-sm font-bold text-white transition hover:-translate-y-0.5">
-              {ar ? "تصفح الكورسات" : "Browse courses"} <span className="ms-2" aria-hidden>↗</span>
+              {copy.footerCalloutButton} <span className="ms-2" aria-hidden>↗</span>
             </Link>
           </div>
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-white/40 sm:flex-row sm:items-center sm:justify-between">
           <p>© {year} {copyrightText}</p>
-          <Link href="/" className="transition hover:text-white/70">{t("common.home", ar ? "الرئيسية" : "Home")}</Link>
+          <Link href="/" className="transition hover:text-white/70">{copy.footerHome}</Link>
         </div>
       </div>
     </footer>

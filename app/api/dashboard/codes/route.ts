@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-/** إنشاء أكواد تفعيل لدورة — للأدمن/مساعد الأدمن */
+/** إنشاء أكواد تفعيل لكورس — للأدمن/مساعد الأدمن */
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session || (session.user.role !== "ADMIN" && session.user.role !== "ASSISTANT_ADMIN" && session.user.role !== "TEACHER")) {
@@ -47,13 +47,13 @@ export async function POST(request: NextRequest) {
   const lessonIds = Array.isArray(body.lessonIds) ? body.lessonIds.filter((x) => typeof x === "string") : [];
   const quizIds = Array.isArray(body.quizIds) ? body.quizIds.filter((x) => typeof x === "string") : [];
   if (!courseId) {
-    return NextResponse.json({ error: "معرف الدورة مطلوب" }, { status: 400 });
+    return NextResponse.json({ error: "معرف الكورس مطلوب" }, { status: 400 });
   }
   if (session.user.role === "TEACHER") {
     const course = await getCourseById(courseId);
     const createdBy = course ? ((course as { createdById?: string | null; created_by_id?: string | null }).createdById ?? (course as { created_by_id?: string | null }).created_by_id ?? null) : null;
     if (!course || !canManageCourse("TEACHER", session.user.id, createdBy)) {
-      return NextResponse.json({ error: "غير مصرح بتعديل هذه الدورة" }, { status: 403 });
+      return NextResponse.json({ error: "غير مصرح بتعديل هذا الكورس" }, { status: 403 });
     }
   }
   try {

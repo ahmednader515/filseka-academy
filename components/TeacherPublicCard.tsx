@@ -9,6 +9,10 @@ type Props = {
   teacherAvatarUrl: string | null;
   courses: TeacherCardCourse[];
   titleTag?: "h2" | "h3";
+  variant?: "default" | "spotlight";
+  isDemo?: boolean;
+  demoAvatarPosition?: string;
+  demoLabel?: string;
 };
 
 /** بطاقة خبير — التخصص وقائمة كورساته المنشورة داخل البطاقة فقط */
@@ -19,11 +23,31 @@ export function TeacherPublicCard({
   teacherAvatarUrl,
   courses,
   titleTag: TitleTag = "h3",
+  variant = "default",
+  isDemo = false,
+  demoAvatarPosition,
+  demoLabel = "Demo",
 }: Props) {
   const subject = teacherSubject?.trim() || "خبير على المنصة";
   const profileHref = `/courses?teacher=${encodeURIComponent(teacherId)}`;
   const previewCourses = courses.slice(0, 2);
   const moreCount = courses.length > 2 ? courses.length - 2 : 0;
+
+  if (variant === "spotlight") {
+    const content = <>
+      {isDemo && demoAvatarPosition ? (
+        <span className="academy-trainer-demo-photo" style={{ backgroundImage: `url("${teacherAvatarUrl}")`, backgroundPosition: demoAvatarPosition }} aria-hidden="true" />
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={teacherAvatarUrl || "/teacher-avatar.svg"} alt="" loading="lazy" />
+      )}
+      {isDemo && <span className="academy-trainer-demo-badge">{demoLabel}</span>}
+      <div className="academy-trainer-caption"><TitleTag>{name}</TitleTag><p>{subject}</p></div>
+    </>;
+    return <article className="academy-trainer-card">
+      {isDemo ? <div className="academy-trainer-card-content">{content}</div> : <Link href={profileHref} className="academy-trainer-card-content">{content}</Link>}
+    </article>;
+  }
 
   return (
     <article
@@ -79,7 +103,7 @@ export function TeacherPublicCard({
             {moreCount > 0 ? (
               <p className="mt-2 text-center text-[0.7rem] text-[var(--color-muted)]">
                 {moreCount === 1
-                  ? "ودورة إضافية…"
+                  ? "وكورس إضافي…"
                   : `و${moreCount} كورسات إضافية…`}
               </p>
             ) : null}

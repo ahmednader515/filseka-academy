@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS "PortfolioWork" (
+  id TEXT PRIMARY KEY,
+  content JSONB NOT NULL,
+  is_published BOOLEAN NOT NULL DEFAULT false,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

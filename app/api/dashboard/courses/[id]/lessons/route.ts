@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { canManageCourse } from "@/lib/permissions";
 import { getCourseById, getLessonsByCourseId } from "@/lib/db";
 
-/** جلب حصص دورة — للأدمن/مساعد الأدمن */
+/** جلب حصص كورس — للأدمن/مساعد الأدمن */
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -15,12 +15,12 @@ export async function GET(
   }
   const { id } = await params;
   if (!id?.trim()) {
-    return NextResponse.json({ error: "معرّف الدورة مطلوب" }, { status: 400 });
+    return NextResponse.json({ error: "معرّف الكورس مطلوب" }, { status: 400 });
   }
 
   const course = await getCourseById(id.trim());
   if (!course) {
-    return NextResponse.json({ error: "الدورة غير موجودة" }, { status: 404 });
+    return NextResponse.json({ error: "الكورس غير موجود" }, { status: 404 });
   }
   const createdBy = (course as { createdById?: string | null; created_by_id?: string | null }).createdById ?? (course as { created_by_id?: string | null }).created_by_id ?? null;
   if (!canManageCourse(session.user.role, session.user.id, createdBy)) {

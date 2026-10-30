@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { authOptions } from "@/lib/auth";
-import { getHomepageSettings } from "@/lib/db";
-import { PaymentMethodCards, type PaymentMethodCard } from "./PaymentMethodCards";
+import { getHomepageSettings, getUserById } from "@/lib/db";
+import type { PaymentMethodCard } from "./PaymentMethodCards";
+import { BalancePageView } from "./BalancePageView";
 import { getLocaleFromCookie, getServerTranslator } from "@/lib/i18n/server";
 import type { Locale } from "@/lib/i18n/types";
 
@@ -61,10 +61,11 @@ export default async function AddBalancePage() {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/login");
   if (session.user.role !== "STUDENT") redirect("/dashboard");
-  const [settings, locale, t] = await Promise.all([
+  const [settings, locale, t, user] = await Promise.all([
     getHomepageSettings(),
     getLocaleFromCookie(),
     getServerTranslator(),
+    getUserById(session.user.id),
   ]);
 
   const walletNumber = settings.addBalanceWalletNumber?.trim() || "01023005622";
@@ -152,24 +153,16 @@ export default async function AddBalancePage() {
     },
   ];
 
-  return (
-    <div className="max-w-2xl">
-      <Link
-        href="/dashboard"
-        className="text-sm font-medium text-[var(--color-primary)] hover:underline"
-      >
-        {t("dashboard.title", "Dashboard")} ←
-      </Link>
-      <h2 className="mt-6 text-2xl font-bold text-[var(--color-foreground)]">{pageTitle}</h2>
-      <p className="mt-1 text-[var(--color-muted)]">{pageSubtitle}</p>
-
-      <PaymentMethodCards
-        methods={methods}
-        confirmationNote={confirmationNote}
-        waitingNote={waitingNote}
-        whatsappNumber={whatsappNumber}
-        whatsappButtonText={whatsappButtonText}
-      />
-    </div>
-  );
+  const rawBalance = Number(user?.balance || 0);
+  return <BalancePageView
+    locale={locale}
+    title={pageTitle}
+    subtitle={pageSubtitle}
+    balance={Number.isFinite(rawBalance) ? rawBalance : 0}
+    methods={methods}
+    confirmationNote={confirmationNote}
+    waitingNote={waitingNote}
+    whatsappNumber={whatsappNumber}
+    whatsappButtonText={whatsappButtonText}
+  />;
 }

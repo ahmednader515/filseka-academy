@@ -1,4 +1,5 @@
 import type { PlatformDetailsItem, PlatformDetailsPresetIcon } from "@/lib/types";
+import { AcademyIcon, type AcademyIconName } from "./AcademyIcon";
 
 function PresetIcon({ icon }: { icon: PlatformDetailsPresetIcon }) {
   const common = { className: "h-6 w-6", fill: "none", stroke: "currentColor", strokeWidth: 1.8 } as const;
@@ -28,12 +29,38 @@ export function HomePlatformDetailsSection({
   subtitle,
   backgroundColor,
   items,
+  variant = "default",
 }: {
   title: string;
   subtitle: string | null;
   backgroundColor?: string | null;
   items: PlatformDetailsItem[];
+  variant?: "default" | "achievements";
 }) {
+  if (variant === "achievements") {
+    const icons: Record<string, AcademyIconName> = {
+      "training-hours": "clock",
+      "content-audience": "users",
+      "podcast-productions": "mic",
+      "professional-graduates": "graduate",
+    };
+    return <section id="academy-achievements" className="academy-achievements academy-neon-section" aria-labelledby="academy-achievements-title">
+      <div className="academy-achievements-body">
+        <header className="academy-achievements-heading">
+          <h2 id="academy-achievements-title">{title}</h2>
+          {subtitle && <p>{subtitle}</p>}
+        </header>
+        <div className="academy-statistics">
+          {items.map((item) => <article key={item.id} className="academy-stat-card" data-stat={item.id}>
+            <div className="academy-stat-icon"><AcademyIcon name={icons[item.id] ?? "trophy"} /></div>
+            <strong dir="ltr">{item.title}</strong>
+            <h3>{item.description}</h3>
+            <span className="academy-stat-accent" aria-hidden="true" />
+          </article>)}
+        </div>
+      </div>
+    </section>;
+  }
   return (
     <section
       className="border-y border-[var(--color-border)] px-4 py-14 sm:px-6"

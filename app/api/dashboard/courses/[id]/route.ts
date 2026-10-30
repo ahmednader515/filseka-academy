@@ -7,9 +7,8 @@ import {
   getCourseForEdit,
   updateCourse,
   deleteCourse,
-  deleteLessonsByCourseId,
+  saveCourseLessons,
   deleteQuizzesByCourseId,
-  createLesson,
   createQuiz,
   createQuestion,
   createQuestionOption,
@@ -18,13 +17,13 @@ import {
   categoryIsManageableOnDashboard,
 } from "@/lib/db";
 
-type LessonInput = { title: string; titleAr?: string; videoUrl?: string; content?: string; pdfUrl?: string; acceptsHomework?: boolean; homeworkImageUrl?: string };
+type LessonInput = { id?: string; title: string; titleAr?: string; videoUrl?: string; content?: string; pdfUrl?: string; acceptsHomework?: boolean; homeworkImageUrl?: string };
 type QuestionOptionInput = { text: string; isCorrect: boolean };
 type QuestionInput = { type: "MULTIPLE_CHOICE" | "ESSAY" | "TRUE_FALSE"; questionText: string; questionImageUrl?: string; options?: QuestionOptionInput[] };
 type QuizInput = { title: string; timeLimitMinutes?: number | null; questions: QuestionInput[] };
 type ContentOrderEntry = { type: "lesson"; index: number } | { type: "quiz"; index: number };
 
-/** تحديث دورة - للأدمن ومساعد الأدمن */
+/** تحديث كورس - للأدمن ومساعد الأدمن */
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -66,7 +65,7 @@ export async function PUT(
 
   const course = await getCourseById(id);
   if (!course) {
-    return NextResponse.json({ error: "الدورة غير موجودة" }, { status: 404 });
+    return NextResponse.json({ error: "الكورس غير موجود" }, { status: 404 });
   }
   const createdBy = (course as { createdById?: string | null; created_by_id?: string | null }).createdById ?? (course as { created_by_id?: string | null }).created_by_id ?? null;
   if (!canManageCourse(session.user.role, session.user.id, createdBy)) {
@@ -137,7 +136,6 @@ export async function PUT(
     ...(body.acceptsHomework !== undefined && { accepts_homework: body.acceptsHomework }),
   });
 
-  await deleteLessonsByCourseId(id);
   const lessons = body.lessons ?? [];
   const quizzes = body.quizzes ?? [];
   const contentOrder =
@@ -147,12 +145,14 @@ export async function PUT(
       ...quizzes.map((_, i) => ({ type: "quiz" as const, index: i })),
     ] satisfies ContentOrderEntry[]);
 
+  const savedLessons: Parameters<typeof saveCourseLessons>[1] = [];
   for (let i = 0; i < lessons.length; i++) {
     const le = lessons[i];
     const lessonSlug = `${slug}-${i + 1}`.replace(/\s+/g, "-");
     const order = contentOrder.findIndex((e) => e.type === "lesson" && e.index === i);
     const orderVal = order >= 0 ? order : i;
-    await createLesson({
+    savedLessons.push({
+      ...(le.id ? { id: le.id } : {}),
       course_id: id,
       title: le.title?.trim() || `حصة ${i + 1}`,
       title_ar: le.titleAr?.trim() || null,
@@ -165,6 +165,9 @@ export async function PUT(
       homework_image_url: le.homeworkImageUrl?.trim() || null,
     });
   }
+
+  try { await saveCourseLessons(id, savedLessons); }
+  catch (error) { if (error instanceof Error && error.message === "INVALID_LESSON_IDS") return NextResponse.json({ error: "الحصص غير صالحة. حدّث الصفحة وحاول مرة أخرى." }, { status: 400 }); throw error; }
 
   await deleteQuizzesByCourseId(id);
   for (let qi = 0; qi < quizzes.length; qi++) {
@@ -206,7 +209,7 @@ export async function PUT(
   return NextResponse.json({ success: true });
 }
 
-/** جلب دورة كاملة للتعديل - للأدمن ومساعد الأدمن */
+/** جلب كورس كامل للتعديل - للأدمن ومساعد الأدمن */
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -219,7 +222,7 @@ export async function GET(
   const { id } = await params;
   const data = await getCourseForEdit(id);
   if (!data?.course) {
-    return NextResponse.json({ error: "الدورة غير موجودة" }, { status: 404 });
+    return NextResponse.json({ error: "الكورس غير موجود" }, { status: 404 });
   }
   const c0 = data.course as { createdById?: string | null; created_by_id?: string | null };
   const createdBy = c0.createdById ?? c0.created_by_id ?? null;
@@ -268,7 +271,7 @@ export async function GET(
   return NextResponse.json(payload);
 }
 
-/** حذف دورة - للأدمن ومساعد الأدمن. يحذف التسجيلات والحصص والاختبارات تلقائياً (Cascade) */
+/** حذف كورس - للأدمن ومساعد الأدمن. يحذف التسجيلات والحصص والاختبارات تلقائياً (Cascade) */
 export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -282,7 +285,7 @@ export async function DELETE(
 
   const course = await getCourseById(id);
   if (!course) {
-    return NextResponse.json({ error: "الدورة غير موجودة" }, { status: 404 });
+    return NextResponse.json({ error: "الكورس غير موجود" }, { status: 404 });
   }
   const createdByDel = (course as { createdById?: string | null; created_by_id?: string | null }).createdById ?? (course as { created_by_id?: string | null }).created_by_id ?? null;
   if (!canManageCourse(session.user.role, session.user.id, createdByDel)) {

@@ -401,7 +401,7 @@ export interface Enrollment {
   enrolled_at: Date;
 }
 
-/** كود تفعيل مجاني لدورة — للأدمن إنشاؤه وللطالب تفعيله */
+/** كود تفعيل مجاني لكورس — للأدمن إنشاؤه وللطالب تفعيله */
 export interface ActivationCode {
   id: string;
   course_id: string;

@@ -33,6 +33,10 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
   }
   let body: {
+    storeSectionTitle?: string | null;
+    storeSectionTitleEn?: string | null;
+    storeSectionDescription?: string | null;
+    storeSectionDescriptionEn?: string | null;
     heroTemplate?: string | null;
     teacherImageUrl?: string | null;
     heroTitle?: string | null;
@@ -437,6 +441,10 @@ export async function PUT(request: NextRequest) {
 
   try {
     await updateHomepageSettings({
+      store_section_title: body.storeSectionTitle === undefined ? undefined : String(body.storeSectionTitle ?? "").trim().slice(0, 240) || null,
+      store_section_title_en: body.storeSectionTitleEn === undefined ? undefined : String(body.storeSectionTitleEn ?? "").trim().slice(0, 240) || null,
+      store_section_description: body.storeSectionDescription === undefined ? undefined : String(body.storeSectionDescription ?? "").trim().slice(0, 1000) || null,
+      store_section_description_en: body.storeSectionDescriptionEn === undefined ? undefined : String(body.storeSectionDescriptionEn ?? "").trim().slice(0, 1000) || null,
       hero_template,
       teacher_image_url: body.teacherImageUrl !== undefined ? body.teacherImageUrl : undefined,
       hero_title: body.heroTitle !== undefined ? body.heroTitle : undefined,

@@ -2,7 +2,8 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { CourseCard } from "@/components/CourseCard";
+import { AcademyIcon } from "@/components/AcademyIcon";
+import styles from "./student-dashboard.module.css";
 import { useLocale, useT } from "@/components/LocaleProvider";
 import { getDir } from "@/lib/i18n/core";
 import type { Course } from "@/lib/types";
@@ -78,7 +79,7 @@ export function MyCoursesSection({ courses }: { courses: CourseWithCategory[] })
 
   if (courses.length === 0) {
     return (
-      <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)]">
+      <div className="student-panel rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)]">
         <h2 className="mb-4 text-lg font-semibold text-[var(--color-foreground)]">
           {t("dashboard.page.myCourses.title", "My courses")}
         </h2>
@@ -93,7 +94,7 @@ export function MyCoursesSection({ courses }: { courses: CourseWithCategory[] })
   }
 
   return (
-    <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)]">
+    <div className="student-panel rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)]">
       <h2 className="mb-4 text-lg font-semibold text-[var(--color-foreground)]">
         {t("dashboard.page.myCourses.title", "My courses")}
       </h2>
@@ -121,10 +122,16 @@ export function MyCoursesSection({ courses }: { courses: CourseWithCategory[] })
           {t("dashboard.page.myCourses.noSearchResults", "No results match your search.")}
         </p>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((course) => (
-            <CourseCard key={course.id} course={toCourseCardCourse(course)} />
-          ))}
+        <div className={styles.courseGrid}>
+          {filtered.map((course) => {
+            const item = toCourseCardCourse(course);
+            const title = locale === "ar" ? item.titleAr || item.title : item.title;
+            return <Link key={course.id} href={`/courses/${encodeURIComponent(course.slug || course.id)}`} className={styles.myCourse}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={item.imageUrl || "/category-artwork/general.webp"} alt="" loading="lazy" />
+              <div><h3>{title}</h3>{item.shortDesc && <p>{item.shortDesc}</p>}<span className={styles.button}><AcademyIcon name="video" />{locale === "ar" ? "افتح الكورس" : "Open course"}<span aria-hidden="true">{locale === "ar" ? "‹" : "›"}</span></span></div>
+            </Link>;
+          })}
         </div>
       )}
     </div>

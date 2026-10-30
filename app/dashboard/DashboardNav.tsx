@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useT } from "@/components/LocaleProvider";
+import { useLocale, useT } from "@/components/LocaleProvider";
 
 const baseClass =
   "rounded-[var(--radius-btn)] border px-4 py-2 text-sm font-medium transition";
@@ -42,6 +42,7 @@ export function DashboardNav({
   isTeacher: boolean;
 }) {
   const t = useT();
+  const ar = useLocale() === "ar";
   const isStaff = isAdmin || isAssistant;
 
   if (isTeacher) {
@@ -81,6 +82,9 @@ export function DashboardNav({
       <NavLink href="/dashboard/students">
         {isAdmin ? t("dashboardNav.studentsAccounts", "Students & accounts") : t("dashboardNav.students", "Students")}
       </NavLink>
+      <NavLink href="/dashboard/contact">{ar ? "رسائل تواصل معنا" : "Contact inquiries"}</NavLink>
+      <NavLink href="/dashboard/portfolio">{ar ? "إدارة معرض الأعمال" : "Manage portfolio"}</NavLink>
+      <NavLink href="/dashboard/blog">{ar ? "إدارة المدونة" : "Manage blog"}</NavLink>
       <NavLink href="/dashboard/statistics">
         {t("dashboardNav.studentStats", "Student statistics")}
       </NavLink>

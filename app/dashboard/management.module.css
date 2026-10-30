@@ -1,0 +1,22 @@
+.manager { display: grid; gap: 24px; }
+.intro h2 { font-size: 24px; font-weight: 850; }
+.intro p, .panel > p { margin-top: 8px; color: #c1a3b0; font-size: 13px; line-height: 1.9; }
+.columns { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(0, 1.7fr); gap: 24px; align-items: start; }
+.panel { display: grid; gap: 16px; min-width: 0; padding: 22px; border: 1px solid #97304f; border-radius: 20px; background: linear-gradient(135deg, #201019, #0c080b); }
+.panel h3 { font-size: 19px; font-weight: 800; }
+.panel label { display: grid; gap: 7px; font-size: 13px; color: #dfc3cf; }
+.panel input:not([type="checkbox"]):not([type="color"]), .panel textarea, .panel select { width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid #814254; border-radius: 12px; background: #150c12; color: #fff5f8; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; font-size: 12px; }
+.actions button { cursor: pointer; }
+.actions button:disabled { opacity: .5; cursor: wait; }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 9px 20px; border: 1px solid #f23159; border-radius: 99px; background: linear-gradient(#d0002d, #720016); color: #fff1f7; font-size: 12px; font-weight: 800; cursor: pointer; }
+.list { display: grid; gap: 12px; max-height: 700px; overflow-y: auto; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 15px; border: 1px solid #71304788; border-radius: 14px; background: #ffffff03; }
+.row > div { min-width: 0; }
+.row p { margin-top: 5px; color: #bd9bab; font-size: 12px; overflow-wrap: anywhere; }
+.row a { display: inline-block; margin-top: 8px; font-size: 12px; color: #ff9cba; }
+.notice { padding: 14px; border: 1px solid #a73a5a; border-radius: 12px; color: #ffd3e1; }
+.preview { min-width: 0; overflow: auto; }
+.checkbox { display: flex !important; align-items: center; gap: 10px; padding-block: 8px; }
+@media (max-width: 1000px) { .columns { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 500px) { .panel { padding: 16px; } .row { flex-wrap: wrap; } }

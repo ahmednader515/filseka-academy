@@ -16,12 +16,13 @@ import {
 } from "@/lib/db";
 import { EnrollButton } from "./EnrollButton";
 import { CoursePageActions } from "./CoursePageActions";
+import { CourseCompletion } from "@/components/CourseCompletion";
 import { getLocaleFromCookie, getServerTranslator } from "@/lib/i18n/server";
 import { pickLocalizedText } from "@/lib/i18n/localized-field";
 
 type Props = { params: Promise<{ slug: string }> };
 
-/** عدم التخزين المؤقت — دائماً التحقق من وجود الدورة (تجنب 404 للكورسات المحذوفة) */
+/** عدم التخزين المؤقت — دائماً التحقق من وجود الكورس (تجنب 404 للكورسات المحذوفة) */
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -193,6 +194,7 @@ export default async function CoursePage({ params }: Props) {
             </div>
           ) : null}
           <h1 className="text-2xl font-bold leading-snug text-white sm:text-[27px]">{title}</h1>
+          {session?.user.role === "STUDENT" && (isEnrolled || hasFullStudentAccess || allowedLessonIds.length > 0) && <CourseCompletion courseId={course.id} />}
           <p className="mt-3 text-sm text-white/65">{locale === "ar" ? "بواسطة " : "By "}<span className="font-semibold text-sky-300">{instructorName}</span></p>
           {categoryName ? (
             <div className="mt-1 text-sm">
@@ -201,7 +203,7 @@ export default async function CoursePage({ params }: Props) {
           ) : null}
 
           <ul className="mt-5 space-y-2.5 border-t border-white/10 pt-4 text-sm text-white/75">
-            {courseDuration ? <li className="flex items-center justify-between gap-3"><span>{locale === "ar" ? "مدة الدورة" : "Course duration"}</span><span>{courseDuration}</span></li> : null}
+            {courseDuration ? <li className="flex items-center justify-between gap-3"><span>{locale === "ar" ? "مدة الكورس" : "Course duration"}</span><span>{courseDuration}</span></li> : null}
             <li className="flex items-center justify-between gap-3"><span>{locale === "ar" ? "عدد الدروس" : "Lessons"}</span><span>{course.lessons.length}</span></li>
             {courseLevelLabel ? <li className="flex items-center justify-between gap-3"><span>{locale === "ar" ? "المستوى" : "Level"}</span><span>{courseLevelLabel}</span></li> : null}
           </ul>
@@ -209,9 +211,9 @@ export default async function CoursePage({ params }: Props) {
           <div className="mt-5 border-t border-white/10 pt-4">
             {coursePrice > 0 ? (
               <p className="mb-3 text-center text-sm text-white/70">
-                {locale === "ar" ? "اشترِ الدورة لمرة واحدة مقابل" : "Get lifetime access for"} <strong className="text-lg text-white">{coursePrice.toFixed(2)} {locale === "ar" ? t("common.egpShortAr", "ج.م") : t("common.egyptianPoundShort", "EGP")}</strong>
+                {locale === "ar" ? "اشترِ الكورس لمرة واحدة مقابل" : "Get lifetime access for"} <strong className="text-lg text-white">{coursePrice.toFixed(2)} {locale === "ar" ? t("common.egpShortAr", "ج.م") : t("common.egyptianPoundShort", "EGP")}</strong>
               </p>
-            ) : <p className="mb-3 text-center text-sm font-semibold text-emerald-300">{locale === "ar" ? "دورة مجانية" : "Free course"}</p>}
+            ) : <p className="mb-3 text-center text-sm font-semibold text-emerald-300">{locale === "ar" ? "كورس مجاني" : "Free course"}</p>}
             {canEnroll ? <EnrollButton courseId={course.id} coursePrice={coursePrice} userBalance={userBalance} /> : null}
             {isGuest ? (
               <div className="grid gap-2">
@@ -258,7 +260,7 @@ export default async function CoursePage({ params }: Props) {
             ) : null}
 
             <div className="mt-7 border-t border-white/10 pt-6">
-              <h2 className="text-xl font-bold text-white">{locale === "ar" ? "عن الدورة" : "About this course"}</h2>
+              <h2 className="text-xl font-bold text-white">{locale === "ar" ? "عن الكورس" : "About this course"}</h2>
               <div className="prose-custom mt-3 text-sm leading-7 text-white/70"><p>{courseDescription}</p></div>
             </div>
 

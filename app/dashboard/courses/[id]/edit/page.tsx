@@ -72,6 +72,7 @@ export default async function EditCoursePage({ params }: Props) {
     lessons: data.lessons.map((l) => {
       const row = l as Record<string, unknown>;
       return {
+        id: String(row.id),
         title: String(row.title ?? ""),
         videoUrl: String(row.videoUrl ?? row.video_url ?? ""),
         content: String(row.content ?? ""),
@@ -119,7 +120,7 @@ export default async function EditCoursePage({ params }: Props) {
         ← العودة إلى إدارة الكورسات
       </Link>
       <h2 className="mt-4 text-xl font-bold text-[var(--color-foreground)]">
-        تعديل الدورة
+        تعديل الكورس
       </h2>
       <EditCourseForm courseId={id} initialData={initialData} />
     </div>

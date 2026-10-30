@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" fill="none" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="ribbon" x1="80" y1="900" x2="1570" y2="310" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff0926" stop-opacity=".05"/>
+      <stop offset=".42" stop-color="#e6001b" stop-opacity=".65"/>
+      <stop offset=".78" stop-color="#ff263e"/>
+      <stop offset="1" stop-color="#c90018" stop-opacity=".25"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-100%" width="200%" height="300%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+    <filter id="core" x="-50%" y="-100%" width="200%" height="300%">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>
+  <path d="M-170 1030C330 470 850 910 1710 230" stroke="url(#ribbon)" stroke-width="44" opacity=".24" filter="url(#glow)"/>
+  <path d="M-170 1030C330 470 850 910 1710 230" stroke="url(#ribbon)" stroke-width="26" opacity=".16"/>
+  <path d="M-170 1030C330 470 850 910 1710 230" stroke="url(#ribbon)" stroke-width="5" opacity=".8" filter="url(#core)"/>
+  <path d="M-170 1030C330 470 850 910 1710 230" stroke="url(#ribbon)" stroke-width="1.5"/>
+  <path d="M-150 1080C350 530 890 980 1730 300" stroke="url(#ribbon)" stroke-width="24" opacity=".12"/>
+  <path d="M-150 1080C350 530 890 980 1730 300" stroke="url(#ribbon)" stroke-width="1" opacity=".35"/>
+</svg>

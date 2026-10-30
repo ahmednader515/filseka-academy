@@ -1,22 +1,19 @@
-import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import {
-  getCategories,
   getCoursesPublished,
-  getReviews,
+  getCategories,
+  getTeacherIdsExcludedFromPublicCourseLists,
   listActiveSubscriptionPlansPublic,
-  listStoreProductsPublic,
   listTeachersForHomepage,
   selectTeachersForHomepagePreview,
   userHasActivePlatformSubscription,
   getLatestPlatformSubscriptionExpiry,
 } from "@/lib/db";
 import type { HomepageSetting } from "@/lib/types";
-import { CourseCard } from "@/components/CourseCard";
-import { CourseCarousel } from "@/components/CourseCarousel";
-import { HomeEditorialCollections } from "@/components/HomeEditorialCollections";
-import { HomeCourseShowcase } from "@/components/HomeCourseShowcase";
+import { HomeContentCategories } from "@/components/HomeContentCategories";
+import { HOMEPAGE_DEMO_INSTRUCTORS } from "@/lib/homepage-demo-instructors";
+import { getAcademyMilestones } from "@/lib/academy-milestones";
 import { HomeTeachersSection } from "@/components/HomeTeachersSection";
 import { HomeSubscriptionsSection } from "@/components/HomeSubscriptionsSection";
 import { HomeStoreSection } from "@/components/HomeStoreSection";
@@ -27,15 +24,9 @@ import { parsePlatformNewsItems } from "@/lib/platform-news";
 import { HomePlatformNewsSlider } from "@/components/HomePlatformNewsSlider";
 import { getLocaleFromCookie, getServerTranslator } from "@/lib/i18n/server";
 import {
-  HOMEPAGE_DEFAULT_CTA_BADGE_AR,
-  HOMEPAGE_DEFAULT_CTA_BUTTON_AR,
-  HOMEPAGE_DEFAULT_CTA_DESCRIPTION_AR,
-  HOMEPAGE_DEFAULT_CTA_TITLE_AR,
   HOMEPAGE_DEFAULT_PLATFORM_DETAILS_SUBTITLE_AR,
   HOMEPAGE_DEFAULT_PLATFORM_DETAILS_TITLE_AR,
   HOMEPAGE_DEFAULT_PLATFORM_NEWS_TITLE_AR,
-  HOMEPAGE_DEFAULT_REVIEWS_SECTION_SUBTITLE_AR,
-  HOMEPAGE_DEFAULT_REVIEWS_SECTION_TITLE_AR,
   HOMEPAGE_DEFAULT_SOCIAL_LEFT_LABEL_AR,
   HOMEPAGE_DEFAULT_SOCIAL_RIGHT_LABEL_AR,
   HOMEPAGE_DEFAULT_STORE_SECTION_DESCRIPTION_AR,
@@ -62,15 +53,13 @@ export async function HomePageBelowFold({
 
   const emptyTeachers: Awaited<ReturnType<typeof listTeachersForHomepage>> = [];
   const emptyPlans: Awaited<ReturnType<typeof listActiveSubscriptionPlansPublic>> = [];
-  const emptyStore: Awaited<ReturnType<typeof listStoreProductsPublic>> = [];
 
   const [
     teachersResult,
     subscriptionPlansResult,
-    storeProductsResult,
     coursesResult,
     categoriesResult,
-    reviewsResult,
+    excludedTeacherIds,
   ] = await Promise.all([
     homepageSettings.teachersEnabled
       ? listTeachersForHomepage().catch(() => emptyTeachers)
@@ -78,20 +67,13 @@ export async function HomePageBelowFold({
     homepageSettings.subscriptionsEnabled
       ? listActiveSubscriptionPlansPublic().catch(() => emptyPlans)
       : Promise.resolve(emptyPlans),
-    homepageSettings.storeEnabled
-      ? listStoreProductsPublic().catch(() => emptyStore)
-      : Promise.resolve(emptyStore),
     getCoursesPublished(true).catch(() => [] as CourseWithCategory[]),
-    getCategories().catch(() => [] as Awaited<ReturnType<typeof getCategories>>),
-    getReviews().catch(() => [] as Awaited<ReturnType<typeof getReviews>>),
+    getCategories().catch(() => []),
+    getTeacherIdsExcludedFromPublicCourseLists(),
   ]);
 
-  let courses: CourseWithCategory[] = coursesResult;
-  const categories = categoriesResult;
   const teachersForHome = teachersResult;
   const subscriptionPlansHome = subscriptionPlansResult;
-  const storeProductsHome = storeProductsResult;
-  const reviews = reviewsResult;
   const teachersSectionEnabled = homepageSettings.teachersEnabled;
   const subscriptionsSectionEnabled = homepageSettings.subscriptionsEnabled;
   const storeSectionEnabled = homepageSettings.storeEnabled;
@@ -114,45 +96,6 @@ export async function HomePageBelowFold({
     }
   }
 
-  if (teachersSectionEnabled && teachersForHome.length > 0) {
-    const teacherAccountIds = new Set(teachersForHome.map((row) => row.id));
-    courses = courses.filter((c) => {
-      const creator =
-        (c as { createdById?: string | null }).createdById ??
-        (c as { created_by_id?: string | null }).created_by_id ??
-        null;
-      return !creator || !teacherAccountIds.has(creator);
-    });
-  }
-
-  const featuredCourse = courses[0]
-    ? (() => {
-        // Database rows are normalized to camelCase, while older course records
-        // and types still expose some snake_case fields.
-        const row = courses[0] as unknown as Record<string, unknown>;
-        const category = (row.category ?? null) as Record<string, unknown> | null;
-        const text = (...values: unknown[]) => values.find((value) => typeof value === "string" && value.trim()) as string | undefined;
-        return {
-          title: pickLocalizedText(locale, text(row.titleAr, row.title_ar), text(row.title, row.titleEn)) || "",
-          description: pickLocalizedText(
-            locale,
-            text(row.shortDesc, row.short_desc, row.description),
-            text(row.shortDescEn, row.short_desc_en, row.descriptionEn, row.description_en, row.description),
-          ) || "",
-          category: category
-            ? pickLocalizedText(
-                locale,
-                text(category.nameAr, category.name_ar),
-                text(category.name),
-              )
-            : (locale === "ar" ? "الكورسات التدريبية" : "Courses"),
-          duration: text(row.duration) ?? null,
-          imageUrl: text(row.imageUrl, row.image_url) ?? null,
-          slug: text(row.slug, row.id) ?? "",
-        };
-      })()
-      : null;
-
   const configuredPlatformNewsSlides = parsePlatformNewsItems(homepageSettings.platformNewsItems);
   const localizedPlatformNewsSlides = configuredPlatformNewsSlides.map((item) => ({
     ...item,
@@ -164,38 +107,11 @@ export async function HomePageBelowFold({
 
   const teachersHomePreview =
     teachersForHome.length > 0
-      ? selectTeachersForHomepagePreview(teachersForHome, 4).map(({ homepageOrder, ...row }) => {
+      ? selectTeachersForHomepagePreview(teachersForHome, teachersForHome.length).map(({ homepageOrder, ...row }) => {
           void homepageOrder;
           return row;
         })
       : [];
-
-  const categoryIdToCourses = new Map<string, CourseWithCategory[]>();
-  const uncategorized: CourseWithCategory[] = [];
-  for (const c of courses) {
-    const catId = (c as { category?: { id?: string } }).category?.id;
-    if (catId) {
-      if (!categoryIdToCourses.has(catId)) categoryIdToCourses.set(catId, []);
-      categoryIdToCourses.get(catId)!.push(c);
-    } else {
-      uncategorized.push(c);
-    }
-  }
-
-  const sections: { title: string; slug?: string; courses: CourseWithCategory[] }[] = [];
-  for (const cat of categories) {
-    const list = categoryIdToCourses.get(cat.id);
-    if (list?.length) {
-      sections.push({
-        title: pickLocalizedText(locale, (cat as { nameAr?: string | null }).nameAr, cat.name),
-        slug: cat.slug,
-        courses: list,
-      });
-    }
-  }
-  if (uncategorized.length > 0) {
-    sections.push({ title: t("courses.allCoursesTitle", "All courses"), courses: uncategorized });
-  }
 
   const platformDetailsItems = parsePlatformDetailsItems(homepageSettings.platformDetailsItems);
   const localizedPlatformDetailsItems = platformDetailsItems.map((item) => ({
@@ -204,43 +120,6 @@ export async function HomePageBelowFold({
     description: pickLocalizedText(locale, item.description, item.descriptionEn),
   }));
 
-  const rawReviewsTitle = pickLocalizedText(
-    locale,
-    homepageSettings.reviewsSectionTitle,
-    homepageSettings.reviewsSectionTitleEn,
-  );
-  const rawReviewsSubtitle = pickLocalizedText(
-    locale,
-    homepageSettings.reviewsSectionSubtitle,
-    homepageSettings.reviewsSectionSubtitleEn,
-  );
-  const reviewsTitle =
-    locale === "en" &&
-    (rawReviewsTitle === HOMEPAGE_DEFAULT_REVIEWS_SECTION_TITLE_AR || rawReviewsTitle === "")
-      ? t("home.reviewsTitleDefault", "What students say")
-      : rawReviewsTitle || t("home.reviewsTitleDefault", "What students say");
-  const reviewsSubtitle =
-    locale === "en" &&
-    (rawReviewsSubtitle === HOMEPAGE_DEFAULT_REVIEWS_SECTION_SUBTITLE_AR || rawReviewsSubtitle === "")
-      ? t("home.reviewsSubtitleDefault", "Real experiences from platform students")
-      : rawReviewsSubtitle || t("home.reviewsSubtitleDefault", "Real experiences from platform students");
-
-  const rawCtaBadge = pickLocalizedText(
-    locale,
-    homepageSettings.ctaBadgeText,
-    homepageSettings.ctaBadgeTextEn,
-  );
-  const rawCtaTitle = pickLocalizedText(locale, homepageSettings.ctaTitle, homepageSettings.ctaTitleEn);
-  const rawCtaDescription = pickLocalizedText(
-    locale,
-    homepageSettings.ctaDescription,
-    homepageSettings.ctaDescriptionEn,
-  );
-  const rawCtaButton = pickLocalizedText(
-    locale,
-    homepageSettings.ctaButtonText,
-    homepageSettings.ctaButtonTextEn,
-  );
   const platformDetailsTitle = homepageDefaultForLocale(
     locale,
     pickLocalizedText(locale, homepageSettings.platformDetailsTitle, homepageSettings.platformDetailsTitleEn),
@@ -289,164 +168,32 @@ export async function HomePageBelowFold({
     t,
     "Platform News",
   );
-  const ctaBadge = homepageDefaultForLocale(
-    locale,
-    rawCtaBadge,
-    HOMEPAGE_DEFAULT_CTA_BADGE_AR,
-    "home.ctaBadgeDefault",
-    t,
-    "A stronger start to learning",
-  );
-  const ctaTitle = homepageDefaultForLocale(
-    locale,
-    rawCtaTitle,
-    HOMEPAGE_DEFAULT_CTA_TITLE_AR,
-    "home.ctaTitleDefault",
-    t,
-    "Ready to turn your dream into a real result?",
-  );
-  const ctaDescription = homepageDefaultForLocale(
-    locale,
-    rawCtaDescription,
-    HOMEPAGE_DEFAULT_CTA_DESCRIPTION_AR,
-    "home.ctaDescriptionDefault",
-    t,
-    "Start now with a confident step: organized content, clear explanations, and practical exercises that help you retain what you learn faster. Every lesson you complete today brings you closer to the level you deserve tomorrow.",
-  );
-  const ctaButton = homepageDefaultForLocale(
-    locale,
-    rawCtaButton,
-    HOMEPAGE_DEFAULT_CTA_BUTTON_AR,
-    "home.ctaButtonDefault",
-    t,
-    "Start your journey now",
-  );
-  const featuredCoursesHeading =
-    pickLocalizedText(
-      locale,
-      homepageSettings.featuredCoursesTitle,
-      homepageSettings.featuredCoursesTitleEn,
-    ) || (locale === "ar" ? "الكورسات المميزة هذا الأسبوع" : "Featured courses this week");
-
   return (
     <>
-      {homepageSettings.featuredCoursesEnabled !== false && featuredCourse ? (
-        <HomeCourseShowcase course={featuredCourse} locale={locale} copy={homepageCopy} />
-      ) : null}
-
-      {homepageSettings.featuredCoursesEnabled !== false && courses.length > 0 ? (
-        <section className="filseka-course-section mx-auto px-4 pb-8 pt-4 sm:px-6 sm:pb-10" aria-labelledby="filseka-featured-courses-heading">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <p className="mb-2 text-[11px] font-bold tracking-[0.2em] text-[var(--color-primary)]">
-                {homepageCopy.featuredEyebrow}
-              </p>
-              <h2 id="filseka-featured-courses-heading" className="text-2xl font-extrabold text-[var(--color-foreground)] sm:text-3xl">
-                {featuredCoursesHeading}
-              </h2>
-            </div>
-            <Link href="/courses" className="hidden shrink-0 text-sm font-semibold text-[var(--color-primary)] transition hover:translate-x-[-2px] sm:inline-flex">
-              {homepageCopy.featuredViewAll} <span aria-hidden className="ms-2">←</span>
-            </Link>
-          </div>
-          <CourseCarousel locale={locale}>
-            {courses.slice(0, 8).map((course) => <CourseCard key={`featured-${course.id}`} course={course} />)}
-          </CourseCarousel>
-        </section>
-      ) : null}
-
-      {sections.length > 0
-        ? sections.map((section, idx) => (
-            <section
-              key={section.slug ?? `uncategorized-${idx}`}
-              className="filseka-course-section mx-auto px-4 py-12 sm:px-6"
-            >
-              <div className="flex items-end justify-between gap-4">
-                <div>
-                  <h2 className="text-2xl font-bold text-[var(--color-foreground)]">{section.title}</h2>
-                </div>
-                <Link
-                  href={section.slug ? `/courses?category=${encodeURIComponent(section.slug)}` : "/courses"}
-                  className="text-sm font-medium text-[var(--color-primary)] hover:underline"
-                >
-                  {homepageCopy.categoryViewAll} ←
-                </Link>
-              </div>
-
-              <CourseCarousel locale={locale}>
-                {section.courses.slice(0, 6).map((course) => (
-                  <CourseCard key={course.id} course={course} />
-                ))}
-              </CourseCarousel>
-              {section.courses.length > 6 && (
-                <div className="mt-6 text-center">
-                  <Link
-                    href={section.slug ? `/courses?category=${encodeURIComponent(section.slug)}` : "/courses"}
-                    className="text-sm font-medium text-[var(--color-primary)] hover:underline"
-                  >
-                    {homepageCopy.categoryViewAll} ({section.courses.length})
-                  </Link>
-                </div>
-              )}
-            </section>
-          ))
-        : null}
-
-      <HomeEditorialCollections locale={locale} copy={homepageCopy} />
-
+      {teachersSectionEnabled ? <HomeTeachersSection enabled initialTeachers={[...HOMEPAGE_DEMO_INSTRUCTORS.map((teacher) => ({ ...teacher, name: homepageCopy[`demoTeacher.${teacher.id}.name`], nameEn: homepageCopy[`demoTeacher.${teacher.id}.name`], teacherSubject: homepageCopy[`demoTeacher.${teacher.id}.subject`], teacherSubjectEn: homepageCopy[`demoTeacher.${teacher.id}.subject`] })), ...teachersHomePreview]} copy={homepageCopy} variant="spotlight" /> : null}
+      <HomePlatformDetailsSection
+        variant="achievements"
+        title={homepageCopy.achievementsTitle}
+        subtitle={homepageCopy.achievementsDescription}
+        items={getAcademyMilestones(locale).map((item) => ({ ...item, title: homepageCopy[`milestone.${item.id}.value`], description: homepageCopy[`milestone.${item.id}.label`] }))}
+      />
+      <HomeContentCategories locale={locale} copy={homepageCopy} categories={categoriesResult.map((category) => {
+        const row = category as typeof category & { nameAr?: string | null; imageUrl?: string | null };
+        const categoryCourses = coursesResult.filter((course) => {
+          const c = course as CourseWithCategory & { category?: { slug?: string }; createdById?: string | null; imageUrl?: string | null };
+          return c.category?.slug === category.slug && (!c.createdById || !excludedTeacherIds.has(c.createdById));
+        });
+        const firstCourse = categoryCourses[0] as (CourseWithCategory & { imageUrl?: string | null }) | undefined;
+        return {
+          slug: category.slug,
+          name: pickLocalizedText(locale, row.nameAr ?? row.name_ar, row.name),
+          imageUrl: row.imageUrl || row.image_url || firstCourse?.imageUrl || firstCourse?.image_url || null,
+          count: categoryCourses.length,
+        };
+      })} />
       <HomeMobileAppSection locale={locale} copy={homepageCopy} />
 
-      {teachersSectionEnabled ? (
-        <HomeTeachersSection enabled initialTeachers={teachersHomePreview} copy={homepageCopy} />
-      ) : null}
 
-      <section className="reviews-section border-t border-[var(--color-border)] bg-[var(--color-reviews-bg)] px-4 py-16 sm:px-6">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="text-2xl font-bold text-[var(--color-foreground)]">{reviewsTitle}</h2>
-          <p className="mt-1 text-[var(--color-muted)]">{reviewsSubtitle}</p>
-          {reviews.length > 0 ? (
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {reviews.map((r) => {
-                const letter =
-                  (r.avatarLetter && r.avatarLetter.trim()) || (r.authorName.trim()[0] ?? "؟");
-                const reviewText = pickLocalizedText(locale, r.text, r.textEn);
-                const reviewAuthorTitle = pickLocalizedText(locale, r.authorTitle, r.authorTitleEn);
-                return (
-                  <div
-                    key={r.id}
-                    className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-card)]"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--color-reviews-avatar)] text-lg font-semibold text-[var(--color-muted)]">
-                        {letter}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-[var(--color-primary)]">{r.authorName}</p>
-                        {reviewAuthorTitle ? (
-                          <p className="mt-0.5 text-xs text-[var(--color-muted)]">{reviewAuthorTitle}</p>
-                        ) : null}
-                      </div>
-                    </div>
-                    <p className="mt-4 text-[var(--color-foreground)]">{reviewText}</p>
-                    {r.imageUrl ? (
-                      <div className="mt-4 overflow-hidden rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-black/5 p-2 dark:bg-white/5">
-                        <img
-                          src={r.imageUrl}
-                          alt={`${t("home.reviewImageAltPrefix", "Review image from")} ${r.authorName}`}
-                          loading="lazy"
-                          className="h-auto max-h-72 w-full object-contain"
-                        />
-                      </div>
-                    ) : null}
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <p className="mt-10 text-center text-[var(--color-muted)]">{homepageCopy.reviewsEmpty}</p>
-          )}
-        </div>
-      </section>
 
       {homepageSettings.platformDetailsEnabled && platformDetailsItems.length > 0 ? (
         <HomePlatformDetailsSection
@@ -468,9 +215,8 @@ export async function HomePageBelowFold({
         />
       ) : null}
 
-      {storeSectionEnabled && storeProductsHome.length > 0 ? (
+      {storeSectionEnabled ? (
         <HomeStoreSection
-          productsCount={storeProductsHome.length}
           sectionTitle={storeSectionTitle}
           sectionDescription={storeSectionDescription}
           copy={homepageCopy}
@@ -487,43 +233,6 @@ export async function HomePageBelowFold({
           </div>
         </section>
       ) : null}
-
-      <section className="border-t border-[var(--color-border)] bg-[var(--color-surface)]">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-          <div className="rounded-[var(--radius-card)] bg-[var(--color-surface)] p-8 sm:p-12">
-            <div className="text-center">
-              <p className="inline-flex items-center rounded-full border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-4 py-1 text-xs font-semibold text-[var(--color-primary)] sm:text-sm">
-                {ctaBadge}
-              </p>
-              <h2 className="mt-4 text-3xl font-extrabold text-[var(--color-foreground)] sm:text-4xl">
-                {ctaTitle}
-              </h2>
-              <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[var(--color-muted)] sm:text-base">
-                {ctaDescription}
-              </p>
-
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-                <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/70 px-3 py-1 text-xs text-[var(--color-muted)]">
-                  {homepageCopy.ctaChip1}
-                </span>
-                <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/70 px-3 py-1 text-xs text-[var(--color-muted)]">
-                  {homepageCopy.ctaChip2}
-                </span>
-                <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/70 px-3 py-1 text-xs text-[var(--color-muted)]">
-                  {homepageCopy.ctaChip3}
-                </span>
-              </div>
-
-              <Link
-                href="/#home-next-section"
-                className="mt-8 inline-flex items-center justify-center rounded-[var(--radius-btn)] bg-[var(--color-primary)] px-8 py-3 text-base font-bold text-white transition hover:scale-[1.02] hover:bg-[var(--color-primary-hover)]"
-              >
-                {ctaButton}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {(() => {
         const ytIcon = (
@@ -553,7 +262,7 @@ export async function HomePageBelowFold({
         );
 
         const baseBtn =
-          "group fixed z-50 inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/25 p-2 text-white shadow-[0_12px_30px_rgba(0,0,0,0.25)] backdrop-blur-md transition hover:bg-black/35 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60";
+          "group fixed z-50 hidden items-center gap-2 rounded-full border border-white/15 bg-black/25 p-2 text-white shadow-[0_12px_30px_rgba(0,0,0,0.25)] backdrop-blur-md transition hover:bg-black/35 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 md:inline-flex";
         const circle =
           "flex h-11 w-11 items-center justify-center rounded-full shadow-sm transition group-hover:scale-[1.03]";
         const label =

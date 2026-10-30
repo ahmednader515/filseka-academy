@@ -29,7 +29,7 @@ export function EnrollButton({
     if (!hasEnoughBalance) {
       setError(
         locale === "ar"
-          ? `رصيدك غير كافٍ. سعر الدورة: ${coursePrice.toFixed(2)} ج.م، رصيدك: ${userBalance.toFixed(2)} ج.م`
+          ? `رصيدك غير كافٍ. سعر الكورس: ${coursePrice.toFixed(2)} ج.م، رصيدك: ${userBalance.toFixed(2)} ج.م`
           : `Insufficient balance. Course price: ${coursePrice.toFixed(2)} EGP, your balance: ${userBalance.toFixed(2)} EGP`,
       );
       return;
@@ -45,7 +45,7 @@ export function EnrollButton({
       setError(
         data.error ??
           (locale === "ar"
-            ? t("courses.enrollFailed", "فشل التسجيل في الدورة")
+            ? t("courses.enrollFailed", "فشل التسجيل في الكورس")
             : t("courses.enrollFailed", "Failed to enroll in course")),
       );
       return;
@@ -115,7 +115,7 @@ export function EnrollButton({
         <div className="mb-4 rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-background)] p-4">
           <div className="flex items-center justify-between">
             <span className="text-sm text-[var(--color-muted)]">
-              {locale === "ar" ? t("courses.priceLabel", "سعر الدورة:") : t("courses.priceLabel", "Course price:")}
+              {locale === "ar" ? t("courses.priceLabel", "سعر الكورس:") : t("courses.priceLabel", "Course price:")}
             </span>
             <span className="text-lg font-semibold text-[var(--color-foreground)]">
               {coursePrice.toFixed(2)} {locale === "ar" ? t("common.egpShortAr", "ج.م") : t("common.egyptianPoundShort", "EGP")}
@@ -201,10 +201,10 @@ export function EnrollButton({
               : t("courses.enrolling", "Enrolling..."))
           : coursePrice > 0
           ? (locale === "ar"
-              ? `شراء الدورة (${coursePrice.toFixed(2)} ج.م)`
+              ? `شراء الكورس (${coursePrice.toFixed(2)} ج.م)`
               : `Buy course (${coursePrice.toFixed(2)} EGP)`)
           : (locale === "ar"
-              ? t("courses.enrollFree", "التسجيل في الدورة (مجاناً)")
+              ? t("courses.enrollFree", "التسجيل في الكورس (مجاناً)")
               : t("courses.enrollFree", "Enroll (Free)"))}
       </button>
     </div>

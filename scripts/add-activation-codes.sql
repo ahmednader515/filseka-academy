@@ -15,7 +15,7 @@ CREATE INDEX IF NOT EXISTS "ActivationCode_code_idx" ON "ActivationCode"(code);
 CREATE INDEX IF NOT EXISTS "ActivationCode_created_at_idx" ON "ActivationCode"(created_at);
 
 -- ربط كود التفعيل بحصص محددة داخل الكورس (اختياري)
--- إذا كان للكود صفوف هنا => الكود يفتح الحصص المحددة فقط (بدون تسجيل كامل في الدورة)
+-- إذا كان للكود صفوف هنا => الكود يفتح الحصص المحددة فقط (بدون تسجيل كامل في الكورس)
 CREATE TABLE IF NOT EXISTS "ActivationCodeLesson" (
   activation_code_id TEXT NOT NULL REFERENCES "ActivationCode"(id) ON DELETE CASCADE,
   lesson_id          TEXT NOT NULL REFERENCES "Lesson"(id) ON DELETE CASCADE,

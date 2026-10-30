@@ -11,7 +11,7 @@ import {
   deleteAllHomeworkSubmissions,
 } from "@/lib/db";
 
-/** قائمة تسليمات الواجبات — أدمن: الكل مع بحث باسم الطالب؛ طالب: تسليماته لدورة معيّنة */
+/** قائمة تسليمات الواجبات — أدمن: الكل مع بحث باسم الطالب؛ طالب: تسليماته لكورس معيّن */
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
         const list = await getHomeworkSubmissionsByCourseAndUser(courseId, session.user.id);
         return NextResponse.json(list);
       }
-      return NextResponse.json({ error: "معرف الحصة أو الدورة مطلوب" }, { status: 400 });
+      return NextResponse.json({ error: "معرف الحصة أو الكورس مطلوب" }, { status: 400 });
     }
 
     return NextResponse.json({ error: "غير مصرح" }, { status: 403 });

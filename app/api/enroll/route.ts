@@ -12,17 +12,17 @@ export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const courseId = searchParams.get("courseId");
   if (!courseId) {
-    return NextResponse.json({ error: "معرف الدورة مطلوب" }, { status: 400 });
+    return NextResponse.json({ error: "معرف الكورس مطلوب" }, { status: 400 });
   }
 
   const course = await getCourseById(courseId);
   if (!course || !(course as { isPublished?: boolean }).isPublished) {
-    return NextResponse.json({ error: "الدورة غير موجودة" }, { status: 404 });
+    return NextResponse.json({ error: "الكورس غير موجود" }, { status: 404 });
   }
 
   const existing = await getEnrollment(session.user.id, courseId);
   if (existing) {
-    return NextResponse.json({ error: "مسجّل في هذه الدورة مسبقاً" }, { status: 400 });
+    return NextResponse.json({ error: "مسجّل في هذا الكورس مسبقاً" }, { status: 400 });
   }
 
   const user = await getUserById(session.user.id);
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     const needed = coursePrice - userBalance;
     return NextResponse.json(
       {
-        error: `رصيدك غير كافٍ. سعر الدورة: ${coursePrice.toFixed(2)} ج.م، رصيدك: ${userBalance.toFixed(2)} ج.م. تحتاج: ${needed.toFixed(2)} ج.م`,
+        error: `رصيدك غير كافٍ. سعر الكورس: ${coursePrice.toFixed(2)} ج.م، رصيدك: ${userBalance.toFixed(2)} ج.م. تحتاج: ${needed.toFixed(2)} ج.م`,
         insufficientBalance: true,
         coursePrice,
         userBalance,

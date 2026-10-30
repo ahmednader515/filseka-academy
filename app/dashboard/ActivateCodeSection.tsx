@@ -64,7 +64,7 @@ export function ActivateCodeSection() {
   }
 
   return (
-    <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)]">
+    <div id="activate-code" className="student-panel scroll-mt-24 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)]">
       <h2 className="mb-2 text-lg font-semibold text-[var(--color-foreground)]">
         {t("dashboard.page.activateCode.title", "Activate a code")}
       </h2>

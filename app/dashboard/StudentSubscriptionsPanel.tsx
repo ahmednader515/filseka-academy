@@ -5,6 +5,7 @@ import { useState } from "react";
 import { SubscriptionPlanCard, type SubscriptionPlanCardData } from "@/components/SubscriptionPlanCard";
 import { useLocale, useT } from "@/components/LocaleProvider";
 import { getDir } from "@/lib/i18n/core";
+import subscriptionStyles from "@/components/HomeSubscriptionsSection.module.css";
 
 export function StudentSubscriptionsPanel({
   plans,
@@ -21,7 +22,7 @@ export function StudentSubscriptionsPanel({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
+    <div id="my-subscriptions" className="student-panel scroll-mt-24 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -64,9 +65,10 @@ export function StudentSubscriptionsPanel({
               )}
             </p>
           ) : (
-            <div className="flex flex-wrap justify-center gap-8">
+            <div className={subscriptionStyles.plans}>
               {plans.map((p) => (
                 <SubscriptionPlanCard
+                  variant="academy"
                   key={p.id}
                   plan={p}
                   isStudent

@@ -67,7 +67,7 @@ function groupCoursesByCategory(courses: TeacherCourseListItem[]) {
   });
 }
 
-/** مطابقة نص البحث مع اسم الدورة أو الوصف القصير أو القسم (اسم / معرّف slug) */
+/** مطابقة نص البحث مع اسم الكورس أو الوصف القصير أو القسم (اسم / معرّف slug) */
 export function courseMatchesSearchQuery(course: TeacherCourseListItem, rawQuery: string) {
   const q = normalizeSearch(rawQuery);
   if (!q) return true;
@@ -128,11 +128,13 @@ export function TeacherCoursesSearch({
   courses,
   /** عند false: شبكة واحدة (مثل «جميع الكورسات») مع نفس شريط البحث */
   groupByCategory = true,
+  initialQuery = "",
 }: {
   courses: TeacherCourseListItem[];
   groupByCategory?: boolean;
+  initialQuery?: string;
 }) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const locale = useLocale();
   const t = useT();
 
@@ -160,7 +162,7 @@ export function TeacherCoursesSearch({
           autoComplete="off"
           placeholder={
             locale === "ar"
-              ? t("courses.searchPlaceholder", "ابحث باسم الدورة أو القسم…")
+              ? t("courses.searchPlaceholder", "ابحث باسم الكورس أو القسم…")
               : t("courses.searchPlaceholder", "Search by course or category…")
           }
           value={query}
@@ -173,7 +175,7 @@ export function TeacherCoursesSearch({
         <div className="rounded-[var(--radius-card)] border border-dashed border-[var(--color-border)] bg-[var(--color-surface)]/50 p-12 text-center">
           <p className="text-[var(--color-muted)]">
             {normalizeSearch(query)
-              ? "لا توجد نتائج تطابق بحثك. جرّب اسم دورة أو قسم آخر."
+              ? "لا توجد نتائج تطابق بحثك. جرّب اسم كورس أو قسم آخر."
               : "لا توجد كورسات لعرضها."}
           </p>
         </div>

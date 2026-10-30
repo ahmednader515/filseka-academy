@@ -1,7 +1,7 @@
 /* شاشة دخول المتجر — نفس أسلوب Netflix (أسماء فريدة nfs-* لتفادي التعارض) */
-/* ألوان التركواز/الأساسي مثل زر «إنشاء حساب» (var(--color-primary)) */
+/* All animation colors derive from the platform theme. */
 .nfs-wrap {
-  --nfs-primary: var(--color-primary);
+  --nfs-primary: var(--color-primary, #e11d2e);
   --nfs-bg: #000000;
   --nfs-animation-time: 3.5s;
   --nfs-glow-intensity: 22px;
@@ -82,7 +82,7 @@
   height: 100%;
   left: 8%;
   top: 0;
-  background-color: color-mix(in srgb, var(--color-primary) 50%, transparent);
+  background-color: color-mix(in srgb, var(--nfs-primary) 50%, transparent);
   transform: rotate(180deg) translate3d(0, 0, 0);
   animation: nfs-fade-segment 2s 0.6s forwards;
 }
@@ -271,9 +271,9 @@
 
 @keyframes nfs-fade-segment {
   0% {
-    background-color: color-mix(in srgb, var(--color-primary) 50%, transparent);
+    background-color: color-mix(in srgb, var(--nfs-primary) 50%, transparent);
   }
   100% {
-    background-color: color-mix(in srgb, var(--color-primary) 0%, transparent);
+    background-color: color-mix(in srgb, var(--nfs-primary) 0%, transparent);
   }
 }

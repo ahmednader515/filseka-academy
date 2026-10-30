@@ -1,0 +1,22 @@
+.document { --certificate-accent: #a3001b; position: relative; isolation: isolate; width: 100%; aspect-ratio: 1.414; overflow: hidden; padding: 3%; color: #30201d; background: radial-gradient(ellipse at 35% 40%, #fffdf6, #efe0cb); border: 8px solid #221b1b; box-shadow: 0 12px 30px #0005; container-type: inline-size; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+.inner { position: relative; z-index: 1; display: flex; height: 100%; flex-direction: column; align-items: center; justify-content: center; border: 2px solid #c99846; outline: 1px solid #d9b574; outline-offset: 5px; padding: 3% 5%; text-align: center; }
+.ribbon { position: absolute; z-index: 2; width: 42%; height: 10%; top: 3%; right: -12%; transform: rotate(40deg); border-block: 3px solid #d4a544; background: linear-gradient(var(--certificate-accent), #4b000e); box-shadow: 0 5px 10px #0005; }
+.logo { height: 12cqw; width: 26cqw; object-fit: contain; margin-bottom: 1cqw; background: #160c0e; border-radius: 1cqw; padding: .7cqw; }
+.academy { font-size: 2cqw; font-weight: 700; }
+.inner h2 { margin-top: 1cqw; font-size: 4.7cqw; font-weight: 900; line-height: 1.5; }
+.subtitle { font-size: 1.7cqw; letter-spacing: .16em; }
+.introduction { margin-top: 2cqw; font-size: 2.1cqw; }
+.name { display: block; width: 83%; padding-block: .8cqw; border-bottom: 1px solid #ba946b; font-size: 4.1cqw; font-weight: 900; color: var(--certificate-accent); overflow-wrap: anywhere; line-height: 1.4; }
+.completion { margin-top: 1.8cqw; max-width: 85%; font-size: 1.9cqw; line-height: 1.8; }
+.inner h3 { max-width: 90%; margin-top: 1.2cqw; padding: .6cqw 4cqw; border-radius: 99px; background: var(--certificate-accent); color: #fff7e9; font-size: 2.5cqw; line-height: 1.6; overflow-wrap: anywhere; }
+.bottom { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 2cqw; margin-top: auto; padding-top: 2cqw; }
+.signature { display: grid; justify-items: center; width: 30%; gap: .4cqw; font-size: 1.6cqw; }
+.signature img { width: 15cqw; height: 5cqw; object-fit: contain; }
+.signatureLine { display: block; width: 14cqw; height: 3cqw; border-bottom: 1px solid #926a39; }
+.signature > span:last-child { font-size: 1.3cqw; }
+.seal { display: grid; place-items: center; width: 10cqw; height: 10cqw; flex-shrink: 0; border: .7cqw double #a77929; outline: .5cqw solid #ddb257; border-radius: 50%; background: radial-gradient(#ffe2a0, #c99532); color: #7b4e15; box-shadow: 0 3px 6px #63401944; }
+.seal svg { width: 4.5cqw; height: 4.5cqw; }
+.seal span { font-size: 1.1cqw; font-weight: 800; }
+.verification { display: grid; gap: .7cqw; width: 30%; color: #705134; font-size: 1.35cqw; }
+.verification > span { overflow-wrap: anywhere; font-family: monospace; font-size: 1.15cqw; }
+@media print { .document { width: 277mm; height: 196mm; aspect-ratio: auto; box-shadow: none; border-width: 3mm; } }

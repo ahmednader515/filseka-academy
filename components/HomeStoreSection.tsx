@@ -2,51 +2,41 @@
 
 import Link from "next/link";
 import { useStoreSplash } from "@/components/StoreSplashProvider";
+import { useLocale } from "./LocaleProvider";
 import type { ResolvedHomepageCopy } from "@/lib/homepage-copy";
+import styles from "./HomeStoreSection.module.css";
 
-export function HomeStoreSection({
-  productsCount,
-  sectionTitle,
-  sectionDescription,
-  copy,
-}: {
-  productsCount: number;
+export function HomeStoreSection({ sectionTitle, sectionDescription, copy }: {
   sectionTitle: string;
   sectionDescription: string;
   copy: ResolvedHomepageCopy;
 }) {
   const { startStoreSplashTransition } = useStoreSplash();
+  const ar = useLocale() === "ar";
 
-  const handleStoreClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-    e.preventDefault();
+  function handleStoreClick(event: React.MouseEvent<HTMLAnchorElement>) {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    event.preventDefault();
     startStoreSplashTransition();
-  };
+  }
 
   return (
-    <>
-      <section className="home-teachers-hero-blend border-t border-[var(--color-border)] px-4 py-16 sm:px-6">
-        <div className="mx-auto max-w-6xl">
-          <div className="overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
-            <div className="bg-gradient-to-l from-[var(--color-primary)]/20 via-[var(--color-primary)]/10 to-transparent p-8 sm:p-10">
-              <h2 className="text-3xl font-bold text-[var(--color-foreground)]">{sectionTitle}</h2>
-              <p className="mt-4 max-w-3xl whitespace-pre-wrap text-base leading-7 text-[var(--color-muted)]">
-                {sectionDescription}
-              </p>
-              <div className="mt-6 flex flex-wrap items-center gap-4">
-                <Link
-                  href="/store"
-                  onClick={handleStoreClick}
-                  className="inline-flex items-center rounded-full bg-[var(--color-primary)] px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:scale-[1.02] hover:bg-[var(--color-primary-hover)]"
-                >
-                  {copy.storeButton}
-                </Link>
-                <span className="text-sm text-[var(--color-muted)]">{copy.storeProductCount.replace("{count}", String(productsCount))}</span>
-              </div>
+    <section className={styles.section} dir={ar ? "rtl" : "ltr"} aria-labelledby="home-store-heading">
+      <div className={styles.inner}>
+        <div className={styles.heading}>
+          <div className={styles.intro}>
+            <span className={styles.headingIcon} aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M6 10h20l2 19H4ZM11 11V8a5 5 0 0 1 10 0v3" /></svg></span>
+            <div>
+              <h2 id="home-store-heading">{sectionTitle}</h2>
+              <p>{sectionDescription}</p>
             </div>
           </div>
+          <Link href="/store" onClick={handleStoreClick} className={styles.browseButton}>
+            {copy.storeButton}<span aria-hidden="true">{ar ? "←" : "→"}</span>
+          </Link>
         </div>
-      </section>
-    </>
+
+      </div>
+    </section>
   );
 }

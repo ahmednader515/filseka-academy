@@ -1,0 +1,119 @@
+.studentArea { --color-surface: #180c12; --color-background: #0b070a; --color-border: #6b263c; --color-muted: #c1a3b0; --color-primary: #ef1744; --color-primary-hover: #ff3159; --radius-card: 20px; --radius-btn: 12px; --shadow-card: inset 0 1px 8px #ff477315, 0 8px 25px #0003; min-height: 80vh; padding: 0 28px 40px; background: radial-gradient(ellipse at 4% 30%, #5d001c33, transparent 65%), #080506; color: #fff5f8; }
+.studentArea :is(a, button, input, textarea, select):focus-visible { outline: 2px solid #ff86a3; outline-offset: 3px; }
+.studentArea :is(input:not([type="checkbox"]):not([type="radio"]), textarea, select) { border-color: #814254; background: linear-gradient(#24151d, #100b10); color: #ffeaf2; min-height: 43px; border-radius: 12px; }
+.studentArea :is(input, textarea)::placeholder { color: #a98498; }
+.studentArea :global(.student-panel) { border: 1px solid #a52c4d; border-radius: 20px; background: radial-gradient(ellipse at top right, #5a092955, transparent 65%), linear-gradient(135deg, #201019, #0c080b); box-shadow: inset 0 1px 10px #ff3f7022, 0 10px 24px #0003; }
+.studentArea :global(.student-panel) > h2 { font-size: 21px; font-weight: 850; }
+.studentArea :global(.student-panel) :is(button[type="submit"], a[class*="bg-[var(--color-primary)]"]) { min-height: 42px; border: 1px solid #ff3d67; border-radius: 99px; background: linear-gradient(#d40030, #780016); color: #fff3f8; box-shadow: inset 0 1px 6px #ff839e33; }
+.dashboard { display: grid; gap: 22px; max-width: 1500px; margin-inline: auto; }
+.welcome { position: relative; isolation: isolate; min-height: 150px; overflow: hidden; margin-inline: -28px; padding: 25px 30px; border-bottom: 1px solid #6c1832; }
+.welcome > img { z-index: -3; object-fit: cover; object-position: center 42%; }
+.welcome::after { content: ""; position: absolute; inset: 0; z-index: -2; background: linear-gradient(to left, #080307f5 15%, #080307ce 55%, #08030755); }
+.studentArea[dir="ltr"] .welcome::after { transform: scaleX(-1); }
+.welcome > div { max-width: 850px; }
+.eyebrow { display: block; color: #f393ad; font-size: 11px; font-weight: 750; margin-bottom: 8px; }
+.welcome h1 { font-size: clamp(26px, 2.6vw, 40px); font-weight: 900; line-height: 1.6; overflow-wrap: anywhere; }
+.welcome h1 > span { display: inline-block; font-size: .7em; }
+.welcome p { margin-top: 8px; color: #d2b8c4; font-size: 14px; line-height: 1.9; }
+.overviewGrid { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(300px, 1fr); gap: 20px; align-items: stretch; }
+.courseHero { display: grid; grid-template-columns: 1.15fr 1fr; min-width: 0; overflow: hidden; border: 1px solid #d34767; border-radius: 22px; background: radial-gradient(ellipse at top right, #64032155, transparent 60%), #10090d; box-shadow: inset 0 0 12px #fa1e502b, 0 0 20px #e1002a11; }
+.courseCopy { display: flex; flex-direction: column; align-items: flex-start; gap: 13px; padding: 23px; }
+.courseBadge { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border: 1px solid #f2214e; border-radius: 99px; background: linear-gradient(#ae0024, #440010); color: #ffe0ec; font-size: 11px; font-weight: 750; }
+.courseBadge svg { width: 22px; height: 22px; }
+.courseCopy h2 { font-size: clamp(23px, 2.1vw, 32px); font-weight: 900; line-height: 1.65; overflow-wrap: anywhere; }
+.courseCopy > p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; color: #d2b6c5; font-size: 13px; line-height: 1.9; }
+.courseCopy > .button { margin-top: auto; }
+.courseAccess { display: flex; align-items: center; gap: 14px; width: 100%; margin-block: 2px; padding-block: 10px; border-block: 1px solid #ffffff17; }
+.courseAccess span { color: #bea0af; font-size: 11px; }
+.courseAccess strong { color: #fff3f8; font-size: 21px; font-weight: 900; }
+.courseArt { position: relative; min-width: 0; min-height: 275px; }
+.courseArt img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.courseArt::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to left, #10090d55, transparent 55%), linear-gradient(transparent 70%, #10090d88); }
+.summary { display: grid; grid-template-rows: auto 1fr; gap: 17px; min-width: 0; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.stats > div { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; padding: 15px 6px; border: 1px solid #994159; border-radius: 15px; background: linear-gradient(140deg, #43122566, #150a11); text-align: center; box-shadow: inset 0 1px 5px #ffa6c315; }
+.stats svg { width: 28px; height: 28px; color: #ffadc2; filter: drop-shadow(0 0 4px #e70046); }
+.stats strong { font-size: 27px; line-height: 1.25; font-weight: 900; }
+.stats span { color: #ceb0bf; font-size: 10px; line-height: 1.6; }
+.balanceCard { display: grid; align-content: center; gap: 12px; padding: 19px; border: 1px solid #aa2748; border-radius: 20px; background: radial-gradient(ellipse at bottom left, #63002244, transparent 60%), #170b12; }
+.balanceCard > div { display: flex; align-items: center; gap: 10px; }
+.balanceCard > div svg { width: 25px; height: 25px; color: #fa87a6; }
+.balanceCard h2 { font-size: 18px; font-weight: 800; }
+.balanceCard > strong { font-size: 30px; font-weight: 900; }
+.balanceCard > strong small { font-size: 13px; color: #bf9bac; font-weight: 650; }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: fit-content; max-width: 100%; min-height: 42px; padding: 8px 20px; border: 1px solid #f23159; border-radius: 99px; background: linear-gradient(#d0002d, #720016); color: #fff1f7; text-align: center; font-size: 12px; font-weight: 800; box-shadow: inset 0 1px 5px #ff8a9d33; }
+.button:hover { background: linear-gradient(#f8214f, #970023); }
+.button svg { width: 21px; height: 21px; }
+.button > span { font-size: 20px; line-height: 1; }
+.learningGrid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: stretch; }
+.panel { min-width: 0; padding: 19px; border: 1px solid #9d284c; border-radius: 20px; background: radial-gradient(ellipse at top right, #590e2d33, transparent 70%), linear-gradient(135deg, #1f0e18, #0c080c); box-shadow: inset 0 1px 8px #ff477322, 0 8px 24px #0003; }
+.panelHeading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 15px; }
+.panelHeading h2 { display: flex; align-items: center; gap: 9px; font-size: 19px; font-weight: 850; line-height: 1.6; }
+.panelHeading svg { width: 26px; height: 26px; color: #ffc0d1; flex-shrink: 0; filter: drop-shadow(0 0 4px #ef194c); }
+.smallLink { display: inline-flex; align-items: center; gap: 8px; color: #ff8fb1; font-size: 11px; font-weight: 700; }
+.smallLink:hover { color: white; text-decoration: underline; text-underline-offset: 4px; }
+.panelHint { color: #b89aa9; font-size: 12px; line-height: 1.9; }
+.lessonList { display: grid; gap: 7px; }
+.lessonList a { display: flex; align-items: center; gap: 9px; padding: 10px; border: 1px solid #ffffff12; border-radius: 11px; background: #ffffff04; }
+.lessonList a:hover { border-color: #da3c6d; background: #7d06272b; }
+.lessonNumber { color: #b47d96; font-size: 11px; }
+.lessonList strong { flex: 1; min-width: 0; font-size: 12px; font-weight: 650; line-height: 1.8; }
+.lessonList small { color: #c19cad; font-size: 10px; }
+.lessonList svg { width: 20px; height: 20px; color: #ff759b; flex-shrink: 0; }
+.empty { display: grid; justify-items: center; align-content: center; gap: 12px; min-height: 150px; padding: 20px 8px; color: #bca0ae; text-align: center; }
+.empty > svg { width: 36px; height: 36px; color: #d26b8f; }
+.empty p { max-width: 400px; font-size: 12px; line-height: 1.9; }
+.quickActions { display: grid; gap: 10px; }
+.quickActions a { display: flex; align-items: center; gap: 11px; min-height: 50px; padding: 10px; border: 1px solid #ffffff18; border-radius: 12px; background: #ffffff04; font-size: 12px; line-height: 1.8; }
+.quickActions svg { width: 22px; height: 22px; color: #f79cba; flex-shrink: 0; }
+.quickActions a > span:last-child { margin-inline-start: auto; font-size: 21px; color: #d184a2; }
+.quickActions a:hover { border-color: #e2406d; background: #7d06272b; }
+.sessions { display: grid; gap: 10px; margin-top: 13px; }
+.sessions li { display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid #ffffff16; border-radius: 12px; background: #ffffff04; }
+.sessions li > span { display: grid; justify-items: center; flex-shrink: 0; width: 39px; border-radius: 9px; padding: 5px; background: #7b00304d; color: #ffd0e4; }
+.sessions strong { font-size: 18px; }
+.sessions small { font-size: 9px; }
+.sessions li > div { flex: 1; min-width: 0; }
+.sessions h3 { font-size: 11px; font-weight: 700; line-height: 1.8; }
+.sessions time { font-size: 10px; color: #bb92a5; }
+.accountGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 19px; }
+.subscriptionStatus { margin-block: 7px 12px; color: #ffe1ed; font-size: 20px; font-weight: 850; }
+.accountGrid .panel > .button { margin-top: 18px; }
+.anchor { scroll-margin-top: calc(var(--platform-header-height, 69px) + 20px); }
+.purchaseGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; }
+.purchaseGrid article { display: flex; align-items: flex-start; gap: 13px; padding: 13px; border: 1px solid #ffffff1a; border-radius: 13px; background: #ffffff04; }
+.purchaseGrid img { width: 75px; height: 90px; border-radius: 9px; object-fit: cover; }
+.purchaseGrid article > div { min-width: 0; }
+.purchaseGrid h3 { font-size: 13px; font-weight: 800; }
+.purchaseGrid p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: #bba0ad; font-size: 11px; line-height: 1.8; margin-block: 7px 10px; }
+.purchaseGrid .button { min-height: 35px; padding-inline: 12px; font-size: 10px; }
+.subpageHeader { margin-inline: -28px; padding: 25px 30px; border-bottom: 1px solid #9b2849; background: radial-gradient(ellipse at top right, #5f0a2c88, transparent 65%), linear-gradient(130deg, #210b16, #0a0709); }
+.subpageHeader > nav { display: flex; align-items: center; gap: 12px; color: #c59bab; font-size: 12px; margin-bottom: 20px; }
+.subpageHeader > div { display: flex; align-items: center; gap: 18px; }
+.subpageIcon { display: grid; place-items: center; width: 66px; height: 66px; padding: 14px; border: 1px solid #f34470; border-radius: 18px; background: linear-gradient(#c90039, #560016); box-shadow: 0 0 22px #ee00332b; }
+.subpageIcon svg { width: 100%; height: 100%; }
+.subpageHeader h1 { font-size: 34px; font-weight: 900; line-height: 1.5; }
+.subpageHeader p { margin-top: 8px; color: #c5a3b3; font-size: 13px; line-height: 1.9; }
+.subpageContent { max-width: 1250px; margin: 24px auto 0; padding: 24px; border: 1px solid #97304f; border-radius: 22px; background: radial-gradient(ellipse at top right, #590b2d33, transparent 65%), #10090e; box-shadow: inset 0 1px 8px #ff477322; }
+.subpageContent > div { max-width: none; }
+.studentArea :global(.student-profile-form) { max-width: 720px; }
+.studentArea :global(.student-profile-form) > button { min-height: 44px; padding-inline: 24px; border: 1px solid #ff4574; border-radius: 99px; background: linear-gradient(#d20038, #76001e); }
+.studentArea :global(.student-messages) > div { border-color: #92324f; border-radius: 18px; background: #1b0d16; box-shadow: inset 0 1px 7px #ff477312; }
+.studentArea :global(.student-messages) button { border-radius: 11px; }
+.courseGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.myCourse { display: flex; flex-direction: column; min-width: 0; overflow: hidden; border: 1px solid #a54d6a; border-radius: 17px; background: linear-gradient(#301120, #10090e); }
+.myCourse > img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.myCourse > div { display: flex; flex-direction: column; flex: 1; align-items: flex-start; gap: 10px; padding: 16px; }
+.myCourse h3 { font-size: 18px; font-weight: 850; line-height: 1.7; }
+.myCourse p { color: #bc9aa9; font-size: 12px; line-height: 1.8; }
+.myCourse .button { margin-top: auto; }
+.myCourse:hover { border-color: #ff7099; }
+@media (max-width: 1300px) { .overviewGrid { grid-template-columns: minmax(0, 1.4fr) minmax(260px, 1fr); } .learningGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .learningGrid > section:first-child { grid-column: 1 / -1; } .purchaseGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .overviewGrid { grid-template-columns: 1fr; } .courseHero { grid-template-columns: 1.2fr 1fr; } .courseArt { grid-row: auto; min-height: 260px; aspect-ratio: auto; } .summary { grid-template-columns: 1fr 1fr; grid-template-rows: auto; } .stats { align-self: stretch; } .balanceCard > strong { font-size: 27px; } .courseGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) {
+  .studentArea { padding: 0 14px 30px; } .dashboard { gap: 17px; } .welcome { margin-inline: -14px; padding: 24px 18px; min-height: 170px; } .welcome h1 { font-size: 27px; } .welcome p { font-size: 13px; }
+  .overviewGrid { gap: 16px; } .courseHero { grid-template-columns: 1fr; border-radius: 19px; } .courseArt { grid-row: 1; min-height: 0; aspect-ratio: 16 / 8; } .courseCopy { padding: 20px 17px; } .courseCopy h2 { font-size: 26px; } .summary { grid-template-columns: 1fr; gap: 15px; } .stats { gap: 9px; } .stats > div { padding-block: 15px; } .stats strong { font-size: 29px; } .balanceCard { padding: 19px; }
+  .learningGrid, .accountGrid { grid-template-columns: minmax(0, 1fr); gap: 16px; } .learningGrid > section:first-child { grid-column: auto; } .panel { padding: 18px 14px; border-radius: 18px; } .panelHeading h2 { font-size: 20px; } .panelHeading { gap: 10px; } .lessonList a { padding-inline: 8px; gap: 7px; } .lessonList strong { font-size: 12px; } .lessonList small { font-size: 9px; } .studentArea :global(.student-panel) { border-radius: 18px; }
+  .purchaseGrid, .courseGrid { grid-template-columns: minmax(0, 1fr); } .purchaseGrid article { gap: 15px; } .subpageHeader { margin-inline: -14px; padding: 22px 18px; } .subpageIcon { width: 54px; height: 54px; padding: 12px; flex-shrink: 0; } .subpageHeader > div { gap: 13px; align-items: flex-start; } .subpageHeader h1 { font-size: 29px; } .subpageHeader p { font-size: 12px; } .subpageContent { padding: 19px 14px; border-radius: 19px; margin-top: 20px; } .studentArea :global(.student-messages) { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { .studentArea * { scroll-behavior: auto; } }

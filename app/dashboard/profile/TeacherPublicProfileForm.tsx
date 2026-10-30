@@ -76,7 +76,7 @@ export function TeacherPublicProfileForm({ defaultSubject, defaultAvatarUrl }: P
         </div>
         <div>
           <span className="block text-sm font-medium text-[var(--color-foreground)]">صورة الملف الشخصي</span>
-          <p className="mt-1 text-xs text-[var(--color-muted)]">ارفع صورة (تُحفظ على التخزين السحابي) كما في صورة الكورس عند إنشاء دورة.</p>
+          <p className="mt-1 text-xs text-[var(--color-muted)]">ارفع صورة (تُحفظ على التخزين السحابي) كما في صورة الكورس عند إنشاء كورس.</p>
           {avatarUrl ? (
             <div className="mt-2 flex items-start gap-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -26,24 +26,29 @@ export default async function HomePage() {
   const heroCtaLabel = pickLocalizedText(locale, homepageSettings.ctaButtonText, homepageSettings.ctaButtonTextEn)
     || (locale === "ar" ? "اكتشف الكورسات" : "Explore courses");
   const homepageCopy = resolveHomepageCopy(homepageSettings.homepageTextOverrides, locale);
-  const defaultHeroTitle = locale === "ar" ? "ابدأ رحلتك التعليمية مع فِلسِكة" : "Your next learning journey starts here";
+  const defaultHeroTitle = locale === "ar" ? "في السكة أكاديمي" : "Filsaka Academy";
   const defaultHeroSubtitle = locale === "ar"
-    ? "كورسات عملية وخبراء يساعدونك على بناء مهاراتك وتحقيق أهدافك."
-    : "Practical courses and expert guidance to help you build skills and reach your goals.";
+    ? "منصة متكاملة لصناعة الإعلاميين"
+    : "An integrated academy for the next generation of media professionals";
   const heroTitle =
     configuredHeroTitle === "أستاذ / عصام محي" ||
     configuredHeroTitle.toLowerCase() === "filseka academy" ||
+    configuredHeroTitle === "ابدأ رحلتك التعليمية مع فِلسِكة" ||
+    configuredHeroTitle.startsWith("ابدأ رحلتك التعليمية") ||
+    configuredHeroTitle === "Your next learning journey starts here" ||
     (locale === "en" && configuredHeroTitle === "ابدأ رحلتك التعليمية مع فِلسِكة")
       ? defaultHeroTitle
       : configuredHeroTitle || defaultHeroTitle;
   const heroSubtitle =
     configuredHeroSubtitle === "ادرسها... يمكن تفهم المعلومة صح!" ||
+    configuredHeroSubtitle === "كورسات عملية وخبراء يساعدونك على بناء مهاراتك وتحقيق أهدافك." ||
+    configuredHeroSubtitle === "Practical courses and expert guidance to help you build skills and reach your goals." ||
     (locale === "en" && configuredHeroSubtitle === "كورسات عملية وخبراء يساعدونك على بناء مهاراتك وتحقيق أهدافك.")
       ? defaultHeroSubtitle
       : configuredHeroSubtitle || defaultHeroSubtitle;
 
   return (
-    <div className="filseka-home">
+    <div className="filseka-home academy-reference-home">
       {heroTemplate === "coming_soon" ? (
         <HomeHeroTemplateThree
           title={pickLocalizedText(locale, homepageSettings.hero3Title, homepageSettings.hero3TitleEn) || t("home.defaultHero3Title", "The #1 all-in-one platform")}
@@ -59,6 +64,7 @@ export default async function HomePage() {
         />
       ) : (
         <HomeMarketplaceHero
+          copy={homepageCopy}
           title={heroTitle}
           subtitle={heroSubtitle}
           ctaLabel={heroCtaLabel}
