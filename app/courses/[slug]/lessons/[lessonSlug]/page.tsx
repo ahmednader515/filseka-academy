@@ -15,6 +15,7 @@ import { VideoCopyrightOverlay } from "@/components/video-copyright-overlay";
 import { getYouTubeVideoId } from "@/lib/youtube";
 import { CourseOutlineSidebar } from "@/components/CourseOutlineSidebar";
 import { LessonHomeworkSection } from "./LessonHomeworkSection";
+import { HOMEWORK_UI_ENABLED } from "@/lib/ui-features";
 import { LessonRatingSection } from "./LessonRatingSection";
 import { CourseCompletion } from "@/components/CourseCompletion";
 import { getLocaleFromCookie, getServerTranslator } from "@/lib/i18n/server";
@@ -199,7 +200,7 @@ export default async function LessonPage({ params }: Props) {
             </div>
           ) : null}
 
-          {Boolean(lessonObj.acceptsHomework ?? lessonObj.accepts_homework) && (
+          {HOMEWORK_UI_ENABLED && Boolean(lessonObj.acceptsHomework ?? lessonObj.accepts_homework) && (
             <LessonHomeworkSection
               lessonId={String(lessonObj.id)}
               homeworkImageUrl={

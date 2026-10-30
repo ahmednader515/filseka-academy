@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AddBalanceButton } from "./AddBalanceButton";
+import { DashboardDialog } from "@/components/DashboardDialog";
 import { useT } from "@/components/LocaleProvider";
 import { useDashboardTable, formatAccountCreatedAt } from "@/lib/i18n/dashboard-table";
 import { fillMessage } from "@/lib/i18n/interpolate";
@@ -22,7 +23,6 @@ type Student = {
   role: string;
   balance: number;
   student_number?: string | null;
-  guardian_number?: string | null;
   copyright_code?: string | null;
   createdAt?: string | null;
   _count: { enrollments: number };
@@ -70,7 +70,6 @@ export function StudentsList({
   const [editRole, setEditRole] = useState("");
   const [editPassword, setEditPassword] = useState("");
   const [editStudentNumber, setEditStudentNumber] = useState("");
-  const [editGuardianNumber, setEditGuardianNumber] = useState("");
   const [coursesStudent, setCoursesStudent] = useState<Student | null>(null);
   const [addCourseId, setAddCourseId] = useState("");
   const [loading, setLoading] = useState(false);
@@ -89,7 +88,6 @@ export function StudentsList({
         s.name.toLowerCase().includes(q) ||
         s.email.toLowerCase().includes(q) ||
         (s.student_number ?? "").toLowerCase().includes(q) ||
-        (s.guardian_number ?? "").toLowerCase().includes(q) ||
         (s.copyright_code ?? "").toLowerCase().includes(q),
     );
   }, [initialStudents, search]);
@@ -101,7 +99,6 @@ export function StudentsList({
     setEditRole(s.role);
     setEditPassword("");
     setEditStudentNumber(s.student_number ?? "");
-    setEditGuardianNumber(s.guardian_number ?? "");
     setError("");
   }
 
@@ -116,11 +113,9 @@ export function StudentsList({
       role?: string;
       password?: string;
       student_number?: string | null;
-      guardian_number?: string | null;
     } = {
       name: editName.trim(),
       student_number: editStudentNumber.trim() || null,
-      guardian_number: editGuardianNumber.trim() || null,
     };
     if (canEditFullProfile) {
       payload.email = editEmail.trim();
@@ -237,7 +232,7 @@ export function StudentsList({
         <label className="block text-sm font-medium text-[var(--color-foreground)]">
           {t(
             "dashboard.studentsPage.searchLabel",
-            "Search by name, email, student number, guardian number, or copyright code",
+            "Search by name, email, student number, or copyright code",
           )}
         </label>
         <input
@@ -262,7 +257,6 @@ export function StudentsList({
               <th className={thClass}>{t("dashboard.studentsPage.colName", "Name")}</th>
               <th className={thClass}>{t("dashboard.studentsPage.colEmail", "Email")}</th>
               <th className={thClass}>{t("dashboard.studentsPage.colStudentNumber", "Student number")}</th>
-              <th className={thClass}>{t("dashboard.studentsPage.colGuardianNumber", "Guardian number")}</th>
               <th className={thClass}>{t("dashboard.studentsPage.colCopyright", "Copyright code")}</th>
               <th className={thClass}>{t("dashboard.studentsPage.colBalance", "Balance")}</th>
               <th className={thClass}>{t("dashboard.studentsPage.colCourses", "Courses")}</th>
@@ -285,7 +279,6 @@ export function StudentsList({
                 <td className="p-3 font-medium text-[var(--color-foreground)]">{s.name}</td>
                 <td className="p-3 text-[var(--color-muted)]">{s.email}</td>
                 <td className="p-3 text-[var(--color-foreground)]">{s.student_number ?? dash}</td>
-                <td className="p-3 text-[var(--color-foreground)]">{s.guardian_number ?? dash}</td>
                 <td className="p-3 font-mono text-sm text-[var(--color-foreground)]">
                   {s.copyright_code ?? dash}
                 </td>
@@ -349,7 +342,7 @@ export function StudentsList({
       )}
 
       {coursesStudent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <DashboardDialog size="lg" label={t("dashboard.studentsPage.coursesModalTitlePrefix", "Manage courses")} onDismiss={() => { setCoursesStudent(null); setEnrollError(""); }}>
           <div
             dir={dir}
             className="w-full max-w-lg rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-lg"
@@ -432,11 +425,11 @@ export function StudentsList({
               </button>
             </div>
           </div>
-        </div>
+        </DashboardDialog>
       )}
 
       {editStudent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <DashboardDialog label={t("dashboard.studentsPage.editStudentTitle", "Edit student")} onDismiss={() => { setEditStudent(null); setError(""); }}>
           <div
             dir={dir}
             className="w-full max-w-md rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-lg"
@@ -493,21 +486,7 @@ export function StudentsList({
                   )}
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--color-foreground)]">
-                  {t("dashboard.studentsPage.guardianNumberLabel", "Guardian number")}
-                </label>
-                <input
-                  type="text"
-                  value={editGuardianNumber}
-                  onChange={(e) => setEditGuardianNumber(e.target.value)}
-                  className="mt-1 w-full rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2"
-                  placeholder={t(
-                    "dashboard.studentsPage.guardianNumberPlaceholder",
-                    "Guardian number",
-                  )}
-                />
-              </div>
+
               <div>
                 <label className="block text-sm font-medium text-[var(--color-foreground)]">
                   {t("dashboard.studentsPage.newPasswordOptional", "New password (optional)")}
@@ -580,7 +559,7 @@ export function StudentsList({
               </div>
             </form>
           </div>
-        </div>
+        </DashboardDialog>
       )}
     </div>
   );

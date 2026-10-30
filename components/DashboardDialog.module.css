@@ -1,0 +1,5 @@
+.dialog { width: min(calc(100vw - 32px), 28rem); max-width: none; max-height: calc(100dvh - 32px); margin: auto; padding: 0; overflow-y: auto; overscroll-behavior: contain; border: 0; border-radius: var(--radius-card, 20px); background: transparent; color: var(--color-foreground); box-shadow: 0 20px 60px #0007; }
+.dialog::backdrop { background: rgb(0 0 0 / .65); }
+.sm { width: min(calc(100vw - 32px), 24rem); }
+.lg { width: min(calc(100vw - 32px), 32rem); }
+.dialog :focus-visible { outline: 2px solid #ff86a3; outline-offset: 3px; }

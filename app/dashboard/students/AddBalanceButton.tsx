@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useT } from "@/components/LocaleProvider";
 import { getDir } from "@/lib/i18n/core";
+import { DashboardDialog } from "@/components/DashboardDialog";
 
 export function AddBalanceButton({
   studentId,
@@ -56,7 +57,7 @@ export function AddBalanceButton({
         {t("dashboard.studentsPage.addBalanceButton", "Add balance")}
       </button>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <DashboardDialog size="sm" label={t("dashboard.studentsPage.addBalanceModalTitlePrefix", "Add balance")} onDismiss={() => { setOpen(false); setError(""); }}>
           <div
             dir={dir}
             className="w-full max-w-sm rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-lg"
@@ -99,7 +100,7 @@ export function AddBalanceButton({
               </div>
             </form>
           </div>
-        </div>
+        </DashboardDialog>
       )}
     </>
   );

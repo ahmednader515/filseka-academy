@@ -883,6 +883,8 @@ body:has(.platform-shell) { overflow-x: clip; }
 .home-sidebar[data-audience="student"] .home-sidebar-link { min-height: 44px; font-size: 15px; border-radius: 15px; }
 .home-sidebar[data-audience="admin"] .home-sidebar-link { min-height: 40px; font-size: 13px; border-radius: 12px; gap: 10px; }
 .home-sidebar[data-audience="admin"] .home-sidebar-link > svg { width: 22px; height: 22px; }
+.home-sidebar[data-audience="teacher"] .home-sidebar-link { min-height: 42px; font-size: 14px; border-radius: 13px; gap: 11px; }
+.home-sidebar[data-audience="teacher"] .home-sidebar-link > svg { width: 24px; height: 24px; }
 @media print {
   @page { size: A4 landscape; margin: 10mm; }
   body:has([data-certificate-document]) * { visibility: hidden; }

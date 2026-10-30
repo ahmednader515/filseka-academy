@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLocale, useT } from "@/components/LocaleProvider";
+import { HOMEWORK_UI_ENABLED } from "@/lib/ui-features";
 
 const baseClass =
   "rounded-[var(--radius-btn)] border px-4 py-2 text-sm font-medium transition";
@@ -54,7 +55,7 @@ export function DashboardNav({
         </NavLink>
         <NavLink href="/dashboard/statistics">{t("dashboardNav.studentStats", "Student statistics")}</NavLink>
         <NavLink href="/dashboard/codes">{t("dashboardNav.createCodes", "Create codes")}</NavLink>
-        <NavLink href="/dashboard/homework">{t("dashboardNav.homework", "Student homework")}</NavLink>
+        {HOMEWORK_UI_ENABLED && <NavLink href="/dashboard/homework">{t("dashboardNav.homework", "Student homework")}</NavLink>}
         <NavLink href="/dashboard/messages">{t("dashboardNav.contactMyStudents", "Contact my students")}</NavLink>
         <NavLink href="/dashboard/live-streams">{t("dashboardNav.liveStreams", "Live streams")}</NavLink>
       </>
@@ -98,7 +99,7 @@ export function DashboardNav({
           {t("dashboardNav.createCodes", "Create codes")}
         </NavLink>
       )}
-      {(isAdmin || isAssistant) && (
+      {HOMEWORK_UI_ENABLED && (isAdmin || isAssistant) && (
         <NavLink href="/dashboard/homework">
           {t("dashboardNav.homework", "Student homework")}
         </NavLink>

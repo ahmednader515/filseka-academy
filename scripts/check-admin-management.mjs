@@ -13,7 +13,7 @@ function load(relative, mocks = {}) {
   mod.filename = filename;
   mod.paths = Module._nodeModulePaths(path.dirname(filename));
   const fallback = mod.require.bind(mod);
-  mod.require = (name) => name in mocks ? mocks[name] : fallback(name);
+  mod.require = (name) => name in mocks ? mocks[name] : name === "@/lib/ui-features" ? load("lib/ui-features.ts") : fallback(name);
   mod._compile(ts.transpileModule(readFileSync(filename, "utf8"), { compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true } }).outputText, filename);
   return mod.exports;
 }
@@ -97,6 +97,10 @@ const assistantLinks = getSidebarGroups("ASSISTANT_ADMIN").flatMap((g) => g.item
 assert(adminLinks.includes("/dashboard/categories") && adminLinks.includes("/dashboard/certificates"));
 assert(assistantLinks.includes("/dashboard/categories") && !assistantLinks.includes("/dashboard/certificates"));
 assert(!isSidebarLinkActive("/dashboard/courses", "/dashboard/courses/new", ""));
+const teacherLinks = getSidebarGroups("TEACHER").flatMap((group) => group.items.map((item) => item.href));
+for (const href of ["/dashboard", "/dashboard/courses", "/dashboard/courses/new", "/dashboard/statistics", "/dashboard/profile", "/dashboard/messages", "/dashboard/codes", "/dashboard/live-streams"]) assert(teacherLinks.includes(href));
+for (const role of ["ADMIN", "ASSISTANT_ADMIN", "TEACHER", "STUDENT"]) assert(!getSidebarGroups(role).some((group) => group.items.some((item) => item.href === "/dashboard/homework")));
+for (const href of ["/dashboard/students", "/dashboard/categories", "/dashboard/certificates", "/dashboard/settings/homepage", "/dashboard/subscriptions"]) assert(!teacherLinks.includes(href));
 const css = { __esModule: true, default: new Proxy({}, { get: (_, key) => String(key) }) };
 const icon = load("components/AcademyIcon.tsx");
 const { CertificateDocument } = load("components/CertificateDocument.tsx", { "./AcademyIcon": icon, "./CertificateDocument.module.css": css });
@@ -114,6 +118,13 @@ const localeMock = { useLocale: () => "ar", useT: () => (_key, fallback) => fall
 const imageAttach = load("components/ImageAttachField.tsx", { "@/components/LocaleProvider": localeMock });
 const linkMock = { __esModule: true, default: ({ children, ...props }) => React.createElement("a", props, children) };
 const uiMocks = { "@/components/LocaleProvider": localeMock, "@/components/ImageAttachField": imageAttach, "next/navigation": { useRouter: () => ({ refresh() {} }) }, "next/link": linkMock, "../management.module.css": css };
+const { TeacherDashboard } = load("app/dashboard/TeacherDashboard.tsx", { ...uiMocks, "@/components/AcademyIcon": icon, "@/lib/sidebar-navigation": { getSidebarGroups }, "./admin-dashboard.module.css": css, "./teacher-dashboard.module.css": css });
+const teacherHtml = renderToStaticMarkup(React.createElement(TeacherDashboard, { courses: [{ id: "own-course", title: "My own course", titleAr: "كورسي الخاص", published: true, lessons: 4, enrollments: 7 }] }));
+assert(teacherHtml.includes("كورسي الخاص") && teacherHtml.includes("/dashboard/courses/own-course/edit"));
+assert(teacherHtml.includes("التسجيلات في كورساتي") && !teacherHtml.includes("/dashboard/students"));
+assert(!teacherHtml.includes("/dashboard/homework") && !teacherHtml.includes("واجب"));
+const emptyTeacherHtml = renderToStaticMarkup(React.createElement(TeacherDashboard, { courses: [] }));
+assert(emptyTeacherHtml.includes("إنشاء أول كورس"));
 const { CategoryManager } = load("app/dashboard/categories/CategoryManager.tsx", uiMocks);
 const categoryHtml = renderToStaticMarkup(React.createElement(CategoryManager, { categories: [{ id: "cat", name: "Radio", nameAr: "إذاعة", slug: "radio", description: "Learn radio", imageUrl: "", order: 1, courses: 3 }] }));
 assert(categoryHtml.includes("إذاعة") && categoryHtml.includes("3 كورس"));

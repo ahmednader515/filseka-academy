@@ -1,5 +1,9 @@
 .area { --color-surface: #180c12; --color-background: #0b070a; --color-border: #6b263c; --color-muted: #c1a3b0; --color-foreground: #fff5f8; --color-primary: #ef1744; --color-primary-hover: #ff3159; --radius-card: 20px; --radius-btn: 12px; --shadow-card: inset 0 1px 8px #ff477315, 0 8px 25px #0003; min-height: 80vh; background: radial-gradient(ellipse at 4% 30%, #5d001c33, transparent 65%), #080506; color: #fff5f8; }
 .area :is(a, button, input, textarea, select):focus-visible { outline: 2px solid #ff86a3; outline-offset: 3px; }
+.area select { color-scheme: dark; background-color: #180c12; }
+.area select :is(option, optgroup) { background: #180c12; color: #ffeaf2; }
+.area select option:checked { background: #6b1733; color: #fff5f8; }
+.area select option:disabled { color: #a98498; }
 .header { padding: 25px 30px; border-bottom: 1px solid #9b2849; background: radial-gradient(ellipse at top right, #5f0a2c88, transparent 65%), linear-gradient(130deg, #210b16, #0a0709); }
 .header nav { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; color: #c59bab; font-size: 12px; }
 .header nav a:hover { color: #ff91b0; }

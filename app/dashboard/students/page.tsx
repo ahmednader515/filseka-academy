@@ -50,7 +50,6 @@ export default async function StudentsPage() {
     role: s.role,
     balance: Number(s.balance),
     student_number: s.student_number ?? null,
-    guardian_number: s.guardian_number ?? null,
     copyright_code: (row.copyright_code as string | null | undefined) ?? (s as { copyright_code?: string | null }).copyright_code ?? null,
     createdAt: userCreatedAtToIso(row.created_at ?? row.createdAt ?? s.created_at),
     _count: { enrollments: enrollmentsByUser[i].length },

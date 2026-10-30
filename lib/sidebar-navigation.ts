@@ -1,10 +1,38 @@
 import type { UserRole } from "@/lib/types";
+import { HOMEWORK_UI_ENABLED } from "@/lib/ui-features";
 
 export type SidebarIcon = "chart" | "plus" | "settings" | "shield" | "home" | "users" | "play" | "broadcast" | "tasks" | "film" | "folder" | "support" | "mail" | "info" | "article" | "dashboard" | "profile" | "wallet" | "ticket" | "subscription";
 export type SidebarItem = { ar: string; en: string; icon: SidebarIcon; href: string };
 export type SidebarGroup = { id: string; ar?: string; en?: string; items: SidebarItem[] };
 
 export function getSidebarGroups(role?: UserRole): SidebarGroup[] {
+  return getSidebarGroupsForRole(role).map((group) => ({
+    ...group,
+    items: group.items.filter((item) => HOMEWORK_UI_ENABLED || item.href !== "/dashboard/homework"),
+  }));
+}
+
+function getSidebarGroupsForRole(role?: UserRole): SidebarGroup[] {
+  if (role === "TEACHER") return [
+    { id: "teaching", ar: "مساحة المدرب", en: "Teaching workspace", items: [
+      { ar: "لوحة المدرب", en: "Teacher dashboard", icon: "dashboard", href: "/dashboard" },
+      { ar: "كورساتي", en: "My courses", icon: "play", href: "/dashboard/courses" },
+      { ar: "إنشاء كورس", en: "Create course", icon: "plus", href: "/dashboard/courses/new" },
+      { ar: "البثوث المباشرة", en: "Live streams", icon: "broadcast", href: "/dashboard/live-streams" },
+      { ar: "أكواد التفعيل", en: "Activation codes", icon: "ticket", href: "/dashboard/codes" },
+    ] },
+    { id: "teacher-students", ar: "طلابي والتقييمات", en: "Students & assessments", items: [
+      { ar: "إحصائيات طلابي", en: "My student statistics", icon: "chart", href: "/dashboard/statistics" },
+      { ar: "واجبات الطلاب", en: "Student homework", icon: "tasks", href: "/dashboard/homework" },
+      { ar: "رسائل طلابي", en: "Student messages", icon: "mail", href: "/dashboard/messages" },
+    ] },
+    { id: "teacher-account", ar: "حسابي والأكاديمية", en: "Account & academy", items: [
+      { ar: "ملفي الشخصي", en: "My profile", icon: "profile", href: "/dashboard/profile" },
+      { ar: "المكتبة الإعلامية", en: "Media library", icon: "folder", href: "/store" },
+      { ar: "الدعم الفني", en: "Support", icon: "support", href: "/support" },
+      { ar: "عرض الموقع", en: "View website", icon: "home", href: "/" },
+    ] },
+  ];
   if (role === "ADMIN" || role === "ASSISTANT_ADMIN") {
     const admin = role === "ADMIN";
     return [
@@ -61,15 +89,10 @@ export function getSidebarGroups(role?: UserRole): SidebarGroup[] {
     ] },
   ];
 
-  const staff = role === "TEACHER";
   return [{ id: "academy", items: [
     { ar: "الرئيسية", en: "Homepage", icon: "home", href: "/" },
     { ar: "المدربون", en: "Trainers", icon: "users", href: "/teachers" },
-    { ar: "كورساتي", en: "My courses", icon: "play", href: staff ? "/dashboard/courses" : "/dashboard#my-courses" },
-    ...(staff ? [
-      { ar: "المحاضرات المباشرة", en: "Live lectures", icon: "broadcast" as const, href: "/dashboard/live-streams" },
-      { ar: "المهام والتقييمات", en: "Tasks & assessments", icon: "tasks" as const, href: "/dashboard/homework" },
-    ] : []),
+    { ar: "كورساتي", en: "My courses", icon: "play", href: "/dashboard#my-courses" },
     { ar: "معرض الأعمال", en: "Portfolio", icon: "film", href: "/portfolio" },
     { ar: "المكتبة الإعلامية", en: "Media library", icon: "folder", href: "/store" },
     { ar: "الدعم الفني", en: "Support", icon: "support", href: "/support" },

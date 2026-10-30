@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useT } from "@/components/LocaleProvider";
 import { CourseFormSaveOverlay } from "../../CourseFormSaveOverlay";
 import { ImageAttachField } from "@/components/ImageAttachField";
+import { HOMEWORK_UI_ENABLED } from "@/lib/ui-features";
 
 type CategoryOption = { id: string; name: string; nameAr?: string | null };
 type LessonRow = { id?: string; title: string; videoUrl: string; content: string; pdfUrl: string; acceptsHomework: boolean; homeworkImageUrl: string };
@@ -556,11 +557,11 @@ export function EditCourseForm({ courseId, initialData }: { courseId: string; in
                 )}
               </div>
               <textarea value={lesson.content} onChange={(e) => updateLesson(i, "content", e.target.value)} placeholder={t(`${Cf}.notesPlaceholder`)} rows={2} className="w-full rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm" />
-              <label className="flex items-center gap-2 pt-2">
+              {HOMEWORK_UI_ENABLED && <label className="flex items-center gap-2 pt-2">
                 <input type="checkbox" checked={lesson.acceptsHomework} onChange={(e) => updateLesson(i, "acceptsHomework", e.target.checked)} className="rounded border-[var(--color-border)]" />
                 <span className="text-sm text-[var(--color-foreground)]">{t(`${Cf}.homeworkCheckbox`)}</span>
-              </label>
-              {lesson.acceptsHomework ? (
+              </label>}
+              {HOMEWORK_UI_ENABLED && lesson.acceptsHomework ? (
                 <ImageAttachField
                   value={lesson.homeworkImageUrl}
                   onChange={(url) => updateLesson(i, "homeworkImageUrl", url)}

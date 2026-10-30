@@ -21,7 +21,7 @@ function load(relative, overrides = {}) {
   const mod = new Module(filename);
   mod.filename = filename; mod.paths = Module._nodeModulePaths(path.dirname(filename));
   const fallback = mod.require.bind(mod);
-  mod.require = (name) => Object.hasOwn(overrides, name) ? overrides[name] : name.endsWith(".module.css") ? styles : name === "next/link" ? link : name === "next/image" ? image : fallback(name);
+  mod.require = (name) => Object.hasOwn(overrides, name) ? overrides[name] : name === "@/lib/ui-features" ? load("lib/ui-features.ts") : name.endsWith(".module.css") ? styles : name === "next/link" ? link : name === "next/image" ? image : fallback(name);
   mod._compile(ts.transpileModule(readFileSync(filename, "utf8"), { compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true } }).outputText, filename);
   return mod.exports;
 }

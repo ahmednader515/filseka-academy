@@ -41,6 +41,7 @@ export function HomeSidebar() {
   const { data: session } = useSession();
   const student = session?.user.role === "STUDENT";
   const admin = session?.user.role === "ADMIN" || session?.user.role === "ASSISTANT_ADMIN";
+  const teacher = session?.user.role === "TEACHER";
   const groups = getSidebarGroups(session?.user.role);
   const [hash, setHash] = useState("");
   const [open, setOpen] = useState(false);
@@ -84,7 +85,7 @@ export function HomeSidebar() {
         id={panelId}
         ref={panel}
         className={`home-sidebar${open ? " is-open" : ""}`}
-        data-audience={admin ? "admin" : student ? "student" : "academy"}
+        data-audience={admin ? "admin" : teacher ? "teacher" : student ? "student" : "academy"}
         role={open ? "dialog" : undefined}
         aria-modal={open || undefined}
         aria-label={ar ? "قائمة الأكاديمية" : "Academy menu"}
