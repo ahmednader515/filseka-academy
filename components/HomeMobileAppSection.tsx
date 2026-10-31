@@ -30,7 +30,7 @@ export function HomeMobileAppSection({ locale, copy }: {
     <section aria-labelledby="mobile-app-heading" className={`filseka-mobile-app-section ${styles.section}`} dir="ltr">
       <div className={styles.inner}>
         <div className={styles.copy} dir={ar ? "rtl" : "ltr"}>
-          <Image src="/mobile-app-logo-transparent.png" width={280} height={138} alt={ar ? "في السكة أكاديمي" : "Filsaka Academy"} className={styles.logo} />
+          <Image src="/logo-1.png" width={280} height={138} alt={ar ? "في السكة أكاديمي" : "Filsaka Academy"} className={styles.logo} />
           <p className={styles.eyebrow}>{copy.mobileAppEyebrow}</p>
           <h2 id="mobile-app-heading">{copy.mobileAppTitle}</h2>
           <span className={styles.underline} aria-hidden="true" />

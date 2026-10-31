@@ -69,7 +69,7 @@ export default function RegisterPage() {
           <div className="login-field">
             <label htmlFor="student_number" className="sr-only">{t("auth.register.phoneLabel")}</label>
             <LoginIcon name="phone" />
-            <input id="student_number" type="tel" inputMode="numeric" autoComplete="tel" value={studentNumber} onChange={(e) => setStudentNumber(e.target.value)} required placeholder={t("auth.register.phoneLabel")} title={t("auth.register.phoneMustBe11")} />
+            <input id="student_number" type="tel" inputMode="numeric" autoComplete="tel" style={{ textAlign: ar ? "right" : "left" }} value={studentNumber} onChange={(e) => setStudentNumber(e.target.value)} required placeholder={t("auth.register.phoneLabel")} title={t("auth.register.phoneMustBe11")} />
           </div>
           <div className="login-field">
             <label htmlFor="password" className="sr-only">{t("auth.register.passwordLabel")}</label>

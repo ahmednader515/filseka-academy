@@ -733,7 +733,7 @@ body {
 .plyr:fullscreen.plyr--video {
   overflow: hidden;
 }
-/* Keep the auth scene viewport-sized, with the shared footer below it. */
+/* Keep the desktop auth scene viewport-sized, with the shared footer below it. */
 body:has(.login-page) { --auth-navbar-height: 69px; }
 body:has(.login-page) .filseka-header { flex-shrink: 0; }
 body:has(.login-page) .platform-shell > main { flex: none; height: calc(100vh - var(--auth-navbar-height)); height: calc(100dvh - var(--auth-navbar-height)); min-height: 0; }
@@ -793,19 +793,22 @@ body:has(.login-page) .platform-shell > main { flex: none; height: calc(100vh - 
   .login-soundwave { width: 30px; height: 25px; }
 }
 @media (max-width: 700px) {
-  .login-page, .login-composition { min-height: 0; }
-  .login-composition { display: flex; flex-direction: column; align-items: center; gap: 32px; padding: 8px 20px 20px; }
+  body:has(.login-page) .platform-shell > main { height: auto; min-height: calc(100dvh - var(--auth-navbar-height)); }
+  .login-page, .login-composition { height: auto; min-height: calc(100dvh - var(--auth-navbar-height)); }
+  .login-composition { display: flex; flex-direction: column; align-items: center; gap: 64px; padding: 20px 20px 64px; }
   .login-studio-background { object-position: 30% center; }
   .login-page::before { background: #05010780; }
   .login-brand { position: static; transform: none; flex-shrink: 0; width: min(240px, 100%); padding-top: 0; }
   .login-brand-tagline { font-size: 11px; margin-top: -4px; gap: 5px; }
-  .login-card { width: 100%; max-width: 400px; height: auto; flex: 1; min-height: 0; padding: 48px 22px 20px; border-radius: 32px; backdrop-filter: blur(10px); }
+  .login-card { width: 100%; max-width: 400px; height: auto; flex: none; min-height: 0; padding: 58px 22px 28px; border-radius: 32px; backdrop-filter: blur(10px); }
+  .login-card > *, .login-form > * { flex-shrink: 0; }
+  .login-form { gap: 16px; }
   .login-user-badge { width: 88px; height: 84px; top: -35px; border-radius: 21px; }
   .login-user-badge svg { width: 50px; height: 54px; }
   .login-card h1 { font-size: 26px; }
   .login-welcome { font-size: 13px; margin-bottom: 14px; }
-  .login-field { height: 46px; gap: 10px; padding-inline: 13px; border-radius: 15px; }
-  .login-field input { font-size: 14px; }
+  .login-field { height: 56px; min-height: 56px; gap: 10px; padding-inline: 13px; border-radius: 15px; }
+  .login-field input { font-size: 16px; }
   .login-field > svg { width: 25px; height: 25px; }
   .login-password-toggle svg { width: 25px; height: 25px; }
   .login-register { padding-top: 18px; font-size: 15px; gap: 10px; }
@@ -813,9 +816,13 @@ body:has(.login-page) .platform-shell > main { flex: none; height: calc(100vh - 
 .login-remember { display: flex; align-items: center; gap: 10px; cursor: pointer; }
 .login-remember input { width: 25px; height: 25px; accent-color: #ee0015; cursor: pointer; }
 
-/* Keep lengthy authentication notices accessible without extending the page. */
+/* Desktop forms scroll within the viewport-sized scene. Mobile forms grow with the page. */
 .login-form, .login-session-notice { min-height: 0; overflow-y: auto; }
-@media (max-width: 700px) { .login-brand .login-soundwave { width: 18px; height: 20px; } .login-card .login-register { flex-shrink: 0; } }
+@media (max-width: 700px) {
+  .login-form, .login-session-notice { overflow: visible; flex-shrink: 0; }
+  .login-brand .login-soundwave { width: 18px; height: 20px; }
+  .login-card .login-register { flex-shrink: 0; }
+}
 /* Registration shares the sign-in scene, with tighter spacing for its extra fields. */
 .register-card { height: min(620px, 100%); padding-top: 54px; padding-bottom: 24px; }
 .register-card h1 { font-size: clamp(28px, 2.2vw, 34px); }
@@ -829,7 +836,10 @@ body:has(.login-page) .platform-shell > main { flex: none; height: calc(100vh - 
 .register-card .login-register { padding-top: 20px; font-size: 14px; }
 .register-card .login-submit { min-height: 48px; font-size: 18px; }
 @media (max-width: 700px) {
-  .register-card { height: auto; padding-top: 48px; padding-bottom: 18px; }
+  .register-card { height: auto; padding-top: 58px; padding-bottom: 28px; }
+  .register-form { gap: 16px; }
+  .register-form .login-field { height: 56px; min-height: 56px; }
+  .register-form .login-field input { font-size: 16px; }
   .register-card h1 { font-size: 26px; }
   .register-card .login-welcome { font-size: 12px; margin-bottom: 10px; }
   .register-card .login-register { padding-top: 12px; }

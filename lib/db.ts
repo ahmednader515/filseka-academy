@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
-import { neon } from "@neondatabase/serverless";
+import { createPostgresSql } from "./postgres-sql";
 import {
   HOMEPAGE_CONTENT_TAG,
   HOMEPAGE_SETTINGS_TAG,
@@ -58,8 +58,8 @@ import {
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) throw new Error("DATABASE_URL غير معرّف");
 
-/** عميل Neon — الاتصال المباشر بقاعدة البيانات Neon (بدون Prisma) */
-export const sql = neon(connectionString);
+/** Shared PostgreSQL client for the configured DATABASE_URL. */
+export const sql = createPostgresSql(connectionString);
 
 /**
  * Many pages call "ensure schema" helpers during render.
