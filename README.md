@@ -4,6 +4,10 @@
 
 > **إذا ظهر على Vercel:** `Environment variable not found: DATABASE_URL` أو فشل تسجيل الدخول/إنشاء الحساب، أضف المتغيرات من **Vercel → Settings → Environment Variables** (راجع **ENV_VERCEL.md**).
 
+## Prisma
+
+يمكن تشغيل `npx prisma db push` و `npx prisma generate` و `npx prisma studio` من مجلد المشروع. راجع [دليل Prisma](prisma/README.md) للإعدادات وطريقة استخدام العميل. الاستعلامات الحالية عبر Neon SQL مستمرة على نفس قاعدة البيانات.
+
 ## التقنيات
 
 - **Next.js 16** (App Router)
@@ -28,16 +32,17 @@
 3. تطبيق الـ schema وإنشاء الجداول:
    ```bash
    npm run db:push
+   npm run db:generate
    ```
 
 4. (اختياري) إدخال بيانات تجريبية:
    ```bash
-   npm run db:seed
+   npm run seed:demo-academy
    ```
 
 5. تشغيل المشروع:
    ```bash
-   npm dev
+   npm run dev
    ```
 
 افتح [http://localhost:3000](http://localhost:3000).
@@ -89,7 +94,7 @@ npm run db:push
 (اختياري) لملء بيانات تجريبية:
 
 ```bash
-npm run db:seed
+npm run seed:demo-academy
 ```
 
 بعد ذلك لا تحتاج لتشغيل هذه الأوامر على السيرفر؛ Vercel يستخدم نفس القاعدة عبر `DATABASE_URL`.
@@ -118,7 +123,7 @@ npm run db:seed
 | `npm run build` | بناء المشروع للإنتاج |
 | `npm run db:generate` | توليد Prisma Client |
 | `npm run db:push` | مزامنة الـ schema مع قاعدة البيانات |
-| `npm run db:seed` | إدخال البيانات التجريبية |
+| `npm run seed:demo-academy` | إدخال البيانات التجريبية |
 
 ## هيكل المشروع
 
