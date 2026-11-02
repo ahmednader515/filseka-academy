@@ -19,12 +19,10 @@ export function HomepageSettingsForm({ initialSettings }: { initialSettings: Hom
   const [query, setQuery] = useState("");
   const [detailItems, setDetailItems] = useState(() => parsePlatformDetailsItems(initialSettings.platformDetailsItems));
   const [newsItems, setNewsItems] = useState(() => parsePlatformNewsItems(initialSettings.platformNewsItems));
-  const socialKeys = ["youtubeUrl", "linkedinUrl", "whatsappUrl", "facebookUrl", "telegramUrl", "teamYoutubeUrl", "teamLinkedinUrl", "teamWhatsappUrl", "teamFacebookUrl", "teamTelegramUrl"] as const;
+  const socialKeys = ["youtubeUrl", "linkedinUrl", "whatsappUrl", "facebookUrl", "telegramUrl"] as const;
   const [social, setSocial] = useState(() => Object.fromEntries(socialKeys.map((key) => [key, String(initialSettings[key] ?? "")])));
-  const [socialLeftEnabled, setSocialLeftEnabled] = useState(initialSettings.socialLeftEnabled !== false);
   const socialLabels: Record<string, string> = {
     youtubeUrl: text("يوتيوب الأكاديمية", "Academy YouTube"), linkedinUrl: text("لينكدإن الأكاديمية", "Academy LinkedIn"), whatsappUrl: text("واتساب الأكاديمية", "Academy WhatsApp"), facebookUrl: text("فيسبوك الأكاديمية", "Academy Facebook"), telegramUrl: text("تليجرام الأكاديمية", "Academy Telegram"),
-    teamYoutubeUrl: text("يوتيوب فريق العمل", "Team YouTube"), teamLinkedinUrl: text("لينكدإن فريق العمل", "Team LinkedIn"), teamWhatsappUrl: text("واتساب فريق العمل", "Team WhatsApp"), teamFacebookUrl: text("فيسبوك فريق العمل", "Team Facebook"), teamTelegramUrl: text("تليجرام فريق العمل", "Team Telegram"),
   };
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -37,7 +35,7 @@ export function HomepageSettingsForm({ initialSettings }: { initialSettings: Hom
   return <form className={`${styles.manager} mt-6`} onSubmit={async (e) => {
     e.preventDefault(); setSaving(true); setMessage("");
     try {
-      const response = await fetch("/api/dashboard/settings/homepage", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...values, ...social, socialLeftEnabled, homepageTextOverrides: copy, ...(detailItems.length ? { platformDetailsItems: detailItems } : {}), ...(newsItems.length ? { platformNewsItems: newsItems } : {}) }) });
+      const response = await fetch("/api/dashboard/settings/homepage", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...values, ...social, homepageTextOverrides: copy, ...(detailItems.length ? { platformDetailsItems: detailItems } : {}), ...(newsItems.length ? { platformNewsItems: newsItems } : {}) }) });
       const data = await response.json(); if (!response.ok) throw new Error(data.error);
       setMessage(text("تم حفظ نصوص الصفحة الرئيسية.", "Homepage text saved.")); router.refresh();
     } catch (e) { setMessage(e instanceof Error ? e.message : text("تعذر حفظ النصوص", "Could not save text")); } finally { setSaving(false); }
@@ -51,7 +49,7 @@ export function HomepageSettingsForm({ initialSettings }: { initialSettings: Hom
     })}
     {detailItems.length > 0 && <details className={styles.panel}><summary className="cursor-pointer text-lg font-bold">{text("نصوص بطاقات تفاصيل المنصة", "Platform detail cards")}</summary>{detailItems.map((item, index) => <div key={item.id}>{editor(text(`بطاقة ${index + 1} · العنوان`, `Card ${index + 1} · title`), item.title, item.titleEn || "", (locale, value) => setDetailItems((items) => items.map((row, i) => i === index ? { ...row, [locale === "ar" ? "title" : "titleEn"]: value } : row)), 120)}{editor(text("الوصف", "Description"), item.description, item.descriptionEn || "", (locale, value) => setDetailItems((items) => items.map((row, i) => i === index ? { ...row, [locale === "ar" ? "description" : "descriptionEn"]: value } : row)), 400)}</div>)}</details>}
     {newsItems.length > 0 && <details className={styles.panel}><summary className="cursor-pointer text-lg font-bold">{text("نصوص الأخبار الحالية", "Current news text")}</summary>{newsItems.map((item, index) => <div key={item.id}>{editor(text(`خبر ${index + 1}`, `News ${index + 1}`), item.description, item.descriptionEn || "", (locale, value) => setNewsItems((items) => items.map((row, i) => i === index ? { ...row, [locale === "ar" ? "description" : "descriptionEn"]: value } : row)), 1000)}</div>)}</details>}
-    <details className={styles.panel}><summary className="cursor-pointer text-lg font-bold">{text("روابط التواصل الاجتماعي", "Social links")}</summary><label className={styles.checkbox}><input type="checkbox" checked={socialLeftEnabled} onChange={(e) => setSocialLeftEnabled(e.target.checked)} />{text("إظهار روابط فريق العمل", "Show team social links")}</label>{socialKeys.map((key) => <label key={key}>{socialLabels[key]}<input dir="ltr" maxLength={4000} value={social[key]} onChange={(e) => setSocial((v) => ({ ...v, [key]: e.target.value }))} /></label>)}</details>
+    <details className={styles.panel}><summary className="cursor-pointer text-lg font-bold">{text("روابط التواصل الاجتماعي", "Social links")}</summary>{socialKeys.map((key) => <label key={key}>{socialLabels[key]}<input dir="ltr" maxLength={4000} value={social[key]} onChange={(e) => setSocial((v) => ({ ...v, [key]: e.target.value }))} /></label>)}</details>
     <div className="sticky bottom-4 z-10 flex flex-wrap items-center gap-4 rounded-2xl border border-[#97304f] bg-[#180c12]/95 p-4 shadow-xl backdrop-blur"><button disabled={saving} className={styles.button}>{saving ? text("جارٍ الحفظ…", "Saving…") : text("حفظ النصوص", "Save text")}</button>{message && <p role="status" className="text-sm">{message}</p>}</div>
   </form>;
 }

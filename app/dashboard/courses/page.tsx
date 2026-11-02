@@ -1,12 +1,12 @@
 import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { authOptions } from "@/lib/auth";
-import { getCoursesWithCounts, getCoursesWithCountsForCreator } from "@/lib/db";
+import { getCoursesWithCounts, getCoursesWithCountsForCreator, getUsersByRole } from "@/lib/db";
 import { getServerTranslator } from "@/lib/i18n/server";
 import { CoursesManageList } from "./CoursesManageList";
 
-export default async function DashboardCoursesPage() {
+export default async function DashboardCoursesPage({ searchParams }: { searchParams: Promise<{ teacherId?: string }> }) {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/login");
   const role = session.user.role;
@@ -14,11 +14,17 @@ export default async function DashboardCoursesPage() {
     redirect("/dashboard");
   }
   const t = await getServerTranslator();
+  const teachers = role === "ADMIN" ? await getUsersByRole("TEACHER") : [];
+  const { teacherId: requestedTeacherId } = await searchParams;
+  const teacherId = role === "ADMIN" ? requestedTeacherId : undefined;
+  const teacher = teachers.find((teacher) => teacher.id === teacherId);
+  if (teacherId && !teacher) notFound();
+  const createHref = teacherId ? `/dashboard/courses/new?teacherId=${encodeURIComponent(teacherId)}` : "/dashboard/courses/new";
 
   const courses =
     role === "TEACHER"
       ? await getCoursesWithCountsForCreator(session.user.id)
-      : await getCoursesWithCounts();
+      : teacherId ? await getCoursesWithCountsForCreator(teacherId) : await getCoursesWithCounts();
 
   const coursesPlain = courses.map((c) => {
     const row = c as Record<string, unknown>;
@@ -45,16 +51,29 @@ export default async function DashboardCoursesPage() {
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <h2 className="text-xl font-bold text-[var(--color-foreground)]">
-          {role === "TEACHER" ? t("dashboard.coursesRoutePage.titleTeacher") : t("dashboard.coursesRoutePage.titleStaff")}
+          {teacher ? `${t("dashboard.teachersAdmin.manageContent")}: ${teacher.name}` : role === "TEACHER" ? t("dashboard.coursesRoutePage.titleTeacher") : t("dashboard.coursesRoutePage.titleStaff")}
         </h2>
         <Link
-          href="/dashboard/courses/new"
+          href={createHref}
           className="rounded-[var(--radius-btn)] bg-[var(--color-primary)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--color-primary-hover)]"
         >
           {t("dashboard.coursesRoutePage.createCourse")}
         </Link>
       </div>
-      <CoursesManageList courses={coursesPlain} />
+      {role === "ADMIN" && (
+        <form className="mb-6 flex flex-wrap items-end gap-3" action="/dashboard/courses">
+          <label className="text-sm font-medium">
+            {t("dashboard.coursesRoutePage.teacherFilter")}
+            <select name="teacherId" defaultValue={teacherId ?? ""} className="mt-1 block rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
+              <option value="">{t("dashboard.coursesRoutePage.allTeachers")}</option>
+              {teachers.map((teacher) => <option key={teacher.id} value={teacher.id}>{teacher.name} ({teacher.email})</option>)}
+            </select>
+          </label>
+          <button type="submit" className="rounded-[var(--radius-btn)] border border-[var(--color-border)] px-4 py-2 text-sm">{t("dashboard.coursesRoutePage.showContent")}</button>
+        </form>
+      )}
+      {teacher && <p className="mb-4 text-sm text-[var(--color-muted)]">{t("dashboard.coursesRoutePage.teacherContentHelp")}</p>}
+      <CoursesManageList courses={coursesPlain} createHref={createHref} />
     </div>
   );
 }

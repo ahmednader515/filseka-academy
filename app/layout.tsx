@@ -24,6 +24,7 @@ import { LocaleProvider } from "@/components/LocaleProvider";
 import { homepageDefaultForLocale } from "@/lib/homepage-default-for-locale";
 import { pickLocalizedText } from "@/lib/i18n/localized-field";
 import { resolveHomepageCopy } from "@/lib/homepage-copy";
+import { getHomepageSound } from "@/lib/homepage-sound";
 import {
   HOMEPAGE_DEFAULT_FOOTER_COPYRIGHT_AR,
   HOMEPAGE_DEFAULT_FOOTER_TAGLINE_AR,
@@ -71,10 +72,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [locale, settingsResult, session] = await Promise.all([
+  const [locale, settingsResult, session, homepageSound] = await Promise.all([
     getLocaleFromCookie(),
     getHomepageSettings().catch(() => null),
     getServerSession(authOptions).catch(() => null),
+    getHomepageSound().catch(() => null),
   ]);
   const dir = getDir(locale);
   const t = makeTranslator(locale);
@@ -171,6 +173,7 @@ export default async function RootLayout({
             <Header
               platformSubscriptionExpiryLabel={platformSubscriptionExpiryLabel}
               homepageCopy={homepageCopy}
+              homepageSound={homepageSound}
             />
             <main className="flex-1">{children}</main>
             <Footer copy={homepageCopy} footerTitle={footerTitle} footerTagline={footerTagline} footerCopyright={footerCopyright} />

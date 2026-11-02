@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useT } from "@/components/LocaleProvider";
-import { useDashboardTable, formatAccountCreatedAt } from "@/lib/i18n/dashboard-table";
+import { useDashboardTable } from "@/lib/i18n/dashboard-table";
 import { fillMessage } from "@/lib/i18n/interpolate";
 
 export type TeacherRow = {
@@ -524,6 +525,12 @@ export function TeachersAdminClient({
                         <td className="px-4 py-3 text-[var(--color-muted)]">{row.subject ?? "—"}</td>
                         <td className="px-4 py-3">
                           <div className="flex flex-wrap gap-2">
+                            <Link
+                              href={`/dashboard/courses?teacherId=${encodeURIComponent(row.id)}`}
+                              className="rounded-[var(--radius-btn)] bg-[var(--color-primary)] px-3 py-1 text-xs font-medium text-white hover:bg-[var(--color-primary-hover)]"
+                            >
+                              {t(`${Ta}.manageContent`)}
+                            </Link>
                             <button
                               type="button"
                               onClick={() => openEdit(row)}

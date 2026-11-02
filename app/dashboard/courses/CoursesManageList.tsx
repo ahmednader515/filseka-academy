@@ -94,7 +94,7 @@ function CourseTableRow({
   );
 }
 
-export function CoursesManageList({ courses }: { courses: CourseRow[] }) {
+export function CoursesManageList({ courses, createHref = "/dashboard/courses/new" }: { courses: CourseRow[]; createHref?: string }) {
   const router = useRouter();
   const t = useT();
   const L = "dashboard.coursesList";
@@ -158,7 +158,7 @@ export function CoursesManageList({ courses }: { courses: CourseRow[] }) {
       <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center">
         <p className="text-[var(--color-muted)]">
           {t(`${L}.emptyAllCourses`)}{" "}
-          <Link href="/dashboard/courses/new" className="text-[var(--color-primary)] hover:underline">
+          <Link href={createHref} className="text-[var(--color-primary)] hover:underline">
             {t(`${L}.createNewCourseLink`)}
           </Link>
         </p>

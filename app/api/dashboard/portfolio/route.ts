@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { portfolioSchema } from "@/lib/portfolio-content";
-import { savePortfolioWork } from "@/lib/portfolio-db";
+import { savePortfolioWork, deletePortfolioWork } from "@/lib/portfolio-db";
+import { revalidatePath } from "next/cache";
 
 async function save(request: NextRequest, updating: boolean) {
   const session = await getServerSession(authOptions);
@@ -23,3 +24,18 @@ async function save(request: NextRequest, updating: boolean) {
 }
 export async function POST(request: NextRequest) { return save(request, false); }
 export async function PATCH(request: NextRequest) { return save(request, true); }
+
+export async function DELETE(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || !["ADMIN", "ASSISTANT_ADMIN"].includes(session.user.role)) return NextResponse.json({ code: "FORBIDDEN" }, { status: 403 });
+  const origin = request.headers.get("origin");
+  if (origin && origin !== request.nextUrl.origin) return NextResponse.json({ code: "FORBIDDEN" }, { status: 403 });
+  const id = request.nextUrl.searchParams.get("id");
+  if (!id || !/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(id)) return NextResponse.json({ code: "INVALID_INPUT" }, { status: 400 });
+  try {
+    if (!await deletePortfolioWork(id)) return NextResponse.json({ code: "NOT_FOUND" }, { status: 404 });
+    revalidatePath("/portfolio");
+    revalidatePath("/dashboard/portfolio");
+    return NextResponse.json({ deleted: true });
+  } catch { return NextResponse.json({ code: "UNAVAILABLE" }, { status: 503 }); }
+}

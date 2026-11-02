@@ -3,24 +3,30 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import type { ResolvedHomepageCopy } from "@/lib/homepage-copy";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ProfileDropdown } from "@/components/ProfileDropdown";
 import controls from "@/components/HeaderControls.module.css";
 import { useLocale, useT } from "@/components/LocaleProvider";
+import { HomepageWelcomeSound } from "@/components/HomepageWelcomeSound";
+import type { HomepageSoundSetting } from "@/lib/homepage-sound";
 
 export function Header({
   platformSubscriptionExpiryLabel,
   homepageCopy,
+  homepageSound,
 }: {
   homepageCopy: ResolvedHomepageCopy;
+  homepageSound?: HomepageSoundSetting | null;
   /** للطالب ذي اشتراك منصة نشط: نص تاريخ انتهاء الاشتراك (مُنسَّق من السيرفر) */
   platformSubscriptionExpiryLabel?: string | null;
 }) {
   const { data: session, status } = useSession();
   const t = useT();
   const ar = useLocale() === "ar";
+  const pathname = usePathname();
+  const showSound = pathname === "/" && homepageSound?.enabled && homepageSound.url;
   const router = useRouter();
   const headerRef = useRef<HTMLElement>(null);
 
@@ -36,7 +42,7 @@ export function Header({
 
   return (
     <header ref={headerRef} className="filseka-header sticky top-0 z-50 border-b border-white/10 bg-[#080808]/95 text-white backdrop-blur-xl">
-      <div className="platform-header-inner mx-auto flex h-[68px] max-w-[1500px] items-center justify-between gap-2 px-3 sm:gap-3 sm:px-8 lg:px-12">
+      <div className={`platform-header-inner mx-auto flex min-h-[68px] max-w-[1500px] items-center justify-between gap-2 px-3 sm:gap-3 sm:px-8 lg:px-12 ${showSound ? controls.withSound : ""}`}>
         <form role="search" action="/courses" className="platform-header-search" onSubmit={(event) => {
           event.preventDefault();
           const query = String(new FormData(event.currentTarget).get("q") ?? "").trim();
@@ -50,6 +56,7 @@ export function Header({
         </form>
 
         <div className={controls.actions}>
+          {showSound && <HomepageWelcomeSound key={homepageSound.url} url={homepageSound.url!} locale={ar ? "ar" : "en"} />}
           <LanguageToggle />
           {status === "loading" ? (
             <span className="text-sm text-white/60">...</span>

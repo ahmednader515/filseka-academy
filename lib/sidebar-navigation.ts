@@ -43,7 +43,7 @@ function getSidebarGroupsForRole(role?: UserRole): SidebarGroup[] {
       { id: "education", ar: "إدارة التعلم", en: "Learning management", items: [
         { ar: "إدارة الأقسام", en: "Manage categories", icon: "folder", href: "/dashboard/categories" },
         ...(admin ? [
-          { ar: "تصميم الشهادات", en: "Certificate designer", icon: "shield" as const, href: "/dashboard/certificates" },
+          { ar: "إدارة الشهادات", en: "Manage certificates", icon: "shield" as const, href: "/dashboard/certificates" },
           { ar: "إدارة الكورسات", en: "Manage courses", icon: "play" as const, href: "/dashboard/courses" },
           { ar: "إنشاء كورس", en: "Create course", icon: "plus" as const, href: "/dashboard/courses/new" },
           { ar: "البثوث المباشرة", en: "Live streams", icon: "broadcast" as const, href: "/dashboard/live-streams" },

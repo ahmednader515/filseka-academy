@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { HomepageSettingsForm } from "./HomepageSettingsForm";
 import { getHomepageSettings } from "@/lib/db";
 import { getServerTranslator } from "@/lib/i18n/server";
+import { getHomepageSound } from "@/lib/homepage-sound";
+import { HomepageSoundSettings } from "./HomepageSoundSettings";
 
 export default async function DashboardHomepageSettingsPage() {
   const session = await getServerSession(authOptions);
@@ -23,6 +25,7 @@ export default async function DashboardHomepageSettingsPage() {
           "Manage homepage text in Arabic and English.",
         )}
       </p>
+      <HomepageSoundSettings initial={await getHomepageSound()} />
       <HomepageSettingsForm initialSettings={settings} />
     </div>
   );

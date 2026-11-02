@@ -12,6 +12,7 @@ import {
   findCategoryByNameForDashboard,
   createCategory,
   categoryIsManageableOnDashboard,
+  getUserById,
 } from "@/lib/db";
 
 export async function GET() {
@@ -39,6 +40,7 @@ export async function POST(request: NextRequest) {
   }
 
   let body: {
+    teacherId?: string;
     title?: string;
     titleAr?: string;
     titleEn?: string;
@@ -67,6 +69,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "طلب غير صالح" }, { status: 400 });
   }
 
+  let creatorId = session.user.id;
+  if (body.teacherId != null) {
+    if (session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+    }
+    if (typeof body.teacherId !== "string" || !body.teacherId.trim()) {
+      return NextResponse.json({ error: "المدرس غير صالح" }, { status: 400 });
+    }
+    const teacher = await getUserById(body.teacherId.trim());
+    if (!teacher || teacher.role !== "TEACHER") {
+      return NextResponse.json({ error: "المدرس غير صالح" }, { status: 400 });
+    }
+    creatorId = teacher.id;
+  }
+
   const titleAr = (body.titleAr ?? body.title)?.trim();
   const titleEn = (body.titleEn ?? body.title)?.trim();
   const slug = body.slug?.trim();
@@ -85,10 +102,11 @@ export async function POST(request: NextRequest) {
   const catNameAr = (body.categoryNameAr ?? body.categoryName)?.trim();
   const catNameEn = (body.categoryNameEn ?? body.categoryName)?.trim();
   const role = session.user.role;
+  const categoryOwnerRole = creatorId !== session.user.id ? "TEACHER" : role;
   if (catNameAr || catNameEn) {
     let cat =
-      (catNameAr ? await findCategoryByNameForDashboard(catNameAr, session.user.id, role) : null) ??
-      (catNameEn ? await findCategoryByNameForDashboard(catNameEn, session.user.id, role) : null);
+      (catNameAr ? await findCategoryByNameForDashboard(catNameAr, creatorId, categoryOwnerRole) : null) ??
+      (catNameEn ? await findCategoryByNameForDashboard(catNameEn, creatorId, categoryOwnerRole) : null);
     if (!cat) {
       const slugBase = (catNameEn || catNameAr || "cat");
       const slugCat = slugBase.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\u0600-\u06FF-]+/g, "") || "cat";
@@ -97,7 +115,7 @@ export async function POST(request: NextRequest) {
         name: catNameEn || catNameAr || slugBase,
         name_ar: catNameAr || catNameEn || slugBase,
         slug: uniqueSlug,
-        created_by_id: session.user.id,
+        created_by_id: creatorId,
       });
     }
     categoryId = cat.id;
@@ -123,7 +141,7 @@ export async function POST(request: NextRequest) {
       image_url: body.imageUrl?.trim() || null,
       price: body.price ?? 0,
       is_published: true,
-      created_by_id: session.user.id,
+      created_by_id: creatorId,
       max_quiz_attempts: body.maxQuizAttempts ?? null,
       category_id: categoryId,
       accepts_homework: !!body.acceptsHomework,

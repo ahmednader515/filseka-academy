@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 function getR2Config() {
   return {
@@ -52,6 +52,15 @@ export async function uploadToR2(
 export function isR2Configured(): boolean {
   const { accountId, accessKeyId, secretAccessKey, bucket } = getR2Config();
   return !!(accountId && accessKeyId && secretAccessKey && bucket);
+}
+
+export async function readR2File(key: string): Promise<Uint8Array> {
+  const client = getClient();
+  const { bucket } = getR2Config();
+  if (!client || !bucket) throw new Error("R2 storage is not configured");
+  const result = await client.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
+  if (!result.Body) throw new Error("File not found");
+  return result.Body.transformToByteArray();
 }
 
 /** يُرجع قائمة بأسماء المتغيرات الناقصة في .env */

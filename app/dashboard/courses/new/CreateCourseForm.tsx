@@ -26,12 +26,13 @@ function emptyLesson(): LessonRow {
   return { title: "", videoUrl: "", content: "", pdfUrl: "", acceptsHomework: false, homeworkImageUrl: "" };
 }
 
-export function CreateCourseForm() {
+export function CreateCourseForm({ teachers = [], canAssignTeacher = false, initialTeacherId = "" }: { teachers?: { id: string; name: string; email: string }[]; canAssignTeacher?: boolean; initialTeacherId?: string }) {
   const router = useRouter();
   const t = useT();
   const Cf = "dashboard.courseForm";
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [teacherId, setTeacherId] = useState(initialTeacherId);
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [form, setForm] = useState({
     titleAr: "",
@@ -256,6 +257,7 @@ export function CreateCourseForm() {
       );
 
     const payload = {
+      ...(canAssignTeacher && teacherId ? { teacherId } : {}),
       titleAr: form.titleAr.trim(),
       titleEn: form.titleEn.trim(),
       slug,
@@ -290,7 +292,7 @@ export function CreateCourseForm() {
       setError(data.error ?? t(`${Cf}.createCourseFailed`));
       return;
     }
-    router.push("/dashboard");
+    router.push(canAssignTeacher && teacherId ? `/dashboard/courses?teacherId=${encodeURIComponent(teacherId)}` : "/dashboard/courses");
     router.refresh();
     } finally {
       setLoading(false);
@@ -311,6 +313,15 @@ export function CreateCourseForm() {
       )}
 
       <section className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
+        {canAssignTeacher && (
+          <label className="mb-5 block text-sm font-medium">
+            {t("dashboard.coursesRoutePage.courseTeacher")}
+            <select value={teacherId} onChange={(event) => setTeacherId(event.target.value)} className="mt-1 block w-full rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2">
+              <option value="">{t("dashboard.coursesRoutePage.platformCourse")}</option>
+              {teachers.map((teacher) => <option key={teacher.id} value={teacher.id}>{teacher.name} ({teacher.email})</option>)}
+            </select>
+          </label>
+        )}
         <h3 className="mb-4 text-lg font-semibold text-[var(--color-foreground)]">{t(`${Cf}.sectionCourseBasics`)}</h3>
         <div className="space-y-4">
           <div>

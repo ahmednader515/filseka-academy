@@ -543,9 +543,13 @@ export async function getCategories(): Promise<Category[]> {
   return getCategoriesCached();
 }
 
-/** أقسام تظهر في لوحة إنشاء/تعديل الكورس: الخبير يرى أقسامه فقط؛ الأدمن يرى أقسام المنصة وأقسام أي أدمن/مساعد */
+/** أقسام لوحة الكورسات: الأدمن يرى الكل؛ الخبير أقسامه؛ المساعد أقسام المنصة والإدارة */
 export async function getCategoriesForDashboard(userId: string, role: UserRole): Promise<Category[]> {
   await ensureCategoryCreatedByColumn();
+  if (role === "ADMIN") {
+    const rows = await sql`SELECT * FROM "Category" ORDER BY "order" ASC`;
+    return rowsToCamel(rows as Record<string, unknown>[]) as Category[];
+  }
   if (role === "TEACHER") {
     const rows = await sql`
       SELECT * FROM "Category"
@@ -554,7 +558,7 @@ export async function getCategoriesForDashboard(userId: string, role: UserRole):
     `;
     return rowsToCamel(rows as Record<string, unknown>[]) as Category[];
   }
-  if (role === "ADMIN" || role === "ASSISTANT_ADMIN") {
+  if (role === "ASSISTANT_ADMIN") {
     const rows = await sql`
       SELECT c.* FROM "Category" c
       WHERE c.created_by_id IS NULL
@@ -586,6 +590,10 @@ export async function categoryIsManageableOnDashboard(
   await ensureCategoryCreatedByColumn();
   const id = categoryId.trim();
   if (!id) return false;
+  if (role === "ADMIN") {
+    const rows = await sql`SELECT 1 FROM "Category" WHERE id = ${id} LIMIT 1`;
+    return rows.length > 0;
+  }
   if (role === "TEACHER") {
     const rows = await sql`
       SELECT 1 FROM "Category" c
@@ -594,7 +602,7 @@ export async function categoryIsManageableOnDashboard(
     `;
     return rows.length > 0;
   }
-  if (role === "ADMIN" || role === "ASSISTANT_ADMIN") {
+  if (role === "ASSISTANT_ADMIN") {
     const rows = await sql`
       SELECT 1 FROM "Category" c
       WHERE c.id = ${id}
@@ -656,6 +664,7 @@ export async function findCategoryByNameForDashboard(
   await ensureCategoryCreatedByColumn();
   const n = name.trim();
   if (!n) return null;
+  if (role === "ADMIN") return getCategoryByName(n);
   if (role === "TEACHER") {
     const rows = await sql`
       SELECT * FROM "Category"
@@ -668,7 +677,7 @@ export async function findCategoryByNameForDashboard(
     `;
     return (rowToCamel(rows[0] as Record<string, unknown>) as Category) ?? null;
   }
-  if (role === "ADMIN" || role === "ASSISTANT_ADMIN") {
+  if (role === "ASSISTANT_ADMIN") {
     const rows = await sql`
       SELECT c.* FROM "Category" c
       WHERE (

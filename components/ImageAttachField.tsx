@@ -8,9 +8,11 @@ type Props = {
   onChange: (url: string) => void;
   label: string;
   help?: string;
+  disabled?: boolean;
+  onUploadingChange?: (uploading: boolean) => void;
 };
 
-export function ImageAttachField({ value, onChange, label, help }: Props) {
+export function ImageAttachField({ value, onChange, label, help, disabled = false, onUploadingChange }: Props) {
   const t = useT();
   const Cf = "dashboard.courseForm";
   const [uploading, setUploading] = useState(false);
@@ -29,6 +31,7 @@ export function ImageAttachField({ value, onChange, label, help }: Props) {
           />
           <button
             type="button"
+            disabled={disabled || uploading}
             onClick={() => {
               onChange("");
               setError("");
@@ -45,13 +48,14 @@ export function ImageAttachField({ value, onChange, label, help }: Props) {
           type="file"
           accept="image/jpeg,image/png,image/webp,image/gif"
           className="hidden"
-          disabled={uploading}
+          disabled={disabled || uploading}
           onChange={async (e) => {
             const file = e.target.files?.[0];
             e.target.value = "";
             if (!file) return;
             setError("");
             setUploading(true);
+            onUploadingChange?.(true);
             try {
               const fd = new FormData();
               fd.set("file", file);
@@ -68,6 +72,7 @@ export function ImageAttachField({ value, onChange, label, help }: Props) {
               setError(t(`${Cf}.connectionFailedUpload`));
             } finally {
               setUploading(false);
+              onUploadingChange?.(false);
             }
           }}
         />

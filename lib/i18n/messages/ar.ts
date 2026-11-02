@@ -610,6 +610,12 @@ export const arMessages: Messages = {
         "المحادثات التي بدأها الإدارة معك. يمكنك الرد بنص أو صور أو ملفات.",
     },
     coursesRoutePage: {
+      teacherFilter: "محتوى المدرس",
+      allTeachers: "كل كورسات المنصة",
+      showContent: "عرض المحتوى",
+      courseTeacher: "مدرس الكورس",
+      platformCourse: "كورس المنصة (حسابي)",
+      teacherContentHelp: "أدر كورسات هذا المدرس ودروسه وفيديوهاته وملفاته واختباراته. افتح الكورس لتعديل محتواه أو حالة نشره.",
       titleTeacher: "كورساتي",
       titleStaff: "إدارة الكورسات",
       createCourse: "+ إنشاء كورس جديد",
@@ -1163,6 +1169,7 @@ export const arMessages: Messages = {
       deleteSuccess: "تم حذف سجل الاشتراك",
     },
     teachersAdmin: {
+      manageContent: "إدارة المحتوى",
       multiTeachersTitle: "تعدد المعلمين على المنصة",
       multiTeachersIntro:
         "عند التفعيل يظهر في الموقع قسم «اختر المعلمين»، ويُسمح لك بإنشاء حسابات برتبة خبير. عند الإيقاف يختفي القسم ولا يمكن إنشاء معلمين جدد حتى إعادة التفعيل.",

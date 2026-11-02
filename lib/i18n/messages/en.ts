@@ -613,6 +613,12 @@ export const enMessages: Messages = {
         "Conversations started by staff with you. You can reply with text, images, or files.",
     },
     coursesRoutePage: {
+      teacherFilter: "Teacher content",
+      allTeachers: "All platform courses",
+      showContent: "Show content",
+      courseTeacher: "Course teacher",
+      platformCourse: "Platform course (my account)",
+      teacherContentHelp: "Manage this teacher's courses, lessons, videos, files and quizzes. Open a course to edit its content or publishing status.",
       titleTeacher: "My courses",
       titleStaff: "Manage courses",
       createCourse: "+ Create new course",
@@ -1165,6 +1171,7 @@ export const enMessages: Messages = {
       deleteSuccess: "Subscription record deleted",
     },
     teachersAdmin: {
+      manageContent: "Manage content",
       multiTeachersTitle: "Multiple teachers on the platform",
       multiTeachersIntro:
         'When enabled, the site shows a «Choose teachers» section and you can create teacher accounts. When disabled, the section is hidden and you cannot add teachers until re-enabled.',

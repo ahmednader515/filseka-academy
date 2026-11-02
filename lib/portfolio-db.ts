@@ -33,3 +33,9 @@ export async function savePortfolioWork(data: PortfolioInput, existingId?: strin
   await sql`INSERT INTO "PortfolioWork" (id, content, is_published, sort_order) VALUES (${id}, ${content}::jsonb, ${data.isPublished}, ${data.order})`;
   return id;
 }
+
+export async function deletePortfolioWork(id: string): Promise<boolean> {
+  await ensureSchema();
+  const rows = await sql`DELETE FROM "PortfolioWork" WHERE id = ${id} RETURNING id`;
+  return rows.length > 0;
+}
