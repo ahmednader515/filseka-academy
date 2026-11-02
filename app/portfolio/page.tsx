@@ -1,6 +1,6 @@
-import { listPortfolioWorks } from "@/lib/portfolio-db";
+import { listPortfolioWorks, listPortfolioCategories } from "@/lib/portfolio-db";
 import { getLocaleFromCookie } from "@/lib/i18n/server";
-import { PORTFOLIO_DEMOS } from "@/lib/portfolio-content";
+import { PORTFOLIO_CATEGORIES, PORTFOLIO_DEMOS } from "@/lib/portfolio-content";
 import { PortfolioGallery } from "./PortfolioGallery";
 
 export const dynamic = "force-dynamic";
@@ -10,5 +10,6 @@ export async function generateMetadata() {
 }
 export default async function PortfolioPage() {
   const works = await listPortfolioWorks().catch(() => []);
-  return <PortfolioGallery works={works.length ? works : PORTFOLIO_DEMOS} />;
+  const categories = await listPortfolioCategories().catch(() => PORTFOLIO_CATEGORIES);
+  return <PortfolioGallery categories={categories} works={works.length ? works : PORTFOLIO_DEMOS.filter((work) => categories.some((category) => category.id === work.category))} />;
 }

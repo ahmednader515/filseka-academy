@@ -9,6 +9,15 @@ export const PORTFOLIO_CATEGORIES = [
   { id: "backstage", ar: "كواليس الإنتاج", en: "Behind the scenes", icon: "camera" },
 ] satisfies { id: string; ar: string; en: string; icon: AcademyIconName }[];
 
+export const portfolioCategorySchema = z.object({
+  id: z.string().regex(/^[a-z0-9-]{1,80}$/).refine((id) => id !== "all"),
+  ar: z.string().trim().min(1).max(120),
+  en: z.string().trim().min(1).max(120),
+  icon: z.enum(["video", "mic", "users", "broadcast", "camera", "layers", "graduate", "book"]),
+});
+export const portfolioCategoriesSchema = z.array(portfolioCategorySchema).min(1).max(50).refine((items) => new Set(items.map((item) => item.id)).size === items.length);
+export type PortfolioCategory = z.infer<typeof portfolioCategorySchema>;
+
 export function portfolioMedia(value: string): { kind: "youtube" | "video"; src: string } | null {
   try {
     const url = new URL(value);
@@ -36,7 +45,7 @@ export const portfolioSchema = z.object({
   descriptionEn: z.string().trim().max(3000).default(""),
   credit: z.string().trim().max(150).default(""),
   creditEn: z.string().trim().max(150).default(""),
-  category: z.enum(["programs", "podcasts", "projects", "events", "backstage"]),
+  category: portfolioCategorySchema.shape.id,
   imageUrl,
   videoUrl: z.string().trim().max(2000).refine((value) => !value || !!portfolioMedia(value)).default(""),
   duration: z.string().trim().regex(/^(?:\d{1,3}:)?\d{1,2}:[0-5]\d$|^$/).default(""),

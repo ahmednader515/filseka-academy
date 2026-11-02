@@ -15,6 +15,7 @@ let exists = true;
 let calls = 0;
 const refreshed = [];
 const mocks = {
+  "@/lib/request-origin": { isAllowedRequestOrigin: (request) => !request.headers.get("origin") || request.headers.get("origin") === new URL(request.url).origin },
   "next-auth": { getServerSession: async () => session },
   "@/lib/auth": { authOptions: {} },
   "@/lib/portfolio-content": {},

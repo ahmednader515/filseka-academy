@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { AcademyIcon } from "@/components/AcademyIcon";
-import { PORTFOLIO_CATEGORIES, portfolioMedia, type PortfolioWork } from "@/lib/portfolio-content";
+import { portfolioMedia, type PortfolioCategory, type PortfolioWork } from "@/lib/portfolio-content";
 import styles from "./portfolio.module.css";
 
 function normalize(value: string) { return value.normalize("NFKD").replace(/[\u064B-\u065F\u0670\u0640]/g, "").replace(/[أإآ]/g, "ا").toLowerCase().trim(); }
@@ -31,7 +31,7 @@ function WorkDialog({ work, onClose, ar }: { work: PortfolioWork; onClose: () =>
   </dialog>;
 }
 
-export function PortfolioGallery({ works }: { works: PortfolioWork[] }) {
+export function PortfolioGallery({ works, categories }: { works: PortfolioWork[]; categories: PortfolioCategory[] }) {
   const ar = useLocale() === "ar";
   const text = (arabic: string, english: string) => ar ? arabic : english;
   const [category, setCategory] = useState("all");
@@ -42,9 +42,7 @@ export function PortfolioGallery({ works }: { works: PortfolioWork[] }) {
   const filtered = useMemo(() => works.filter((work) => (category === "all" || work.category === category) && (!normalize(query) || normalize([work.title, work.titleEn, work.description, work.descriptionEn, work.credit, work.creditEn].join(" ")).includes(normalize(query)))), [works, category, query]);
   const stats = [
     { icon: "layers" as const, value: works.length, label: demoMode ? text("نموذج في المعرض", "gallery previews") : text("عمل منشور", "published works") },
-    { icon: "video" as const, value: works.filter((work) => work.category === "programs").length, label: text("برامج تلفزيونية", "TV programs") },
-    { icon: "mic" as const, value: works.filter((work) => work.category === "podcasts").length, label: text("بودكاست", "podcasts") },
-    { icon: "users" as const, value: works.filter((work) => work.category === "projects").length, label: text("مشاريع المتدربين", "student projects") },
+    ...categories.slice(0, 3).map((item) => ({ icon: item.icon, value: works.filter((work) => work.category === item.id).length, label: ar ? item.ar : item.en })),
   ];
 
   return <div className={styles.page} dir={ar ? "rtl" : "ltr"}>
@@ -53,14 +51,14 @@ export function PortfolioGallery({ works }: { works: PortfolioWork[] }) {
       <div className={styles.heading}><span className={styles.headingIcon}><AcademyIcon name="video" /></span><h1>{ar ? <>معرض <em>أعمال</em> الأكاديمية</> : <>Academy <em>portfolio</em></>}</h1></div>
       <p className={styles.subtitle}>{text("أفكار تتحول لإبداع.. اكتشف برامجنا ومشاريع المتدربين وكواليس الإنتاج.", "Ideas brought to life. Explore our programs, student projects and behind the scenes.")}</p><span className={styles.stroke} aria-hidden="true" />
       {demoMode && <span className={styles.demoLabel}>{text("نماذج توضيحية للمعرض · الأعمال المنشورة تظهر هنا عند إضافتها", "Illustrative gallery previews · Published productions will appear here once added")}</span>}
-    </div><div className={styles.stats}>{stats.map((stat) => <div key={stat.icon}><AcademyIcon name={stat.icon} /><span><strong>{stat.value.toLocaleString(ar ? "ar-EG" : "en-US")}</strong><small>{stat.label}</small></span></div>)}</div></header>
+    </div><div className={styles.stats}>{stats.map((stat) => <div key={stat.label}><AcademyIcon name={stat.icon} /><span><strong>{stat.value.toLocaleString(ar ? "ar-EG" : "en-US")}</strong><small>{stat.label}</small></span></div>)}</div></header>
 
     <div className={styles.content}>
-      <div className={styles.toolbar}><div className={styles.filters} role="group" aria-label={text("أقسام معرض الأعمال", "Portfolio categories")}><button type="button" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setLimit(12); }}><AcademyIcon name="layers" />{text("الكل", "All")}</button>{PORTFOLIO_CATEGORIES.map((item) => <button key={item.id} type="button" aria-pressed={category === item.id} onClick={() => { setCategory(item.id); setLimit(12); }}><AcademyIcon name={item.icon} />{ar ? item.ar : item.en}</button>)}</div>
+      <div className={styles.toolbar}><div className={styles.filters} role="group" aria-label={text("أقسام معرض الأعمال", "Portfolio categories")}><button type="button" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setLimit(12); }}><AcademyIcon name="layers" />{text("الكل", "All")}</button>{categories.map((item) => <button key={item.id} type="button" aria-pressed={category === item.id} onClick={() => { setCategory(item.id); setLimit(12); }}><AcademyIcon name={item.icon} />{ar ? item.ar : item.en}</button>)}</div>
       <label className={styles.search}><span className="sr-only">{text("ابحث في الأعمال", "Search portfolio")}</span><input type="search" value={query} onChange={(event) => { setQuery(event.target.value); setLimit(12); }} placeholder={text("ابحث في الأعمال…", "Search our work…")} /><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><circle cx="10" cy="10" r="7" /><path d="m15 15 6 6" /></svg></label></div>
       <p className={styles.results} role="status">{text(`عرض ${Math.min(limit, filtered.length)} من ${filtered.length} عمل${demoMode ? " تجريبي" : ""}`, `Showing ${Math.min(limit, filtered.length)} of ${filtered.length}${demoMode ? " demo" : ""} works`)}</p>
       {filtered.length ? <div className={styles.grid}>{filtered.slice(0, limit).map((work) => {
-        const group = PORTFOLIO_CATEGORIES.find((item) => item.id === work.category)!;
+        const group = categories.find((item) => item.id === work.category) ?? { ar: "بدون قسم", en: "Uncategorized" };
         const title = !ar && work.titleEn ? work.titleEn : work.title;
         return <article key={work.id} className={styles.card}><button type="button" className={styles.workButton} onClick={() => setSelected(work)} aria-label={`${work.isDemo ? text("تفاصيل النموذج", "Preview demo") : text("شاهد", "Watch")} — ${title}`} aria-haspopup="dialog"><div className={styles.thumbnail}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
