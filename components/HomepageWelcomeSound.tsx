@@ -3,6 +3,17 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./HeaderControls.module.css";
 
+const PLAYED_KEY = "filseka:homepage-sound-played";
+let playedWithoutStorage = false;
+function hasPlayedInSession() {
+  try { return window.sessionStorage.getItem(PLAYED_KEY) === "1"; }
+  catch { return playedWithoutStorage; }
+}
+function markPlayedInSession() {
+  try { window.sessionStorage.setItem(PLAYED_KEY, "1"); }
+  catch { playedWithoutStorage = true; }
+}
+
 export function HomepageWelcomeSound({ url, locale }: { url: string; locale: string }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
@@ -15,9 +26,9 @@ export function HomepageWelcomeSound({ url, locale }: { url: string; locale: str
     if (!audio) return;
     audio.volume = 0.7;
     let disposed = false;
-    let started = false;
+    let started = hasPlayedInSession();
     const remove = () => { document.removeEventListener("click", interact); document.removeEventListener("keydown", interact); };
-    const onStarted = () => { started = true; remove(); };
+    const onStarted = () => { started = true; markPlayedInSession(); remove(); };
     const play = () => {
       if (disposed || started) return;
       void audio.play().then(() => {
@@ -29,8 +40,10 @@ export function HomepageWelcomeSound({ url, locale }: { url: string; locale: str
       if (event.target instanceof Element && event.target.closest("[data-homepage-sound-control]")) return;
       play();
     };
-    document.addEventListener("click", interact);
-    document.addEventListener("keydown", interact);
+    if (!started) {
+      document.addEventListener("click", interact);
+      document.addEventListener("keydown", interact);
+    }
     audio.addEventListener("play", onStarted);
     play();
     return () => { disposed = true; remove(); audio.removeEventListener("play", onStarted); audio.pause(); audio.currentTime = 0; };
