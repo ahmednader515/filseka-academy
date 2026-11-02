@@ -5,15 +5,19 @@ import { authOptions } from "@/lib/auth";
 import { isR2Configured, uploadToR2 } from "@/lib/r2";
 import { saveHomepageSound, changeHomepageSound, getHomepageSound } from "@/lib/homepage-sound";
 import { revalidateHomepageCaches } from "@/lib/revalidate-homepage";
+import { isAllowedRequestOrigin } from "@/lib/request-origin";
 
-async function allowed(request: Request) {
+async function authorizationError(request: Request) {
   const session = await getServerSession(authOptions);
-  const origin = request.headers.get("origin");
-  return !!session && ["ADMIN", "ASSISTANT_ADMIN"].includes(session.user.role) && (!origin || origin === new URL(request.url).origin);
+  if (!session) return NextResponse.json({ code: "AUTH_REQUIRED", error: "انتهت الجلسة. سجل الدخول مجددًا / Your session expired. Please sign in again" }, { status: 401 });
+  if (!["ADMIN", "ASSISTANT_ADMIN"].includes(session.user.role)) return NextResponse.json({ code: "FORBIDDEN", error: "هذه الميزة متاحة للإدارة فقط / Administrator access required" }, { status: 403 });
+  if (!isAllowedRequestOrigin(request)) return NextResponse.json({ code: "INVALID_ORIGIN", error: "عنوان الموقع غير مطابق لإعدادات الخادم. تحقق من NEXTAUTH_URL / Site origin does not match server settings. Check NEXTAUTH_URL" }, { status: 403 });
+  return null;
 }
 const extensions: Record<string, string> = { "audio/mpeg": "mp3", "audio/mp3": "mp3", "audio/wav": "wav", "audio/x-wav": "wav", "audio/wave": "wav", "audio/ogg": "ogg", "audio/mp4": "m4a", "audio/x-m4a": "m4a" };
 export async function POST(request: Request) {
-  if (!await allowed(request)) return NextResponse.json({ error: "غير مصرح / Unauthorized" }, { status: 403 });
+  const denied = await authorizationError(request);
+  if (denied) return denied;
   const data = await request.formData().catch(() => null);
   const file = data?.get("file");
   if (!(file instanceof File) || !extensions[file.type] || !file.size || file.size > 10 * 1024 * 1024) return NextResponse.json({ error: "اختر ملف MP3 أو WAV أو OGG أو M4A حتى 10 MB / Choose MP3, WAV, OGG or M4A up to 10 MB" }, { status: 400 });
@@ -38,7 +42,8 @@ export async function POST(request: Request) {
   }
 }
 export async function PATCH(request: Request) {
-  if (!await allowed(request)) return NextResponse.json({ error: "غير مصرح / Unauthorized" }, { status: 403 });
+  const denied = await authorizationError(request);
+  if (denied) return denied;
   const body = await request.json().catch(() => null);
   if (!body || (body.remove !== true && typeof body.enabled !== "boolean")) return NextResponse.json({ error: "طلب غير صالح / Invalid request" }, { status: 400 });
   try {

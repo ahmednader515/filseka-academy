@@ -17,6 +17,7 @@ function load(relative, mocks) {
 let session = null;
 let setting = { url: null, name: null, enabled: false };
 let uploads = 0;
+const originChecks = load("lib/request-origin.ts", {});
 const route = load("app/api/dashboard/settings/homepage-sound/route.ts", {
   "next-auth": { getServerSession: async () => session }, "@/lib/auth": { authOptions: {} },
   "@/lib/r2": { isR2Configured: () => true, uploadToR2: async () => { uploads++; return { url: "https://cdn.example/sound.mp3" }; } },
@@ -26,6 +27,7 @@ const route = load("app/api/dashboard/settings/homepage-sound/route.ts", {
     getHomepageSound: async () => setting,
   },
   "@/lib/revalidate-homepage": { revalidateHomepageCaches() {} },
+  "@/lib/request-origin": originChecks,
 });
 const priorPublicUrl = process.env.R2_PUBLIC_URL;
 process.env.R2_PUBLIC_URL = "https://cdn.example";
@@ -35,7 +37,7 @@ const upload = (type = "audio/mpeg", contents = "ID3audio", origin = "http://loc
 };
 for (const role of [null, "TEACHER", "STUDENT"]) {
   session = role ? { user: { role } } : null;
-  assert.equal((await upload()).status, 403);
+  assert.equal((await upload()).status, role ? 403 : 401);
 }
 session = { user: { role: "ADMIN" } };
 assert.equal((await upload("audio/mpeg", "ID3audio", "https://other.example")).status, 403);
@@ -49,6 +51,21 @@ assert.equal((await patch({ enabled: false })).status, 200);
 assert.equal(setting.enabled, false);
 assert.equal((await patch({ remove: true })).status, 200);
 assert.equal(setting.url, null);
+const oldAuthUrl = process.env.NEXTAUTH_URL;
+const oldAuthAlias = process.env.AUTH_URL;
+delete process.env.AUTH_URL;
+process.env.NEXTAUTH_URL = "https://academy.example";
+const proxiedUpload = (origin, extra = {}) => {
+  const body = new FormData(); body.set("file", new File(["ID3audio"], "welcome.mp3", { type: "audio/mpeg" }));
+  return route.POST(new Request("http://localhost:3000/api/dashboard/settings/homepage-sound", { method: "POST", headers: { origin, ...extra }, body }));
+};
+assert.equal((await proxiedUpload("https://academy.example")).status, 200);
+assert.equal((await proxiedUpload("https://evil.example")).status, 403);
+delete process.env.NEXTAUTH_URL;
+assert.equal((await proxiedUpload("https://academy.example", { host: "academy.example", "x-forwarded-proto": "https" })).status, 200);
+assert.equal((await proxiedUpload("https://evil.example", { host: "academy.example", "x-forwarded-proto": "https", "x-forwarded-host": "evil.example" })).status, 403);
+if (oldAuthUrl === undefined) delete process.env.NEXTAUTH_URL; else process.env.NEXTAUTH_URL = oldAuthUrl;
+if (oldAuthAlias === undefined) delete process.env.AUTH_URL; else process.env.AUTH_URL = oldAuthAlias;
 if (priorPublicUrl === undefined) delete process.env.R2_PUBLIC_URL; else process.env.R2_PUBLIC_URL = priorPublicUrl;
 
 let effect;
