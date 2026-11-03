@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import styles from "./HeaderControls.module.css";
 
 const PLAYED_KEY = "filseka:homepage-sound-played";
@@ -15,6 +16,8 @@ function markPlayedInSession() {
 }
 
 export function HomepageWelcomeSound({ url, locale }: { url: string; locale: string }) {
+  const pathname = usePathname();
+  const lessonPath = /^\/courses\/[^/]+\/lessons\/[^/]+\/?$/.test(pathname) ? pathname : null;
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -22,9 +25,17 @@ export function HomepageWelcomeSound({ url, locale }: { url: string; locale: str
   const [volume, setVolume] = useState(70);
   const ar = locale === "ar";
   useEffect(() => {
+    if (audioRef.current) audioRef.current.volume = 0.7;
+  }, [url]);
+
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    audio.volume = 0.7;
+    // Opening a lesson pauses site audio and disables autoplay retries there.
+    if (lessonPath) {
+      audio.pause();
+      return;
+    }
     let disposed = false;
     let started = hasPlayedInSession();
     const remove = () => { document.removeEventListener("click", interact); document.removeEventListener("keydown", interact); };
@@ -46,11 +57,11 @@ export function HomepageWelcomeSound({ url, locale }: { url: string; locale: str
     }
     audio.addEventListener("play", onStarted);
     play();
-    return () => { disposed = true; remove(); audio.removeEventListener("play", onStarted); audio.pause(); audio.currentTime = 0; };
-  }, [url]);
+    return () => { disposed = true; remove(); audio.removeEventListener("play", onStarted); audio.pause(); };
+  }, [url, lessonPath]);
   return <>
     <audio ref={audioRef} src={url} preload="auto" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onError={() => setFailed(true)} />
-    {!failed && <div className={styles.sound} data-homepage-sound-control role="group" aria-label={ar ? "التحكم في صوت الصفحة الرئيسية" : "Homepage sound controls"}>
+    {!failed && <div className={styles.sound} data-homepage-sound-control role="group" aria-label={ar ? "التحكم في صوت الموقع" : "Site sound controls"}>
       <button type="button" aria-label={playing ? (ar ? "إيقاف مؤقت للصوت" : "Pause sound") : (ar ? "تشغيل الصوت" : "Play sound")} title={playing ? (ar ? "إيقاف مؤقت" : "Pause") : (ar ? "تشغيل" : "Play")} aria-pressed={playing} className={styles.soundButton} onClick={() => {
       const audio = audioRef.current;
       if (!audio) return;

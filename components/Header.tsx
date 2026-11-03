@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRef, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import type { ResolvedHomepageCopy } from "@/lib/homepage-copy";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ProfileDropdown } from "@/components/ProfileDropdown";
@@ -25,8 +25,7 @@ export function Header({
   const { data: session, status } = useSession();
   const t = useT();
   const ar = useLocale() === "ar";
-  const pathname = usePathname();
-  const showSound = pathname === "/" && homepageSound?.enabled && homepageSound.url;
+  const showSound = homepageSound?.enabled && homepageSound.url;
   const router = useRouter();
   const headerRef = useRef<HTMLElement>(null);
 

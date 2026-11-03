@@ -79,6 +79,7 @@ function getSidebarGroupsForRole(role?: UserRole): SidebarGroup[] {
   if (role === "STUDENT") return [
     { id: "learning", ar: "تعلمي", en: "My learning", items: [
       { ar: "لوحة تعلمي", en: "Learning dashboard", icon: "dashboard", href: "/dashboard" },
+      { ar: "كورساتي", en: "My courses", icon: "play", href: "/dashboard#my-courses" },
       { ar: "شحن الرصيد", en: "Add balance", icon: "wallet", href: "/dashboard/add-balance" },
       { ar: "رسائلي", en: "My messages", icon: "mail", href: "/dashboard/messages" },
       { ar: "حسابي", en: "My profile", icon: "profile", href: "/dashboard/profile" },
@@ -92,7 +93,6 @@ function getSidebarGroupsForRole(role?: UserRole): SidebarGroup[] {
   return [{ id: "academy", items: [
     { ar: "الرئيسية", en: "Homepage", icon: "home", href: "/" },
     { ar: "المدربون", en: "Trainers", icon: "users", href: "/teachers" },
-    { ar: "كورساتي", en: "My courses", icon: "play", href: "/dashboard#my-courses" },
     { ar: "معرض الأعمال", en: "Portfolio", icon: "film", href: "/portfolio" },
     { ar: "المكتبة الإعلامية", en: "Media library", icon: "folder", href: "/store" },
     { ar: "الدعم الفني", en: "Support", icon: "support", href: "/support" },

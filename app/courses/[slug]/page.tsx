@@ -322,10 +322,13 @@ export default async function CoursePage({ params }: Props) {
                               • {String((lesson as Record<string, unknown>).duration)} {t("courses.minutes", "minutes")}
                             </span>
                           ) : null}
-                          {(lesson as Record<string, unknown>).videoUrl && canAccessContent ? (
-                            <span className="mr-2 text-xs text-[var(--color-primary)]">▶ {t("courses.videoTag", "Video")}</span>
-                          ) : null}
                         </div>
+                        {(lesson as Record<string, unknown>).videoUrl && canAccessContent ? (
+                          <span className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-[var(--radius-btn)] bg-[var(--color-primary)] px-3 py-2 text-xs font-bold text-white transition hover:bg-[var(--color-primary-hover)] sm:px-4 sm:text-sm">
+                            <span aria-hidden="true">▶</span>
+                            {locale === "ar" ? "مشاهدة الفيديو" : "Watch video"}
+                          </span>
+                        ) : null}
                       </>
                     );
                     const courseSlugOrId = String((course as Record<string, unknown>).slug ?? "").trim() || String((course as Record<string, unknown>).id ?? course.id);
