@@ -9,15 +9,11 @@ export function MobileHomeEntry({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "loading") return;
+    if (status !== "authenticated") return;
 
     const mobile = window.matchMedia("(max-width: 767px)");
     const openEntryPage = () => {
-      if (status === "authenticated") {
-        if (!mobile.matches) router.replace("/dashboard");
-      } else if (mobile.matches) {
-        router.replace("/login");
-      }
+      if (!mobile.matches) router.replace("/dashboard");
     };
 
     openEntryPage();
@@ -29,7 +25,7 @@ export function MobileHomeEntry({ children }: { children: ReactNode }) {
   if (status === "loading") return null;
 
   return (
-    <div className={status === "authenticated" ? "contents md:hidden" : "contents max-md:hidden"}>
+    <div className={status === "authenticated" ? "contents md:hidden" : "contents"}>
       {children}
     </div>
   );
