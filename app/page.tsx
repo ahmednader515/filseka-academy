@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { MobileHomeEntry } from "@/components/MobileHomeEntry";
 import { getHomepageSettings } from "@/lib/db";
 import { HomeMarketplaceHero } from "@/components/HomeMarketplaceHero";
 import { HomeHeroTemplateThree } from "@/components/HomeHeroTemplateThree";
@@ -48,6 +49,7 @@ export default async function HomePage() {
       : configuredHeroSubtitle || defaultHeroSubtitle;
 
   return (
+    <MobileHomeEntry>
     <div className="filseka-home academy-reference-home">
       {heroTemplate === "coming_soon" ? (
         <HomeHeroTemplateThree
@@ -79,5 +81,6 @@ export default async function HomePage() {
         <HomePageBelowFold homepageSettings={homepageSettings} homepageCopy={homepageCopy} />
       </Suspense>
     </div>
+    </MobileHomeEntry>
   );
 }
