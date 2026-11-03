@@ -9,27 +9,27 @@ export function MobileHomeEntry({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "authenticated") {
-      router.replace("/dashboard");
-      return;
-    }
-    if (status !== "unauthenticated") return;
+    if (status === "loading") return;
 
     const mobile = window.matchMedia("(max-width: 767px)");
-    const openSignIn = () => {
-      if (mobile.matches) router.replace("/login");
+    const openEntryPage = () => {
+      if (status === "authenticated") {
+        if (!mobile.matches) router.replace("/dashboard");
+      } else if (mobile.matches) {
+        router.replace("/login");
+      }
     };
 
-    openSignIn();
-    mobile.addEventListener("change", openSignIn);
-    return () => mobile.removeEventListener("change", openSignIn);
+    openEntryPage();
+    mobile.addEventListener("change", openEntryPage);
+    return () => mobile.removeEventListener("change", openEntryPage);
   }, [router, status]);
 
-  // Only show the public homepage once we know this is a signed-out visitor.
-  if (status !== "unauthenticated") return null;
+  // Hide the homepage while checking the session or redirecting visitors.
+  if (status === "loading") return null;
 
   return (
-    <div className="contents max-md:hidden">
+    <div className={status === "authenticated" ? "contents md:hidden" : "contents max-md:hidden"}>
       {children}
     </div>
   );

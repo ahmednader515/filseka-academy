@@ -20,7 +20,7 @@ function LoginForm() {
   const [concurrentSession, setConcurrentSession] = useState(false);
   const [forceLogoutLoading, setForceLogoutLoading] = useState(false);
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
+  const callbackUrl = searchParams.get("callbackUrl");
   const reasonElsewhere = searchParams.get("reason") === "session_ended_elsewhere";
 
   useEffect(() => {
@@ -45,15 +45,16 @@ function LoginForm() {
 
   function navigateToCallback() {
     rememberIdentifier();
+    const defaultDestination = window.matchMedia("(max-width: 767px)").matches ? "/" : "/dashboard";
     try {
-      const destination = new URL(callbackUrl, window.location.origin);
+      const destination = new URL(callbackUrl ?? defaultDestination, window.location.origin);
       const safeDestination =
         destination.origin === window.location.origin
           ? `${destination.pathname}${destination.search}${destination.hash}`
-          : "/dashboard";
+          : defaultDestination;
       window.location.assign(safeDestination);
     } catch {
-      window.location.assign("/dashboard");
+      window.location.assign(defaultDestination);
     }
   }
 
