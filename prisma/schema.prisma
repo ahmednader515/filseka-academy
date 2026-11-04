@@ -544,6 +544,7 @@ model HomepageSound {
   id      String  @id
   url     String?
   name    String?
+  tracks  Json?
   enabled Boolean @default(false)
 }
 
