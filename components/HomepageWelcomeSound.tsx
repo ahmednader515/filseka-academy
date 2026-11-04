@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import styles from "./HeaderControls.module.css";
+import type { HomepageSoundTrack } from "@/lib/homepage-sound";
 
 const PLAYED_KEY = "filseka:homepage-sound-played";
 let playedWithoutStorage = false;
@@ -15,7 +16,10 @@ function markPlayedInSession() {
   catch { playedWithoutStorage = true; }
 }
 
-export function HomepageWelcomeSound({ url, locale }: { url: string; locale: string }) {
+export function HomepageWelcomeSound({ tracks, locale }: { tracks: HomepageSoundTrack[]; locale: string }) {
+  const [trackIndex, setTrackIndex] = useState(0);
+  const advancing = useRef(false);
+  const url = tracks[trackIndex]?.url;
   const pathname = usePathname();
   const lessonPath = /^\/courses\/[^/]+\/lessons\/[^/]+\/?$/.test(pathname) ? pathname : null;
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -26,7 +30,13 @@ export function HomepageWelcomeSound({ url, locale }: { url: string; locale: str
   const ar = locale === "ar";
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = 0.7;
-  }, [url]);
+  }, []);
+
+  useEffect(() => {
+    if (!advancing.current || lessonPath) return;
+    advancing.current = false;
+    void audioRef.current?.play().catch(() => {});
+  }, [trackIndex, lessonPath]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -58,9 +68,14 @@ export function HomepageWelcomeSound({ url, locale }: { url: string; locale: str
     audio.addEventListener("play", onStarted);
     play();
     return () => { disposed = true; remove(); audio.removeEventListener("play", onStarted); audio.pause(); };
-  }, [url, lessonPath]);
+  }, [lessonPath]);
   return <>
-    <audio ref={audioRef} src={url} preload="auto" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onError={() => setFailed(true)} />
+    <audio ref={audioRef} src={url} loop={tracks.length === 1} preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => {
+      setPlaying(false);
+      if (lessonPath || tracks.length < 2) return;
+      advancing.current = true;
+      setTrackIndex((index) => (index + 1) % tracks.length);
+    }} onError={() => setFailed(true)} />
     {!failed && <div className={styles.sound} data-homepage-sound-control role="group" aria-label={ar ? "التحكم في صوت الموقع" : "Site sound controls"}>
       <button type="button" aria-label={playing ? (ar ? "إيقاف مؤقت للصوت" : "Pause sound") : (ar ? "تشغيل الصوت" : "Play sound")} title={playing ? (ar ? "إيقاف مؤقت" : "Pause") : (ar ? "تشغيل" : "Play")} aria-pressed={playing} className={styles.soundButton} onClick={() => {
       const audio = audioRef.current;

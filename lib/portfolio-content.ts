@@ -18,7 +18,7 @@ export const portfolioCategorySchema = z.object({
 export const portfolioCategoriesSchema = z.array(portfolioCategorySchema).min(1).max(50).refine((items) => new Set(items.map((item) => item.id)).size === items.length);
 export type PortfolioCategory = z.infer<typeof portfolioCategorySchema>;
 
-export function portfolioMedia(value: string): { kind: "youtube" | "video"; src: string } | null {
+export function portfolioMedia(value: string): { kind: "youtube" | "facebook" | "video"; src: string; isShort: boolean } | null {
   try {
     const url = new URL(value);
     if (!["https:", "http:"].includes(url.protocol) || url.username || url.password) return null;
@@ -28,8 +28,20 @@ export function portfolioMedia(value: string): { kind: "youtube" | "video"; src:
     if (["youtube.com", "m.youtube.com", "youtube-nocookie.com"].includes(host)) {
       id = url.pathname === "/watch" ? url.searchParams.get("v") : /^\/(?:embed|shorts)\/([^/]+)\/?$/.exec(url.pathname)?.[1] || null;
     }
-    if (id && /^[\w-]{11}$/.test(id)) return { kind: "youtube", src: `https://www.youtube-nocookie.com/embed/${id}` };
-    if (/\.(mp4|webm)$/i.test(url.pathname)) return { kind: "video", src: url.href };
+    if (id && /^[\w-]{11}$/.test(id)) return { kind: "youtube", src: `https://www.youtube-nocookie.com/embed/${id}`, isShort: url.pathname.startsWith("/shorts/") };
+    if (["facebook.com", "m.facebook.com", "web.facebook.com"].includes(host)) {
+      const reelId = /^\/reels?\/(\d+)\/?$/.exec(url.pathname)?.[1];
+      const videoId = /^\/(?:[^/]+\/)?videos\/(?:[^/]+\/)?(\d+)\/?$/.exec(url.pathname)?.[1]
+        || (/^\/(?:watch\/?|video\.php)$/.test(url.pathname) ? url.searchParams.get("v") : null);
+      const facebookId = reelId || videoId;
+      if (facebookId && /^\d+$/.test(facebookId)) {
+        const href = reelId ? `https://www.facebook.com/reel/${facebookId}/` : `https://www.facebook.com/watch/?v=${facebookId}`;
+        const params = new URLSearchParams({ href, show_text: "false", width: reelId ? "360" : "640", height: reelId ? "640" : "360" });
+        return { kind: "facebook", src: `https://www.facebook.com/plugins/video.php?${params}`, isShort: !!reelId };
+      }
+      return null;
+    }
+    if (/\.(mp4|webm)$/i.test(url.pathname)) return { kind: "video", src: url.href, isShort: false };
   } catch { /* Unsupported media URLs stay out of the player. */ }
   return null;
 }

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { isR2Configured, uploadToR2 } from "@/lib/r2";
-import { saveHomepageSound, changeHomepageSound, getHomepageSound } from "@/lib/homepage-sound";
+import { saveHomepageSound, changeHomepageSound, getHomepageSound, editHomepageSoundTrack } from "@/lib/homepage-sound";
 import { revalidateHomepageCaches } from "@/lib/revalidate-homepage";
 import { isAllowedRequestOrigin } from "@/lib/request-origin";
 
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   if (denied) return denied;
   const data = await request.formData().catch(() => null);
   const file = data?.get("file");
-  if (!(file instanceof File) || !extensions[file.type] || !file.size || file.size > 10 * 1024 * 1024) return NextResponse.json({ error: "اختر ملف MP3 أو WAV أو OGG أو M4A حتى 10 MB / Choose MP3, WAV, OGG or M4A up to 10 MB" }, { status: 400 });
+  if (!(file instanceof File) || !extensions[file.type] || !file.size || file.size > 100 * 1024 * 1024) return NextResponse.json({ error: "اختر ملف MP3 أو WAV أو OGG أو M4A حتى 100 MB / Choose MP3, WAV, OGG or M4A up to 100 MB" }, { status: 400 });
   if (!isR2Configured() || !process.env.R2_PUBLIC_URL?.trim()) return NextResponse.json({ error: "التخزين أو رابط R2 العام غير مضبوط / R2 storage and public URL must be configured" }, { status: 503 });
   try {
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -45,9 +45,15 @@ export async function PATCH(request: Request) {
   const denied = await authorizationError(request);
   if (denied) return denied;
   const body = await request.json().catch(() => null);
-  if (!body || (body.remove !== true && typeof body.enabled !== "boolean")) return NextResponse.json({ error: "طلب غير صالح / Invalid request" }, { status: 400 });
+  if (!body || typeof body !== "object" || Array.isArray(body)) return NextResponse.json({ error: "طلب غير صالح / Invalid request" }, { status: 400 });
+  const trackEdit = "trackUrl" in body || "action" in body;
+  if (trackEdit
+    ? typeof body.trackUrl !== "string" || !body.trackUrl || !["remove", "up", "down"].includes(body.action) || "enabled" in body || "remove" in body
+    : body.remove !== true && typeof body.enabled !== "boolean") return NextResponse.json({ error: "طلب غير صالح / Invalid request" }, { status: 400 });
   try {
-    await changeHomepageSound(body.enabled === true, body.remove === true);
+    if (trackEdit) {
+      if (!await editHomepageSoundTrack(body.trackUrl, body.action)) return NextResponse.json({ error: "تغيرت قائمة التشغيل. حدّث الصفحة وحاول مجددًا / The playlist changed. Refresh the page and try again" }, { status: 409 });
+    } else await changeHomepageSound(body.enabled === true, body.remove === true);
     revalidateHomepageCaches();
     return NextResponse.json(await getHomepageSound());
   } catch (error) {

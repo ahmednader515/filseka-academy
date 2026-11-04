@@ -21,9 +21,9 @@ function WorkDialog({ work, onClose, ar }: { work: PortfolioWork; onClose: () =>
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = previous; };
   }, []);
-  return <dialog ref={dialog} className={styles.dialog} dir={ar ? "rtl" : "ltr"} aria-labelledby="portfolio-preview-title" onClose={onClose}>
+  return <dialog ref={dialog} className={`${styles.dialog} ${media?.isShort ? styles.dialogPortrait : ""}`} dir={ar ? "rtl" : "ltr"} aria-labelledby="portfolio-preview-title" onClose={onClose}>
     <div className={styles.dialogHeader}><h2 id="portfolio-preview-title">{title}</h2><button type="button" autoFocus onClick={onClose} aria-label={ar ? "إغلاق العرض" : "Close preview"}>×</button></div>
-    {media?.kind === "youtube" ? <iframe className={styles.player} src={media.src} title={title} allow="encrypted-media; picture-in-picture; fullscreen" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /> : media?.kind === "video" ? <video className={styles.player} src={media.src} controls playsInline preload="metadata" /> : <div className={styles.demoPreview}>
+    {media?.kind === "youtube" || media?.kind === "facebook" ? <iframe className={styles.player} src={media.src} title={title} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /> : media?.kind === "video" ? <video className={styles.player} src={media.src} controls playsInline preload="metadata" /> : <div className={styles.demoPreview}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={work.imageUrl} alt="" /><span>{ar ? "نموذج تجريبي" : "Demo preview"}</span>
     </div>}

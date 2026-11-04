@@ -25,7 +25,7 @@ export function Header({
   const { data: session, status } = useSession();
   const t = useT();
   const ar = useLocale() === "ar";
-  const showSound = homepageSound?.enabled && homepageSound.url;
+  const showSound = homepageSound?.enabled && homepageSound.tracks.length > 0;
   const router = useRouter();
   const headerRef = useRef<HTMLElement>(null);
 
@@ -55,7 +55,7 @@ export function Header({
         </form>
 
         <div className={controls.actions}>
-          {showSound && <HomepageWelcomeSound key={homepageSound.url} url={homepageSound.url!} locale={ar ? "ar" : "en"} />}
+          {showSound && <HomepageWelcomeSound key={JSON.stringify(homepageSound.tracks)} tracks={homepageSound.tracks} locale={ar ? "ar" : "en"} />}
           <LanguageToggle />
           {status === "loading" ? (
             <span className="text-sm text-white/60">...</span>
