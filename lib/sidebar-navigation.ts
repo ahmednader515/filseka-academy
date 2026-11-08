@@ -47,6 +47,7 @@ function getSidebarGroupsForRole(role?: UserRole): SidebarGroup[] {
           { ar: "إدارة الكورسات", en: "Manage courses", icon: "play" as const, href: "/dashboard/courses" },
           { ar: "إنشاء كورس", en: "Create course", icon: "plus" as const, href: "/dashboard/courses/new" },
           { ar: "البثوث المباشرة", en: "Live streams", icon: "broadcast" as const, href: "/dashboard/live-streams" },
+          { ar: "الاستوديو الافتراضي", en: "Virtual studio", icon: "broadcast" as const, href: "/dashboard/studio/manage" },
           { ar: "المدربون", en: "Trainers", icon: "users" as const, href: "/dashboard/teachers" },
         ] : []),
         { ar: "واجبات الطلاب", en: "Student homework", icon: "tasks", href: "/dashboard/homework" },
@@ -80,6 +81,8 @@ function getSidebarGroupsForRole(role?: UserRole): SidebarGroup[] {
     { id: "learning", ar: "تعلمي", en: "My learning", items: [
       { ar: "لوحة تعلمي", en: "Learning dashboard", icon: "dashboard", href: "/dashboard" },
       { ar: "كورساتي", en: "My courses", icon: "play", href: "/dashboard#my-courses" },
+      { ar: "الاستوديو الافتراضي", en: "Virtual studio", icon: "broadcast", href: "/dashboard/studio" },
+      { ar: "تسجيلاتي والتقييمات", en: "Recordings & feedback", icon: "film", href: "/dashboard/studio/recordings" },
       { ar: "شحن الرصيد", en: "Add balance", icon: "wallet", href: "/dashboard/add-balance" },
       { ar: "رسائلي", en: "My messages", icon: "mail", href: "/dashboard/messages" },
       { ar: "حسابي", en: "My profile", icon: "profile", href: "/dashboard/profile" },
@@ -106,6 +109,7 @@ export function isSidebarLinkActive(href: string, pathname: string, hash: string
   const [target, fragment] = href.split("#");
   if (fragment) return pathname === target && hash === `#${fragment}`;
   if (target === "/dashboard") return pathname === target && !hash;
+  if (target === "/dashboard/studio") return pathname === target;
   if (target === "/dashboard/courses" && pathname === "/dashboard/courses/new") return false;
   return pathname === target || (target !== "/" && pathname.startsWith(`${target}/`));
 }

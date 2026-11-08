@@ -1,0 +1,31 @@
+.player { display:flex; align-items:center; gap:12px; width:100%; min-width:0; padding:12px; border:1px solid #6c293f; border-radius:15px; background:radial-gradient(ellipse at left top,#6e0b2938,transparent 65%),linear-gradient(120deg,#25121c,#100a0f); box-shadow:inset 0 1px 0 #ffb5c30a; color:#ffe7ef; text-align:left; font-family:inherit; }
+.media { display:none; }
+.player button { display:grid; place-items:center; flex-shrink:0; padding:0; border:0; color:#f8a3ba; background:transparent; cursor:pointer; min-width:30px; height:32px; }
+.player button svg { width:20px; height:20px; }
+.player button.play { width:40px; height:40px; min-width:40px; border:1px solid #ff6687; border-radius:50%; background:linear-gradient(#ec1240,#920023); color:white; box-shadow:inset 0 1px 4px #ffb9c433,0 0 12px #f2144326; }
+.player .play:hover { background:linear-gradient(#ff365f,#b60031); }
+.player :is(button,input,select):focus-visible { outline:2px solid #ff9eb9; outline-offset:4px; }
+.timeline { flex:1; min-width:35px; display:flex; flex-direction:column; gap:7px; }
+/* Keep dashboard form-field styles from enlarging the media sliders. */
+.player .timeline input.slider[type=range], .player .volume input.slider[type=range] { appearance:none; -webkit-appearance:none; display:block; width:100%; height:5px; min-height:5px; max-height:5px; min-width:0; padding:0; border:0; border-radius:20px; background:linear-gradient(to right,#f52c5c var(--fill,0%),#5b3545 var(--fill,0%)); accent-color:#ff3866; cursor:pointer; box-shadow:none; }
+.player .slider::-webkit-slider-thumb { appearance:none; width:11px; height:11px; border-radius:50%; background:#ff6386; border:2px solid #ffd4df; box-shadow:0 0 7px #ff195866; }
+.player .slider::-moz-range-thumb { width:8px; height:8px; border-radius:50%; background:#ff6386; border:2px solid #ffd4df; }
+.player .slider:disabled { opacity:.45; cursor:default; }
+.time { display:flex; gap:8px; justify-content:space-between; align-items:center; font-size:10px; font-variant-numeric:tabular-nums; line-height:1.2; color:#f0bbc9; white-space:nowrap; }
+.separator { color:#936678; margin:0 3px; }
+.status { font-size:9px; color:#d799ae; direction:rtl; overflow:hidden; text-overflow:ellipsis; }
+.volume { display:flex; align-items:center; gap:5px; width:83px; flex-shrink:0; }
+.volume input { flex:1; }
+.player[role=group] select.speed[aria-label] { width:55px; min-width:55px; min-height:32px; max-height:32px; border:1px solid #613044; border-radius:8px; background:#24121c; color:#ffc4d4; padding:3px; font:inherit; font-size:11px; cursor:pointer; direction:ltr; text-align:center; }
+.speed option { background:#24121c; color:#ffe4ee; }
+@media(max-width:600px) {
+ .player { gap:9px; padding:10px; }
+ .volume { width:30px; }
+ .player .volume input.slider[type=range] { display:none; }
+ .player[role=group] select.speed[aria-label] { width:48px; min-width:48px; }
+ .status { display:none; }
+}
+.download { display:grid; place-items:center; flex-shrink:0; width:30px; height:32px; color:#f8a3ba; border:1px solid #613044; border-radius:8px; background:#24121c; text-decoration:none; }
+.download:hover { color:#fff; border-color:#ee4169; background:#491128; }
+.download svg { width:18px; height:18px; }
+@media(max-width:400px) { .player { gap:6px; padding:9px; } .download { width:27px; } }

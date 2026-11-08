@@ -65,6 +65,8 @@ export function DashboardNav({
   if (!isStaff) {
     return (
       <>
+        <NavLink href="/dashboard/studio" exact>{ar ? "الاستوديو الافتراضي" : "Virtual studio"}</NavLink>
+        <NavLink href="/dashboard/studio/recordings">{ar ? "تسجيلاتي والتقييمات" : "Recordings & feedback"}</NavLink>
         <NavLink href="/dashboard/messages">
           {t("dashboardNav.inbox", "Inbox")}
         </NavLink>
@@ -111,6 +113,7 @@ export function DashboardNav({
       )}
       {isAdmin && (
         <>
+          <NavLink href="/dashboard/studio/manage">{ar ? "الاستوديو الافتراضي" : "Virtual studio"}</NavLink>
           <NavLink href="/dashboard/courses">
             {t("dashboardNav.manageCourses", "Manage courses")}
           </NavLink>

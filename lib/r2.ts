@@ -1,5 +1,6 @@
 import "dotenv/config";
-import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetObjectCommand, HeadObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 function getR2Config() {
   return {
@@ -52,6 +53,37 @@ export async function uploadToR2(
 export function isR2Configured(): boolean {
   const { accountId, accessKeyId, secretAccessKey, bucket } = getR2Config();
   return !!(accountId && accessKeyId && secretAccessKey && bucket);
+}
+
+export async function signStudioUpload(key: string, contentType: string, size: number) {
+  const client = getClient();
+  const { bucket } = getR2Config();
+  if (!client || !bucket) throw new Error("R2 storage is not configured");
+  return getSignedUrl(client, new PutObjectCommand({ Bucket: bucket, Key: key, ContentType: contentType, ContentLength: size }), { expiresIn: 900 });
+}
+
+export async function inspectStudioUpload(key: string) {
+  const client = getClient();
+  const { bucket } = getR2Config();
+  if (!client || !bucket) throw new Error("R2 storage is not configured");
+  return client.send(new HeadObjectCommand({ Bucket: bucket, Key: key }));
+}
+
+export async function deleteStudioAudio(key: string) {
+  const client = getClient();
+  const { bucket } = getR2Config();
+  if (!client || !bucket) throw new Error("R2 storage is not configured");
+  await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
+}
+
+export async function signStudioPlayback(key: string, contentType: string, downloadName?: string) {
+  const client = getClient();
+  const { bucket } = getR2Config();
+  if (!client || !bucket) throw new Error("R2 storage is not configured");
+  const disposition = downloadName
+    ? `attachment; filename="recording"; filename*=UTF-8''${encodeURIComponent(downloadName).replace(/['()*]/g, (character) => `%${character.charCodeAt(0).toString(16).toUpperCase()}`)}`
+    : undefined;
+  return getSignedUrl(client, new GetObjectCommand({ Bucket: bucket, Key: key, ResponseContentType: contentType, ResponseContentDisposition: disposition }), { expiresIn: 3600 });
 }
 
 export async function readR2File(key: string): Promise<Uint8Array> {
