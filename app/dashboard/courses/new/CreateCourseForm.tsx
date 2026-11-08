@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useT } from "@/components/LocaleProvider";
 import { CourseFormSaveOverlay } from "../CourseFormSaveOverlay";
 import { ImageAttachField } from "@/components/ImageAttachField";
+import { LessonVideoPreview } from "@/components/LessonVideoPreview";
 import { HOMEWORK_UI_ENABLED } from "@/lib/ui-features";
 
 type CategoryOption = { id: string; name: string; nameAr?: string | null };
@@ -546,6 +547,7 @@ export function CreateCourseForm({ teachers = [], canAssignTeacher = false, init
                 placeholder={t(`${Cf}.youtubePlaceholder`)}
                 className="w-full rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm"
               />
+              <LessonVideoPreview videoUrl={lesson.videoUrl} />
               <div>
                 <label className="block text-xs text-[var(--color-muted)]">{t(`${Cf}.lessonPdfOptional`)}</label>
                 {lesson.pdfUrl ? (

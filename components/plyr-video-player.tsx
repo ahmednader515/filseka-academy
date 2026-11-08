@@ -18,6 +18,7 @@ export interface PlyrVideoPlayerProps {
   className?: string;
   onEnded?: () => void;
   onTimeUpdate?: (currentTime: number) => void;
+  reloadPageOnQualityChange?: boolean;
 }
 
 function readSavedProgress(key: string): number {
@@ -53,6 +54,7 @@ export function PlyrVideoPlayer({
   className = "",
   onEnded,
   onTimeUpdate,
+  reloadPageOnQualityChange = true,
 }: PlyrVideoPlayerProps) {
   const t = useT();
   const youtubeContainerRef = useRef<HTMLDivElement>(null);
@@ -65,6 +67,7 @@ export function PlyrVideoPlayer({
   const [isPlayerReady, setIsPlayerReady] = useState(false);
   const [fullscreenContainer, setFullscreenContainer] = useState<Element | null>(null);
   const [qualityDialogOpen, setQualityDialogOpen] = useState(false);
+  const [playerRevision, setPlayerRevision] = useState(0);
   const [, setOverlayTick] = useState(0);
 
   const progressStorageKey =
@@ -112,8 +115,12 @@ export function PlyrVideoPlayer({
 
   const closeQualityDialog = useCallback(() => {
     setQualityDialogOpen(false);
-    window.location.reload();
-  }, []);
+    if (reloadPageOnQualityChange) {
+      window.location.reload();
+    } else {
+      setPlayerRevision((revision) => revision + 1);
+    }
+  }, [reloadPageOnQualityChange]);
 
   useEffect(() => {
     const onFullscreenChange = () => syncFullscreenContainer();
@@ -283,7 +290,7 @@ export function PlyrVideoPlayer({
         youtubeContainerRef.current.innerHTML = "";
       }
     };
-  }, [youtubeVideoId, progressStorageKey, saveProgress, syncFullscreenContainer]);
+  }, [youtubeVideoId, progressStorageKey, saveProgress, syncFullscreenContainer, playerRevision]);
 
   const seekControls = (
     <div

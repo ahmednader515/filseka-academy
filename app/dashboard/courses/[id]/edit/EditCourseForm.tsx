@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useT } from "@/components/LocaleProvider";
 import { CourseFormSaveOverlay } from "../../CourseFormSaveOverlay";
 import { ImageAttachField } from "@/components/ImageAttachField";
+import { LessonVideoPreview } from "@/components/LessonVideoPreview";
 import { HOMEWORK_UI_ENABLED } from "@/lib/ui-features";
 
 type CategoryOption = { id: string; name: string; nameAr?: string | null };
@@ -522,6 +523,7 @@ export function EditCourseForm({ courseId, initialData }: { courseId: string; in
             <div className="space-y-2">
               <input type="text" value={lesson.title} onChange={(e) => updateLesson(i, "title", e.target.value)} placeholder={t(`${Cf}.lessonTitlePlaceholder`)} className="w-full rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm" />
               <input type="url" value={lesson.videoUrl} onChange={(e) => updateLesson(i, "videoUrl", e.target.value)} placeholder={t(`${Cf}.youtubePlaceholder`)} className="w-full rounded-[var(--radius-btn)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm" />
+              <LessonVideoPreview videoUrl={lesson.videoUrl} />
               <div>
                 <label className="block text-xs text-[var(--color-muted)]">{t(`${Cf}.lessonPdfOptional`)}</label>
                 {lesson.pdfUrl ? (

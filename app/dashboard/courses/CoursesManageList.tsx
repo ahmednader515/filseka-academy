@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useT } from "@/components/LocaleProvider";
 import { useDashboardTable } from "@/lib/i18n/dashboard-table";
 import { fillMessage } from "@/lib/i18n/interpolate";
+import { RemoveCourseFromTeacher } from "./RemoveCourseFromTeacher";
 
 type CourseRow = {
   id: string;
@@ -27,6 +28,7 @@ function CourseTableRow({
   onDelete,
   t,
   egp,
+  teacherId,
 }: {
   c: CourseRow;
   deletingId: string | null;
@@ -34,6 +36,7 @@ function CourseTableRow({
   onDelete: (id: string) => void;
   t: (k: string, fb?: string) => string;
   egp: string;
+  teacherId?: string;
 }) {
   const L = "dashboard.coursesList";
   return (
@@ -72,6 +75,7 @@ function CourseTableRow({
           >
             {t(`${L}.edit`)}
           </Link>
+          {teacherId && <RemoveCourseFromTeacher courseId={c.id} teacherId={teacherId} />}
           <button
             type="button"
             onClick={() => onDelete(c.id)}
@@ -94,7 +98,7 @@ function CourseTableRow({
   );
 }
 
-export function CoursesManageList({ courses, createHref = "/dashboard/courses/new" }: { courses: CourseRow[]; createHref?: string }) {
+export function CoursesManageList({ courses, createHref = "/dashboard/courses/new", teacherId }: { courses: CourseRow[]; createHref?: string; teacherId?: string }) {
   const router = useRouter();
   const t = useT();
   const L = "dashboard.coursesList";
@@ -226,6 +230,7 @@ export function CoursesManageList({ courses, createHref = "/dashboard/courses/ne
                       onDelete={handleDelete}
                       t={t}
                       egp={egp}
+                      teacherId={teacherId}
                     />
                   ))}
                 </tbody>

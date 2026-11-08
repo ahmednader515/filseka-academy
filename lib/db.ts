@@ -3726,6 +3726,28 @@ export async function updateCourse(
   revalidateHomepageCaches();
 }
 
+export async function assignCourseToTeacher(courseId: string, teacherId: string): Promise<boolean> {
+  const rows = await sql`
+    UPDATE "Course" SET created_by_id = ${teacherId}, updated_at = NOW()
+    WHERE id = ${courseId}
+      AND EXISTS (SELECT 1 FROM "User" WHERE id = ${teacherId} AND role = 'TEACHER')
+    RETURNING id
+  `;
+  if (rows.length > 0) revalidateHomepageCaches();
+  return rows.length > 0;
+}
+
+export async function removeCourseFromTeacher(courseId: string, teacherId: string, adminId: string): Promise<boolean> {
+  const rows = await sql`
+    UPDATE "Course" SET created_by_id = ${adminId}, updated_at = NOW()
+    WHERE id = ${courseId} AND created_by_id = ${teacherId}
+      AND EXISTS (SELECT 1 FROM "User" WHERE id = ${teacherId} AND role = 'TEACHER')
+    RETURNING id
+  `;
+  if (rows.length > 0) revalidateHomepageCaches();
+  return rows.length > 0;
+}
+
 export async function deleteCourse(id: string): Promise<void> {
   await sql`DELETE FROM "Course" WHERE id = ${id}`;
   revalidateHomepageCaches();

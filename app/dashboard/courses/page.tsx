@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { getCoursesWithCounts, getCoursesWithCountsForCreator, getUsersByRole } from "@/lib/db";
 import { getServerTranslator } from "@/lib/i18n/server";
 import { CoursesManageList } from "./CoursesManageList";
+import { AssignExistingCourse } from "./AssignExistingCourse";
 
 export default async function DashboardCoursesPage({ searchParams }: { searchParams: Promise<{ teacherId?: string }> }) {
   const session = await getServerSession(authOptions);
@@ -25,6 +26,18 @@ export default async function DashboardCoursesPage({ searchParams }: { searchPar
     role === "TEACHER"
       ? await getCoursesWithCountsForCreator(session.user.id)
       : teacherId ? await getCoursesWithCountsForCreator(teacherId) : await getCoursesWithCounts();
+
+  const availableCourses = teacher ? (await getCoursesWithCounts())
+    .filter((course) => (course.createdById ?? course.created_by_id) !== teacherId)
+    .map((course) => {
+      const ownerId = course.createdById ?? course.created_by_id;
+      return {
+        id: String(course.id),
+        title: String(course.title ?? ""),
+        titleAr: String(course.titleAr ?? course.title_ar ?? ""),
+        owner: teachers.find((item) => item.id === ownerId)?.name ?? "",
+      };
+    }) : [];
 
   const coursesPlain = courses.map((c) => {
     const row = c as Record<string, unknown>;
@@ -73,7 +86,8 @@ export default async function DashboardCoursesPage({ searchParams }: { searchPar
         </form>
       )}
       {teacher && <p className="mb-4 text-sm text-[var(--color-muted)]">{t("dashboard.coursesRoutePage.teacherContentHelp")}</p>}
-      <CoursesManageList courses={coursesPlain} createHref={createHref} />
+      {teacher && <AssignExistingCourse key={teacher.id} teacherId={teacher.id} courses={availableCourses} />}
+      <CoursesManageList courses={coursesPlain} createHref={createHref} teacherId={teacher?.id} />
     </div>
   );
 }
