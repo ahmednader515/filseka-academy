@@ -44,6 +44,7 @@
 .postActions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
 .postActions > :is(button, a) { min-height: 35px; padding: 5px 11px; border: 1px solid #c54e7d55; border-radius: 9px; color: #ffb8d3; font-size: 11px; cursor: pointer; }
 .empty { padding: 25px 15px; border: 1px dashed #82415e; border-radius: 14px; color: #b99aaa; text-align: center; font-size: 13px; line-height: 1.9; }
+.postActions > .deleteButton { color: #ffd2df; border-color: #b54169; background: #560d29; }
 .preview h2 { font-size: 27px; font-weight: 850; line-height: 1.7; margin-block: 18px 12px; }
 .preview > .check { margin-bottom: 15px; }
 .preview > div > p { color: #d5b7c7; font-size: 15px; line-height: 2; }

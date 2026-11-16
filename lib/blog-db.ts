@@ -39,3 +39,9 @@ export async function saveBlogPost(data: BlogInput, userId: string, existingId?:
   await sql`INSERT INTO "BlogPost" (id, slug, content, is_published, published_at, created_by, updated_by) VALUES (${id}, ${data.slug}, ${content}::jsonb, ${data.isPublished}, CASE WHEN ${data.isPublished} THEN NOW() ELSE NULL END, ${userId}, ${userId})`;
   return id;
 }
+
+export async function deleteBlogPost(id: string): Promise<boolean> {
+  await ensureBlogSchema();
+  const rows = await sql`DELETE FROM "BlogPost" WHERE id = ${id} RETURNING id`;
+  return rows.length > 0;
+}

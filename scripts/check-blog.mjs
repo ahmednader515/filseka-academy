@@ -54,6 +54,93 @@ assert(adjacentList.includes("<h2>Heading</h2><ul>"));
 assert(adjacentList.includes("</ul><h3>Subheading</h3><p>Paragraph</p>"));
 console.log("PASS: blog schema, Arabic slugs, publishing requirements, summaries, safe body formatting");
 
+const deleteId = randomUUID();
+let deletedId;
+let deleteCalls = 0;
+let deleteResult = true;
+let deleteError;
+let session = { user: { id: "admin", role: "ADMIN" } };
+const invalidated = [];
+const route = load("app/api/dashboard/blog/route.ts", {
+  "next-auth": { getServerSession: async () => session },
+  "next/cache": { revalidatePath: (...args) => invalidated.push(args) },
+  "@/lib/auth": { authOptions: {} },
+  "@/lib/blog-content": content,
+  "@/lib/request-origin": load("lib/request-origin.ts"),
+  "@/lib/blog-db": {
+    saveBlogPost: async () => deleteId,
+    deleteBlogPost: async (id) => { deleteCalls++; deletedId = id; if (deleteError) throw deleteError; return deleteResult; },
+  },
+});
+const { NextRequest } = require("next/server");
+const deletion = (id = deleteId, origin = "https://academy.test") => route.DELETE(new NextRequest(`https://academy.test/api/dashboard/blog?id=${encodeURIComponent(id)}`, { method: "DELETE", headers: { origin } }));
+for (const unauthorized of [null, { user: { id: "student", role: "STUDENT" } }]) {
+  session = unauthorized;
+  assert.equal((await deletion()).status, 403);
+}
+session = { user: { id: "admin", role: "ADMIN" } };
+assert.equal((await deletion(deleteId, "https://other.test")).status, 403);
+assert.equal((await deletion("invalid")).status, 400);
+assert.equal(deleteCalls, 0);
+assert.equal((await deletion()).status, 200);
+assert.equal(deletedId, deleteId);
+assert.deepEqual(invalidated, [["/blog", "layout"], ["/dashboard/blog"]]);
+session.user.role = "ASSISTANT_ADMIN";
+assert.equal((await deletion()).status, 200);
+deleteResult = false;
+assert.equal((await deletion()).status, 404);
+const successfulInvalidations = invalidated.length;
+deleteError = Object.assign(new Error("Database unavailable"), { code: "08006" });
+const originalConsoleError = console.error;
+let failureLogged = false;
+try {
+  console.error = () => { failureLogged = true; };
+  assert.equal((await deletion()).status, 503);
+} finally { console.error = originalConsoleError; }
+assert(failureLogged);
+assert.equal(invalidated.length, successfulInvalidations);
+
+let deletionQuery;
+const deletionDb = load("lib/blog-db.ts", {
+  "server-only": {},
+  "./blog-content": content,
+  "@/lib/db": { sql: async (strings, ...values) => {
+    if (strings.join("").startsWith('DELETE FROM "BlogPost"')) { deletionQuery = { strings, values }; return [{ id: values[0] }]; }
+    return [];
+  } },
+});
+assert.equal(await deletionDb.deleteBlogPost(deleteId), true);
+assert.deepEqual(deletionQuery.values, [deleteId]);
+assert.equal(deletionQuery.strings.join("?"), 'DELETE FROM "BlogPost" WHERE id = ? RETURNING id');
+console.log("PASS: blog deletion authorization, origin checks, validation, cache invalidation, missing posts, failures and parameterized SQL");
+
+const oldAuthUrl = process.env.NEXTAUTH_URL;
+const oldAuthAlias = process.env.AUTH_URL;
+try {
+  deleteError = undefined;
+  deleteResult = true;
+  delete process.env.AUTH_URL;
+  process.env.NEXTAUTH_URL = "https://felseka-academy.com";
+  const proxiedRequest = (method, origin, extra = {}) => new NextRequest(`http://localhost:3000/api/dashboard/blog?id=${deleteId}`, {
+    method, headers: { origin, "content-type": "application/json", ...extra },
+    ...(method === "DELETE" ? {} : { body: JSON.stringify({ ...draft, id: deleteId }) }),
+  });
+  for (const method of ["POST", "PATCH", "DELETE"]) {
+    assert.equal((await route[method](proxiedRequest(method, "https://felseka-academy.com"))).status, method === "POST" ? 201 : 200);
+    const rejected = await route[method](proxiedRequest(method, "https://evil.example"));
+    assert.equal(rejected.status, 403);
+    assert.equal((await rejected.json()).code, "INVALID_ORIGIN");
+  }
+  delete process.env.NEXTAUTH_URL;
+  assert.equal((await route.POST(proxiedRequest("POST", "https://felseka-academy.com", { host: "felseka-academy.com", "x-forwarded-proto": "https" }))).status, 201);
+  assert.equal((await route.POST(proxiedRequest("POST", "https://evil.example", { host: "felseka-academy.com", "x-forwarded-proto": "https", "x-forwarded-host": "evil.example" }))).status, 403);
+  assert.equal((await route.POST(proxiedRequest("POST", "http://localhost:3000"))).status, 201);
+} finally {
+  if (oldAuthUrl === undefined) delete process.env.NEXTAUTH_URL; else process.env.NEXTAUTH_URL = oldAuthUrl;
+  if (oldAuthAlias === undefined) delete process.env.AUTH_URL; else process.env.AUTH_URL = oldAuthAlias;
+}
+console.log("PASS: blog creation, editing and deletion behind HTTPS reverse proxies; foreign origins remain blocked");
+
 if (process.argv.includes("--database")) {
   require("dotenv/config");
   const { neon } = require("@neondatabase/serverless");

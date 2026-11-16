@@ -19,6 +19,9 @@ export function BlogEditor({ posts, authorName }: { posts: BlogPost[]; authorNam
   const [draft, setDraft] = useState<BlogInput>(() => newPost(authorName));
   const [slugManual, setSlugManual] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deletedIds, setDeletedIds] = useState<string[]>([]);
+  const [deleteNotice, setDeleteNotice] = useState<{ error?: string; success?: string }>({});
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(false);
   const [previewEnglish, setPreviewEnglish] = useState(false);
@@ -27,11 +30,45 @@ export function BlogEditor({ posts, authorName }: { posts: BlogPost[]; authorNam
   const [notice, setNotice] = useState<{ error?: string; success?: string }>({});
   const inFlight = useRef(false);
   const formStart = useRef<HTMLDivElement>(null);
-  const visible = posts.filter((post) => (status === "all" || (status === "published" ? post.isPublished : !post.isPublished)) && `${post.title} ${post.titleEn}`.toLowerCase().includes(search.toLowerCase().trim()));
-  const busy = saving || uploading;
+  const remaining = posts.filter((post) => !deletedIds.includes(post.id));
+  const visible = remaining.filter((post) => (status === "all" || (status === "published" ? post.isPublished : !post.isPublished)) && `${post.title} ${post.titleEn}`.toLowerCase().includes(search.toLowerCase().trim()));
+  const busy = saving || uploading || deletingId !== null;
   function update<K extends keyof BlogInput>(key: K, value: BlogInput[K]) { setDraft((current) => ({ ...current, [key]: value })); }
   function reset() { setEditingId(null); setDraft(newPost(authorName)); setSlugManual(false); setPreview(false); setNotice({}); }
   function edit(post: BlogPost) { setEditingId(post.id); setDraft({ ...post }); setSlugManual(true); setPreview(false); setNotice({}); requestAnimationFrame(() => formStart.current?.focus()); }
+
+  function saveError(code?: string) {
+    switch (code) {
+      case "INVALID_ORIGIN": return text("عنوان الموقع لا يطابق إعدادات الخادم. تحقق من NEXTAUTH_URL وإعدادات البروكسي.", "Site address does not match server settings. Check NEXTAUTH_URL and reverse proxy configuration.");
+      case "SLUG_EXISTS": return text("رابط المقال مستخدم بالفعل. اختر رابطًا آخر.", "That slug is already in use. Choose another.");
+      case "FORBIDDEN": return text("تم رفض طلب الحفظ. تأكد من تسجيل الدخول بحساب إدارة ومن فتح المحرّر من نفس عنوان الموقع.", "Save request denied. Check that you are signed in as an administrator and using the same site address.");
+      case "INVALID_INPUT": return text("بيانات المقال غير صالحة. راجع الحقول ثم حاول مجددًا.", "The article data is invalid. Check the fields and try again.");
+      case "TOO_LARGE": return text("حجم المقال أكبر من الحد المسموح. قلّل طول النصوص ثم حاول مجددًا.", "The article exceeds the request size limit. Shorten the text and try again.");
+      case "NOT_FOUND": return text("المقال لم يعد موجودًا. انسخ النصوص ثم أنشئ مقالًا جديدًا لحفظها.", "This article no longer exists. Copy your text and create a new article to save it.");
+      case "UNAVAILABLE": return text("خدمة الحفظ غير متاحة مؤقتًا. بياناتك ما زالت في المحرّر؛ حاول مجددًا لاحقًا.", "The save service is temporarily unavailable. Your draft is still in the editor; try again later.");
+      default: return text("تعذر حفظ المقال. بياناتك ما زالت في المحرّر، حاول مجددًا.", "Could not save. Your draft is still in the editor; please try again.");
+    }
+  }
+
+  async function remove(post: BlogPost) {
+    if (inFlight.current || busy) return;
+    const title = !ar && post.titleEn ? post.titleEn : post.title;
+    if (!window.confirm(text(`هل تريد حذف المقال «${title}» نهائيًا؟ لا يمكن التراجع عن الحذف.`, `Permanently delete “${title}”? This cannot be undone.`))) return;
+    inFlight.current = true; setDeletingId(post.id); setDeleteNotice({});
+    try {
+      const response = await fetch(`/api/dashboard/blog?id=${encodeURIComponent(post.id)}`, { method: "DELETE" });
+      if (!response.ok) {
+        const result = await response.json().catch(() => ({}));
+        setDeleteNotice({ error: result.code === "INVALID_ORIGIN" ? saveError(result.code) : result.code === "FORBIDDEN" ? text("تم رفض طلب الحذف. تأكد من تسجيل الدخول بحساب إدارة ومن عنوان الموقع.", "Delete request denied. Check your administrator login and site address.") : result.code === "NOT_FOUND" ? text("المقال لم يعد موجودًا. حدّث الصفحة.", "This article no longer exists. Refresh the page.") : text("تعذر حذف المقال. حاول مجددًا لاحقًا.", "Could not delete the article. Try again later.") });
+        return;
+      }
+      setDeletedIds((current) => [...current, post.id]);
+      if (editingId === post.id) reset();
+      setDeleteNotice({ success: text("تم حذف المقال نهائيًا.", "Article permanently deleted.") });
+      router.refresh();
+    } catch { setDeleteNotice({ error: text("تعذر الاتصال. لم يتم تأكيد حذف المقال؛ حدّث الصفحة للتحقق قبل المحاولة مجددًا.", "Connection failed. Deletion could not be confirmed; refresh to check before retrying.") }); }
+    finally { inFlight.current = false; setDeletingId(null); }
+  }
 
   async function uploadCover(event: ChangeEvent<HTMLInputElement>) {
     const file = event.currentTarget.files?.[0];
@@ -65,8 +102,8 @@ export function BlogEditor({ posts, authorName }: { posts: BlogPost[]; authorNam
     inFlight.current = true; setSaving(true); setNotice({});
     try {
       const response = await fetch("/api/dashboard/blog", { method: editingId ? "PATCH" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...parsed.data, ...(editingId ? { id: editingId } : {}) }) });
-      const result = await response.json();
-      if (!response.ok) { setNotice({ error: result.code === "SLUG_EXISTS" ? text("رابط المقال مستخدم بالفعل. اختر رابطًا آخر.", "That slug is already in use. Choose another.") : text("تعذر حفظ المقال. بياناتك ما زالت في المحرّر، حاول مجددًا.", "Could not save. Your draft is still in the editor; please try again.") }); return; }
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.id) { setNotice({ error: saveError(result.code) }); return; }
       setEditingId(result.id); setSlugManual(true); setNotice({ success: draft.isPublished ? text("تم حفظ المقال ونشره.", "Article saved and published.") : text("تم حفظ المقال كمسودة.", "Article saved as a draft.") }); router.refresh();
     } catch { setNotice({ error: text("تعذر الاتصال. بياناتك ما زالت في المحرّر.", "Connection failed. Your draft is still in the editor.") }); }
     finally { inFlight.current = false; setSaving(false); }
@@ -99,10 +136,11 @@ export function BlogEditor({ posts, authorName }: { posts: BlogPost[]; authorNam
       </form>}
     </section>
 
-    <section className={styles.postsPanel} aria-labelledby="saved-posts-title"><div className={styles.listHeading}><h3 id="saved-posts-title">{text("المقالات", "Articles")} ({posts.length})</h3><Link href="/blog">{text("فتح المدونة", "Open blog")}</Link></div><label><span className="sr-only">{text("بحث في المقالات المحفوظة", "Search saved posts")}</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={text("ابحث بعنوان المقال…", "Search by title…")} /></label><label><span className="sr-only">{text("حالة المقالات", "Post status")}</span><select value={status} onChange={(event) => setStatus(event.target.value)}><option value="all">{text("كل الحالات", "All statuses")}</option><option value="published">{text("منشور", "Published")}</option><option value="draft">{text("مسودة", "Draft")}</option></select></label>
+    <section className={styles.postsPanel} aria-labelledby="saved-posts-title"><div className={styles.listHeading}><h3 id="saved-posts-title">{text("المقالات", "Articles")} ({remaining.length})</h3><Link href="/blog">{text("فتح المدونة", "Open blog")}</Link></div><label><span className="sr-only">{text("بحث في المقالات المحفوظة", "Search saved posts")}</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={text("ابحث بعنوان المقال…", "Search by title…")} /></label><label><span className="sr-only">{text("حالة المقالات", "Post status")}</span><select value={status} onChange={(event) => setStatus(event.target.value)}><option value="all">{text("كل الحالات", "All statuses")}</option><option value="published">{text("منشور", "Published")}</option><option value="draft">{text("مسودة", "Draft")}</option></select></label>
+      {deleteNotice.error && <p className={styles.error} role="alert">{deleteNotice.error}</p>}{deleteNotice.success && <p className={styles.success} role="status">{deleteNotice.success}</p>}
       <div className={styles.postList}>{visible.length ? visible.map((post) => <article key={post.id} className={editingId === post.id ? styles.selectedPost : undefined}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={blogImage(post)} alt="" loading="lazy" /><div><h4>{!ar && post.titleEn ? post.titleEn : post.title}</h4><p><span className={post.isPublished ? styles.published : styles.draft}>{post.isPublished ? text("منشور", "Published") : text("مسودة", "Draft")}</span>{post.isFeatured && <span>★ {text("مميز", "Featured")}</span>}</p><small>{ar ? BLOG_CATEGORIES.find((item) => item.id === post.category)?.ar : BLOG_CATEGORIES.find((item) => item.id === post.category)?.en}</small><div className={styles.postActions}><button type="button" disabled={busy} onClick={() => edit(post)}>{text("تعديل", "Edit")}</button>{post.isPublished && <Link href={`/blog/${encodeURIComponent(post.slug)}`}>{text("عرض المقال", "View article")}</Link>}</div></div>
+          <img src={blogImage(post)} alt="" loading="lazy" /><div><h4>{!ar && post.titleEn ? post.titleEn : post.title}</h4><p><span className={post.isPublished ? styles.published : styles.draft}>{post.isPublished ? text("منشور", "Published") : text("مسودة", "Draft")}</span>{post.isFeatured && <span>★ {text("مميز", "Featured")}</span>}</p><small>{ar ? BLOG_CATEGORIES.find((item) => item.id === post.category)?.ar : BLOG_CATEGORIES.find((item) => item.id === post.category)?.en}</small><div className={styles.postActions}><button type="button" disabled={busy} onClick={() => edit(post)}>{text("تعديل", "Edit")}</button>{post.isPublished && <Link href={`/blog/${encodeURIComponent(post.slug)}`}>{text("عرض المقال", "View article")}</Link>}<button type="button" className={styles.deleteButton} disabled={busy} onClick={() => remove(post)} aria-label={text(`حذف المقال: ${post.title}`, `Delete article: ${post.titleEn || post.title}`)}>{deletingId === post.id ? text("جارٍ الحذف…", "Deleting…") : text("حذف", "Delete")}</button></div></div>
       </article>) : <p className={styles.empty}>{text("لا توجد مقالات مطابقة. أنشئ مقالًا جديدًا أو غيّر التصفية.", "No matching articles. Create a new post or change the filter.")}</p>}</div>
     </section>
   </div>;
