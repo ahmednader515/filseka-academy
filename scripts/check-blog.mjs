@@ -54,6 +54,32 @@ assert(adjacentList.includes("<h2>Heading</h2><ul>"));
 assert(adjacentList.includes("</ul><h3>Subheading</h3><p>Paragraph</p>"));
 console.log("PASS: blog schema, Arabic slugs, publishing requirements, summaries, safe body formatting");
 
+const arabicSlug = "التمثيل-الاذاعي-و-الاداء-امام-الكاميرا";
+const articlePost = { ...content.BLOG_DEMOS[0], slug: arabicSlug, title: "مقال عربي منشور", isDemo: false, isPublished: true };
+let lookupSlug;
+const articlePage = load("app/blog/[slug]/page.tsx", {
+  "@/lib/blog-content": content,
+  "@/lib/blog-db": {
+    getPublicBlogPost: async (slug) => { lookupSlug = slug; return slug === arabicSlug || slug === "english-article" ? articlePost : null; },
+  },
+  "@/lib/i18n/server": { getLocaleFromCookie: async () => "ar" },
+  "@/components/BlogBody": {},
+  "@/components/AcademyIcon": {},
+  "../blog.module.css": {},
+});
+for (const slug of [arabicSlug, encodeURIComponent(arabicSlug), "english-article"]) {
+  const metadata = await articlePage.generateMetadata({ params: Promise.resolve({ slug }) });
+  assert(metadata.title.includes(articlePost.title));
+  assert.equal(lookupSlug, decodeURIComponent(slug));
+}
+for (const slug of ["%D8%", "missing-article", encodeURIComponent(encodeURIComponent(arabicSlug))]) {
+  const params = Promise.resolve({ slug });
+  assert.equal((await articlePage.generateMetadata({ params })).title, "المقال غير موجود");
+  await assert.rejects(() => articlePage.default({ params }), /NEXT_HTTP_ERROR_FALLBACK;404/);
+}
+assert((await articlePage.generateMetadata({ params: Promise.resolve({ slug: content.BLOG_DEMOS[0].slug }) })).title.includes(content.BLOG_DEMOS[0].title));
+console.log("PASS: encoded and decoded Arabic article URLs, English slugs, demos and invalid/missing article 404s");
+
 const deleteId = randomUUID();
 let deletedId;
 let deleteCalls = 0;

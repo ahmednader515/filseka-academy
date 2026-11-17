@@ -9,7 +9,12 @@ import { AcademyIcon } from "@/components/AcademyIcon";
 import styles from "../blog.module.css";
 
 export const dynamic = "force-dynamic";
-async function findPost(slug: string) { return slug.startsWith("demo-") ? BLOG_DEMOS.find((post) => post.slug === slug) || null : getPublicBlogPost(slug); }
+async function findPost(routeSlug: string) {
+  let slug: string;
+  try { slug = decodeURIComponent(routeSlug); }
+  catch { return null; }
+  return slug.startsWith("demo-") ? BLOG_DEMOS.find((post) => post.slug === slug) || null : getPublicBlogPost(slug);
+}
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const [post, locale] = await Promise.all([findPost((await params).slug), getLocaleFromCookie()]);
   if (!post) return { title: locale === "ar" ? "المقال غير موجود" : "Article not found" };
